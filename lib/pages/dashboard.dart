@@ -81,7 +81,7 @@ class _DashboardState extends State<Dashboard> {
                         Padding(
                           padding: const EdgeInsets.only(left: 0.0, top: 40),
                           child: Text(
-                            "THUNDER",
+                            "Binalik naba sa dati?",
                             style: TextStyle(
                                 fontSize: 28.0,
                                 fontWeight: FontWeight.bold,
