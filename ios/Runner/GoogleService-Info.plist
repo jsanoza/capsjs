@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1070637052068-b9gn1ef1e181gvg4pe3hvgpkl1fh9bui.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1070637052068-b9gn1ef1e181gvg4pe3hvgpkl1fh9bui</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDZ-6g9ilLzNZ5LT--wX1PrmIPEGfvE_FQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1070637052068</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.getRekk</string>
+	<key>PROJECT_ID</key>
+	<string>capstonejs-cc692</string>
+	<key>STORAGE_BUCKET</key>
+	<string>capstonejs-cc692.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1070637052068:ios:d890e6c67012bd0677b631</string>
+	<key>DATABASE_URL</key>
+	<string>https://capstonejs-cc692.firebaseio.com</string>
+</dict>
+</plist>
