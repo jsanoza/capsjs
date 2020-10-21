@@ -39,8 +39,8 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   void _onTap() async {
     setState(() => rect = RectGetter.getRectFromKey(rectGetterKey));
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() =>
-          rect = rect.inflate(1.3 * context.mediaQuerySize.longestSide));
+      setState(
+          () => rect = rect.inflate(1.3 * context.mediaQuerySize.longestSide));
       Future.delayed(animationDuration + delay, _goToNextPage);
     });
   }
@@ -105,7 +105,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                     Stack(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.only(top: 100.0),
+                          padding: EdgeInsets.only(top: 80.0),
                           child: new Image(
                               width: 200.0,
                               height: 150.0,

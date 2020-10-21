@@ -1,4 +1,3 @@
-
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -82,7 +81,7 @@ class _DashboardState extends State<Dashboard> {
                         Padding(
                           padding: const EdgeInsets.only(left: 0.0, top: 40),
                           child: Text(
-                            "Welcome",
+                            "THUNDER",
                             style: TextStyle(
                                 fontSize: 28.0,
                                 fontWeight: FontWeight.bold,
@@ -156,10 +155,8 @@ class _DashboardState extends State<Dashboard> {
                         CustomPaint(
                           size: Size(sidebarSize, Get.height),
                           painter: DrawerPainter(offset: _offset),
-                          
                         ),
                         Container(
-                            
                           height: Get.height,
                           width: sidebarSize,
                           child: Column(
@@ -189,10 +186,8 @@ class _DashboardState extends State<Dashboard> {
                               Container(
                                 key: globalKey,
                                 width: double.infinity,
-                               
                                 height: menuContainerHeight,
                                 child: Column(
-                                  
                                   children: <Widget>[
                                     // MyButton(
                                     //     text: "Home",
