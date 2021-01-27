@@ -22,10 +22,8 @@ if (flutterVersionName == null) {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
 android {
     compileSdkVersion 29
 
@@ -40,10 +38,11 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.get_rekk"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -53,6 +52,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+  
 }
 
 flutter {
@@ -62,5 +62,14 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation platform('com.google.firebase:firebase-bom:25.12.0')
-    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.android.gms:play-services-vision:20.1.1'
+    implementation 'com.google.android.gms:play-services-vision-common:19.1.1'
+    implementation "com.google.android.gms:play-services-vision-face-contour-internal:16.0.2"
+    implementation 'com.google.android.gms:play-services-vision-image-label:18.0.5'
+    implementation 'com.google.firebase:firebase-ml-vision:24.1.0'
+    implementation 'com.google.firebase:firebase-ml-vision-face-model:20.0.2'
+    implementation 'com.google.firebase:firebase-ml-model-interpreter:22.0.4'
+    implementation 'org.tensorflow:tensorflow-lite:2.0.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

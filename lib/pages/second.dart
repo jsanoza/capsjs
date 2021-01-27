@@ -2,6 +2,9 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
+import 'package:get_rekk/pages/cameralabel.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
+
 
 class Second extends StatefulWidget {
   @override
@@ -15,6 +18,8 @@ class _SecondState extends State<Second> {
   List<double> limits = [];
 
   bool isMenuOpen = false;
+    final RoundedLoadingButtonController _btnController =
+      new RoundedLoadingButtonController();
 
   @override
   void initState() {
@@ -42,6 +47,37 @@ class _SecondState extends State<Second> {
     double size =
         (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 25 : 12;
     return size;
+  }
+
+    Widget _buildSignupbtn() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 0.0),
+      child: Stack(
+        children: <Widget>[
+          Center(
+              child: Container(
+            child: RoundedLoadingButton(
+              color: Color(0xff1D976C),
+              child: Text('Register',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Nunito-Regular',
+                      fontSize: 18)),
+              controller: _btnController,
+              onPressed: () {
+                _btnController.success();
+                Get.to(CameraPreviewScanner());
+                //   _signUp(
+                //       email: _emailSup.text,
+                //       password: _passwordSup.text,
+                //       context: context);
+                // }, //_doSomething next
+              },
+            ),
+          )),
+        ],
+      ),
+    );
   }
 
   @override
@@ -116,7 +152,9 @@ class _SecondState extends State<Second> {
                         ),
                       ],
                     ),
-
+                    Center(
+                      child: _buildSignupbtn(),
+                    ),
                     ///here
                   ],
                 ),

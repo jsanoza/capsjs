@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:camera/camera.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -6,7 +8,23 @@ import 'package:get_rekk/pages/boarding.dart';
 import 'package:get_rekk/pages/loginsignup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+import 'pages/cameratrial.dart';
+import 'pages/third.dart';
+
+List<CameraDescription> cameras = [];
+
+// void main() {
+//   runApp(MyApp());
+// }
+Future<void> main() async {
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    // Retrieve the device cameras
+    cameras = await availableCameras();
+  } on CameraException catch (e) {
+    print(e);
+  }
   runApp(MyApp());
 }
 
@@ -20,9 +38,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Nunito',
         primarySwatch: Colors.lightGreen,
-        // visualDensity: VisualDensity.adaptivePlatformDensity,
-        // bottomSheetTheme:
-        //     BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        bottomSheetTheme:
+            BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
       ),
       home: Splash(),
     );
@@ -86,4 +104,3 @@ class SplashState extends State<Splash> {
     );
   }
 }
-

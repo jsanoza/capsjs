@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get_rekk/animations/animated_wave.dart';
@@ -8,6 +9,9 @@ import 'package:flutter/services.dart';
 import 'package:rect_getter/rect_getter.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'dashboard.dart';
+import 'package:get_rekk/controllers/authentication.dart';
+
+import 'third.dart';
 
 class LogSign extends StatefulWidget {
   LogSign({Key key}) : super(key: key);
@@ -634,7 +638,22 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                           iconSize: 40,
                           onPressed: () {
                             print("Google clicked");
-                          },
+                            signInWithGoogle();
+                            // onPressed:
+                            // () => signInWithGoogle().whenComplete(() async {
+                            //       // User user = await FirebaseAuth.instance();
+                            //       FirebaseAuth auth = FirebaseAuth.instance;
+                            //       User user = auth.currentUser;
+
+                            //       // Navigator.of(context).pushReplacement(
+                            //       //     MaterialPageRoute(
+                            //       //         builder: (context) =>
+                            //       //             Third(uid: user.uid)));
+                            //       Get.to(Third());
+                            //     })
+                            Get.to(Third());
+                          }
+                          
                         ),
                       ),
                     ],
@@ -667,6 +686,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                           iconSize: 40,
                           onPressed: () {
                             print("Facebook clicked");
+                            handleFacebookSignInz();
                           },
                         ),
                       ),
