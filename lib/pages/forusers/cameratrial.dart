@@ -5,14 +5,13 @@ import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:get/get.dart';
 import 'dart:ui' as ui;
 import 'package:get_rekk/helpers/scanner_utils.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:torch_compat/torch_compat.dart';
-import '../main.dart';
-import 'results.dart';
+import '../../main.dart';
+import '../results.dart';
 
 class CameraApp extends StatefulWidget {
   @override
@@ -52,14 +51,11 @@ class _CameraAppState extends State<CameraApp> {
   }
 
   void _initializeCamera() async {
-    final CameraDescription description =
-        await ScannerUtils.getCamera(_direction);
+    final CameraDescription description = await ScannerUtils.getCamera(_direction);
 
     _camera = CameraController(
       description,
-      defaultTargetPlatform == TargetPlatform.iOS
-          ? ResolutionPreset.medium
-          : ResolutionPreset.medium,
+      defaultTargetPlatform == TargetPlatform.iOS ? ResolutionPreset.medium : ResolutionPreset.medium,
     );
     await _camera.initialize();
 
@@ -95,9 +91,7 @@ class _CameraAppState extends State<CameraApp> {
   Widget _buildResults() {
     const Text noResultsText = Text('No results!');
 
-    if (_scanResults == null ||
-        _camera == null ||
-        !_camera.value.isInitialized) {
+    if (_scanResults == null || _camera == null || !_camera.value.isInitialized) {
       return noResultsText;
     }
 
@@ -187,11 +181,7 @@ class _CameraAppState extends State<CameraApp> {
                         child: Container(
                           width: size,
                           height: size / _camera.value.aspectRatio,
-                          child: Stack(fit: StackFit.expand,
-                          children: <Widget>[
-                            CameraPreview(_camera),
-                            _buildResults()
-                          ]), 
+                          child: Stack(fit: StackFit.expand, children: <Widget>[CameraPreview(_camera), _buildResults()]),
                         ),
                       ),
                     ),
@@ -224,11 +214,7 @@ class _CameraAppState extends State<CameraApp> {
     }
 
     // Formatting Date and Time
-    String dateTime = DateFormat.yMMMd()
-        .addPattern('-')
-        .add_Hms()
-        .format(DateTime.now())
-        .toString();
+    String dateTime = DateFormat.yMMMd().addPattern('-').add_Hms().format(DateTime.now()).toString();
 
     String formattedDateTime = dateTime.replaceAll(' ', '');
     print("Formatted: $formattedDateTime");
@@ -285,8 +271,7 @@ class _CameraAppState extends State<CameraApp> {
                       if (path != null) {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailScreenx(path)),
+                          MaterialPageRoute(builder: (context) => DetailScreenx(path)),
                         );
                       }
                     });
@@ -320,8 +305,8 @@ class _CameraAppState extends State<CameraApp> {
   }
 }
 
-    var keys = ['APC', '7778', 'REGION', 'NCR', 'MC'];
-    var regex = new RegExp("\\b(?:${keys.join('|')})\\b", caseSensitive: false);
+var keys = ['APC', '7778', 'REGION', 'NCR', 'MC'];
+var regex = new RegExp("\\b(?:${keys.join('|')})\\b", caseSensitive: false);
 
 enum Detector {
   text,
@@ -350,10 +335,7 @@ class TextDetectorPainter1 extends CustomPainter {
     }
 
     final ui.ParagraphBuilder builder = ui.ParagraphBuilder(
-      ui.ParagraphStyle(
-          textAlign: TextAlign.left,
-          fontSize: 23.0,
-          textDirection: ui.TextDirection.ltr),
+      ui.ParagraphStyle(textAlign: TextAlign.left, fontSize: 23.0, textDirection: ui.TextDirection.ltr),
     );
 
     final Paint paint = Paint()
@@ -365,48 +347,45 @@ class TextDetectorPainter1 extends CustomPainter {
     String mailAddress = "";
 
     for (TextBlock block in visionText.blocks) {
-       if (!regex.hasMatch(block.text)) {
-      for (TextLine line in block.lines) {
-       
-        if (regEx.hasMatch(line.text)) {
-          mailAddress = mailAddress + line.text;
-          print(block.cornerPoints);
-          // for (TextElement element in line.elements) {
-          //   print(element.text);
-          //   // paint.color = Colors.green;
-          //   // canvas.drawRect(scaleRect(element), paint);
-          //   //  builder.addText('\nelement: ${element.text}\n');
-          //   // Util.uid = element.text + "\n";
-          // }
+      if (!regex.hasMatch(block.text)) {
+        for (TextLine line in block.lines) {
+          if (regEx.hasMatch(line.text)) {
+            mailAddress = mailAddress + line.text;
+            print(block.cornerPoints);
+            // for (TextElement element in line.elements) {
+            //   print(element.text);
+            //   // paint.color = Colors.green;
+            //   // canvas.drawRect(scaleRect(element), paint);
+            //   //  builder.addText('\nelement: ${element.text}\n');
+            //   // Util.uid = element.text + "\n";
+            // }
 
-          mailAddress = mailAddress + '\n';
-          print(mailAddress);
-          // paint.color = Colors.yellow;
-          // canvas.drawRect(scaleRect(line), paint);
+            mailAddress = mailAddress + '\n';
+            print(mailAddress);
+            // paint.color = Colors.yellow;
+            // canvas.drawRect(scaleRect(line), paint);
+          }
         }
-        
-      }
-      paint.color = Colors.red;
-      canvas.drawRect(scaleRect(block), paint);
+        paint.color = Colors.red;
+        canvas.drawRect(scaleRect(block), paint);
 
-      builder.pushStyle(ui.TextStyle(color: Colors.green));
-      builder.addText('Plate: ${mailAddress.toString()} \n');
-      builder.pop();
+        builder.pushStyle(ui.TextStyle(color: Colors.green));
+        builder.addText('Plate: ${mailAddress.toString()} \n');
+        builder.pop();
 
-      canvas.drawParagraph(
-        builder.build()
-          ..layout(ui.ParagraphConstraints(
-            width: size.width,
-          )),
-        const Offset(90.0, 410.0),
-      );
+        canvas.drawParagraph(
+          builder.build()
+            ..layout(ui.ParagraphConstraints(
+              width: size.width,
+            )),
+          const Offset(90.0, 410.0),
+        );
       }
     }
   }
 
   @override
   bool shouldRepaint(TextDetectorPainter1 oldDelegate) {
-    return oldDelegate.absoluteImageSize != absoluteImageSize ||
-        oldDelegate.visionText != visionText;
+    return oldDelegate.absoluteImageSize != absoluteImageSize || oldDelegate.visionText != visionText;
   }
 }

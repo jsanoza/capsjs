@@ -1,11 +1,11 @@
-
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
-import 'cameratrial.dart';
+import 'forusers/cameratrial.dart';
+
 class Third extends StatefulWidget {
   @override
   _ThirdState createState() => _ThirdState();
@@ -13,13 +13,13 @@ class Third extends StatefulWidget {
 
 class _ThirdState extends State<Third> {
   @override
+  // ignore: override_on_non_overriding_member
   Offset _offset = Offset(0, 0);
   GlobalKey globalKey = GlobalKey();
   List<double> limits = [];
 
   bool isMenuOpen = false;
-      final RoundedLoadingButtonController _btnController =
-      new RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
 
   @override
   void initState() {
@@ -44,8 +44,7 @@ class _ThirdState extends State<Third> {
   }
 
   double getSize(int x) {
-    double size =
-        (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 25 : 12;
+    double size = (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 25 : 12;
     return size;
   }
 
@@ -58,11 +57,7 @@ class _ThirdState extends State<Third> {
               child: Container(
             child: RoundedLoadingButton(
               color: Color(0xff1D976C),
-              child: Text('Register',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Nunito-Regular',
-                      fontSize: 18)),
+              child: Text('Register', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
               controller: _btnController,
               onPressed: () {
                 _btnController.success();
@@ -82,7 +77,6 @@ class _ThirdState extends State<Third> {
 
   @override
   Widget build(BuildContext context) {
-    
     double sidebarSize = Get.width * 0.60;
     double menuContainerHeight = Get.height / 2;
 
@@ -94,17 +88,13 @@ class _ThirdState extends State<Third> {
         });
       },
       child: NotificationListener<OverscrollIndicatorNotification>(
+        // ignore: missing_return
         onNotification: (overscroll) {
           overscroll.disallowGlow();
         },
         child: Container(
           decoration: BoxDecoration(
-            gradient: new LinearGradient(
-                colors: [Color(0xff93F9B9), Color(0xff1D976C)],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 1.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp),
+            gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
           ),
           height: Get.height,
           child: Stack(
@@ -119,11 +109,7 @@ class _ThirdState extends State<Third> {
                           padding: const EdgeInsets.only(left: 0.0, top: 40),
                           child: Text(
                             "Third",
-                            style: TextStyle(
-                                fontSize: 28.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontFamily: 'Nunito-Bold'),
+                            style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold, color: Colors.black, fontFamily: 'Nunito-Bold'),
                           ),
                         ),
                         Padding(
@@ -156,6 +142,7 @@ class _ThirdState extends State<Third> {
                     Center(
                       child: _buildSignupbtn(),
                     ),
+
                     ///here
                   ],
                 ),
@@ -177,8 +164,7 @@ class _ThirdState extends State<Third> {
                         });
                       }
 
-                      if (details.localPosition.dx > sidebarSize - 20 &&
-                          details.delta.distanceSquared > 2) {
+                      if (details.localPosition.dx > sidebarSize - 20 && details.delta.distanceSquared > 2) {
                         setState(() {
                           isMenuOpen = true;
                         });
@@ -194,10 +180,8 @@ class _ThirdState extends State<Third> {
                         CustomPaint(
                           size: Size(sidebarSize, Get.height),
                           painter: DrawerPainter(offset: _offset),
-                          
                         ),
                         Container(
-                            
                           height: Get.height,
                           width: sidebarSize,
                           child: Column(
@@ -227,41 +211,19 @@ class _ThirdState extends State<Third> {
                               Container(
                                 key: globalKey,
                                 width: double.infinity,
-                               
                                 height: menuContainerHeight,
                                 child: Column(
-                                  
                                   children: <Widget>[
-                                    MyButton(
-                                        text: "Home",
-                                        iconData: Icons.person,
-                                        textSize: getSize(0),
-                                        height: (menuContainerHeight) / 5,
-                                        selectedIndex: 0),
-                                    MyButton(
-                                        text: "First Page",
-                                        iconData: Icons.payment,
-                                        textSize: getSize(1),
-                                        height: (menuContainerHeight) / 5,
-                                        selectedIndex: 1),
-                                    MyButton(
-                                        text: "Second Page",
-                                        iconData: Icons.notifications,
-                                        textSize: getSize(2),
-                                        height: (menuContainerHeight) / 5,
-                                        selectedIndex: 2),
+                                    MyButton(text: "Home", iconData: Icons.person, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
+                                    MyButton(text: "First Page", iconData: Icons.payment, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 1),
+                                    MyButton(text: "Second Page", iconData: Icons.notifications, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
                                     // MyButton(
                                     //     text: "Third Page",
                                     //     iconData: Icons.attach_file,
                                     //     textSize: getSize(3),
                                     //     height: (menuContainerHeight) / 5,
                                     //     selectedIndex: 3),
-                                    MyButton(
-                                        text: "Fourth",
-                                        iconData: Icons.settings,
-                                        textSize: getSize(4),
-                                        height: (menuContainerHeight) / 5,
-                                        selectedIndex: 4),
+                                    MyButton(text: "Fourth", iconData: Icons.settings, textSize: getSize(4), height: (menuContainerHeight) / 5, selectedIndex: 4),
                                   ],
                                 ),
                               )

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
-import 'package:get/get.dart';
 import 'dart:io';
 import 'dart:ui';
 import 'dart:async';
-
-import 'package:get_rekk/pages/cameratrial.dart';
 
 class DetailScreenx extends StatefulWidget {
   final String imagePath;
@@ -44,24 +41,23 @@ class _DetailScreenxState extends State<DetailScreenx> {
     RegExp regEx = RegExp(pattern);
 
     var keys = ['APC', '7778', 'REGION', 'NCR', 'MC', 'POGI', 'LANG', 'TAKBO'];
-    var regex1 = new RegExp("\\b(?:${keys.join('|')})\\b", caseSensitive: false);
+    var regex1 =
+        new RegExp("\\b(?:${keys.join('|')})\\b", caseSensitive: false);
 
     String mailAddress = "";
     for (TextBlock block in visionText.blocks) {
-      
       for (TextLine line in block.lines) {
         if (!regex1.hasMatch(line.text)) {
-         
-          if(regEx.hasMatch(line.text)){
-          mailAddress = mailAddress + line.text;
-          for (TextElement element in line.elements) {
-            setState(() {
-              _elements.add(element);
-              _blocks.add(block);
-              // mailAddress = Util.uid.toString();
-            });
-          }
-          mailAddress = mailAddress + '\n';
+          if (regEx.hasMatch(line.text)) {
+            mailAddress = mailAddress + line.text;
+            for (TextElement element in line.elements) {
+              setState(() {
+                _elements.add(element);
+                _blocks.add(block);
+                // mailAddress = Util.uid.toString();
+              });
+            }
+            mailAddress = mailAddress + '\n';
           }
         }
       }
@@ -70,7 +66,7 @@ class _DetailScreenxState extends State<DetailScreenx> {
     if (this.mounted) {
       setState(() {
         recognizedText = mailAddress;
-        print('recognized' + recognizedText) ;
+        print('recognized' + recognizedText);
       });
     }
   }

@@ -3,28 +3,30 @@ import 'package:get/get.dart';
 import 'package:get_rekk/pages/foradmin/dashboard.dart';
 import 'package:get_rekk/pages/foradmin/first.dart';
 import 'package:get_rekk/pages/foradmin/fourth.dart';
-import 'package:get_rekk/pages/foradmin/newSched..dart';
 
 import 'package:get_rekk/pages/foradmin/reset.dart';
 import 'package:get_rekk/pages/foradmin/upgradepost.dart';
-import 'package:get_rekk/pages/foradmin/vehiclelist.dart';
+import 'package:get_rekk/pages/forusers/cameratrial.dart';
+import 'package:get_rekk/pages/forusers/editinfo.dart';
+import 'package:get_rekk/pages/forusers/loading.dart';
+import 'package:get_rekk/pages/forusers/userssched.dart';
 import 'package:get_rekk/pages/third.dart';
 
 // ignore: must_be_immutable
-class MyButton extends StatefulWidget {
+class MyButton2 extends StatefulWidget {
   final String text;
   final IconData iconData;
   final double textSize;
   final double height;
   int selectedIndex = 0;
 
-  MyButton({this.text, this.iconData, this.textSize, this.height, this.selectedIndex});
+  MyButton2({this.text, this.iconData, this.textSize, this.height, this.selectedIndex});
 
   @override
-  _MyButtonState createState() => _MyButtonState();
+  _MyButton2State createState() => _MyButton2State();
 }
 
-class _MyButtonState extends State<MyButton> {
+class _MyButton2State extends State<MyButton2> {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
@@ -51,17 +53,17 @@ class _MyButtonState extends State<MyButton> {
           switch (widget.selectedIndex) {
             case 0:
               print('Zero');
-              Get.offAll(Fourth(), transition: Transition.native);
+              Get.offAll(Loading(), transition: Transition.native);
               break;
 
             case 1:
               print('One');
-              Get.offAll(NewSched(), transition: Transition.native);
+              Get.offAll(EditInfoState(), transition: Transition.native);
               break;
 
             case 2:
               print('Two');
-              Get.offAll(First(), transition: Transition.native);
+              Get.offAll(CameraApp(), transition: Transition.native);
               break;
 
             case 3:
@@ -74,11 +76,6 @@ class _MyButtonState extends State<MyButton> {
               Get.offAll(UpgradeposState(), transition: Transition.native);
               break;
 
-            case 5:
-              print('Fifth');
-              Get.offAll(VehicleList(), transition: Transition.native);
-              break;
-
             default:
               print('Index Not Found');
           }
@@ -86,10 +83,10 @@ class _MyButtonState extends State<MyButton> {
   }
 }
 
-class DrawerPainter extends CustomPainter {
+class DrawerPainter2 extends CustomPainter {
   final Offset offset;
 
-  DrawerPainter({this.offset});
+  DrawerPainter2({this.offset});
 
   double getControlPointX(double width) {
     if (offset.dx == 0) {

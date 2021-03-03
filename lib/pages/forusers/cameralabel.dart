@@ -105,6 +105,7 @@ class _CameraPreviewScannerState extends State<CameraPreviewScanner> {
   }
 
   Widget _buildImage() {
+    // ignore: unused_local_variable
     var size = MediaQuery.of(context).size.width;
     return Container(
       constraints: const BoxConstraints.expand(),

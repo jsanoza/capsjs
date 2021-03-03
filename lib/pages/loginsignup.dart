@@ -1,16 +1,22 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get_rekk/animations/animated_wave.dart';
 import 'package:get_rekk/animations/bubble_indication_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:rect_getter/rect_getter.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-import 'dashboard.dart';
-import 'package:get_rekk/controllers/authentication.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
+import 'foradmin/dashboard.dart';
+import 'foradmin/fourth.dart';
+import 'foradmin/newSched..dart';
+import 'forusers/editinfo.dart';
+import 'forusers/loading.dart';
+import 'forusers/userssched.dart';
 import 'third.dart';
 
 class LogSign extends StatefulWidget {
@@ -22,10 +28,11 @@ class LogSign extends StatefulWidget {
 
 class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  final RoundedLoadingButtonController _btnController =
-      new RoundedLoadingButtonController();
-
+  TextEditingController _emailTextController;
+  TextEditingController _passwordTextController;
+  final RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  bool _blackVisible = false;
   PageController _pageController;
   Color left = Colors.black;
   Color right = Colors.white;
@@ -34,6 +41,8 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   bool _obscureText3 = true;
   bool _obscureText2 = true;
   bool _obscureText = true;
+  var data;
+  var uuid = Uuid();
 
   final Duration animationDuration = Duration(milliseconds: 500);
   final Duration delay = Duration(milliseconds: 100);
@@ -43,14 +52,17 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   void _onTap() async {
     setState(() => rect = RectGetter.getRectFromKey(rectGetterKey));
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(
-          () => rect = rect.inflate(1.3 * context.mediaQuerySize.longestSide));
+      setState(() => rect = rect.inflate(1.3 * context.mediaQuerySize.longestSide));
       Future.delayed(animationDuration + delay, _goToNextPage);
     });
   }
 
   void _goToNextPage() {
-    Get.offAll(Dashboard(), transition: Transition.fadeIn);
+    if (data == 'user') {
+      Get.offAll(UsersSched(), transition: Transition.fadeIn);
+    } else {
+      Get.offAll(Fourth(), transition: Transition.fadeIn);
+    }
   }
 
   Widget _ripple() {
@@ -64,11 +76,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
       top: rect.top,
       bottom: Get.height - rect.bottom,
       child: Container(
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-                colors: [Color(0xff1D976C), Color(0xff93F9B9), Colors.white],
-                center: Alignment(0.1, 0.2))),
+        decoration: BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [Color(0xff1D976C), Color(0xff93F9B9), Colors.white], center: Alignment(0.1, 0.2))),
       ),
     );
   }
@@ -88,6 +96,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 )),
           ),
           body: NotificationListener<OverscrollIndicatorNotification>(
+            // ignore: missing_return
             onNotification: (overscroll) {
               overscroll.disallowGlow();
             },
@@ -96,12 +105,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 width: Get.width,
                 height: Get.height,
                 decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
-                      colors: [Color(0xff93F9B9), Color(0xff1D976C)],
-                      begin: const FractionalOffset(0.0, 0.0),
-                      end: const FractionalOffset(1.0, 1.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
+                  gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
@@ -110,11 +114,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(top: 80.0),
-                          child: new Image(
-                              width: 200.0,
-                              height: 150.0,
-                              fit: BoxFit.contain,
-                              image: new AssetImage('assets/images/logo2.png')),
+                          child: new Image(width: 200.0, height: 150.0, fit: BoxFit.contain, image: new AssetImage('assets/images/logo2.png')),
                         ),
                       ],
                     ),
@@ -241,7 +241,8 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
+    _emailTextController = TextEditingController();
+    _passwordTextController = TextEditingController();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -268,6 +269,102 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
     });
   }
 
+  void _changeBlackVisible() {
+    _blackVisible = !_blackVisible;
+  }
+
+  void _showErrorAlert({String title, String content, VoidCallback onPressed, BuildContext context}) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return CustomAlertDialog(
+          content: content,
+          title: title,
+          onPressed: onPressed,
+        );
+      },
+    );
+  }
+
+  void handleSignIn() async {
+    var email = _emailTextController.text.trim();
+    var password = _passwordTextController.text.trim();
+    SharedPreferences level = await SharedPreferences.getInstance();
+    String errorMessage;
+    try {
+      UserCredential result = await auth.signInWithEmailAndPassword(email: email, password: password);
+
+      if (result != null) {
+        var a = await FirebaseFirestore.instance.collection('userlevel').where("email", isEqualTo: email).get();
+        if (a.docs.isNotEmpty) {
+          // print('Exists');
+          var hello = a.docs[0];
+          data = hello.data()['level'];
+          await level.setString('level', data);
+          print(level.getString("level"));
+          User user = auth.currentUser;
+          var collectionid2 = uuid.v1();
+
+          FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
+            'lastactivity.datetime': Timestamp.now(),
+          }).then((value) {
+            FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+              'userid': user.uid,
+              'activity': 'User logged into session.',
+              'editcreate.datetime': Timestamp.now(),
+            });
+          }).then((value) {
+            // auth.signOut();
+            // Get.offAll(LogSign());
+            _onTap();
+          });
+        }
+      }
+    } catch (error) {
+      switch (error.code) {
+        case "ERROR_EMAIL_ALREADY_IN_USE":
+        case "account-exists-with-different-credential":
+        case "email-already-in-use":
+          errorMessage = "Email already used. Go to login page.";
+          break;
+        case "ERROR_WRONG_PASSWORD":
+        case "wrong-password":
+          errorMessage = "Wrong email/password combination.";
+          break;
+        case "ERROR_USER_NOT_FOUND":
+        case "user-not-found":
+          errorMessage = "No user found with this email.";
+          break;
+        case "ERROR_USER_DISABLED":
+        case "user-disabled":
+          errorMessage = "User disabled.";
+          break;
+        case "ERROR_TOO_MANY_REQUESTS":
+        case "operation-not-allowed":
+          errorMessage = "Too many requests to log into this account.";
+          break;
+        case "ERROR_OPERATION_NOT_ALLOWED":
+        case "operation-not-allowed":
+          errorMessage = "Server error, please try again later.";
+          break;
+        case "ERROR_INVALID_EMAIL":
+        case "invalid-email":
+          errorMessage = "Email address is invalid.";
+          break;
+        default:
+          errorMessage = "Login failed. Please try again.";
+          break;
+      }
+      _showErrorAlert(
+          title: "LOGIN FAILED",
+          content: errorMessage, //show error firebase
+          onPressed: _changeBlackVisible,
+          context: context);
+      // showErrDialog(context, errorMessage);
+    }
+  }
+
   Widget _buildMenuBar(BuildContext context) {
     return Container(
       width: 300.0,
@@ -288,25 +385,13 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 onPressed: _onSignInButtonPress,
                 child: Row(
                   children: [
-                    isRequ
-                        ? RotatedBox(
-                            quarterTurns: 0,
-                            child: Icon(Icons.push_pin,
-                                size: 20, color: Color(0xff1D976C)))
-                        : RotatedBox(
-                            quarterTurns: 3,
-                            child:
-                                Icon(Icons.push_pin, size: 20, color: right)),
+                    isRequ ? RotatedBox(quarterTurns: 0, child: Icon(Icons.push_pin, size: 20, color: Color(0xff1D976C))) : RotatedBox(quarterTurns: 3, child: Icon(Icons.push_pin, size: 20, color: right)),
                     VerticalDivider(
                       color: Colors.transparent,
                     ),
                     Text(
                       "SIGN IN",
-                      style: TextStyle(
-                          color: right,
-                          fontSize: 15,
-                          fontFamily: 'Nunito-Regular',
-                          fontWeight: FontWeight.w400),
+                      style: TextStyle(color: right, fontSize: 15, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -320,24 +405,13 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 onPressed: _onSignUpButtonPress,
                 child: Row(
                   children: [
-                    isRequ2
-                        ? RotatedBox(
-                            quarterTurns: 0,
-                            child: Icon(Icons.push_pin,
-                                size: 20, color: Color(0xff1D976C)))
-                        : RotatedBox(
-                            quarterTurns: 3,
-                            child: Icon(Icons.push_pin, size: 20, color: left)),
+                    isRequ2 ? RotatedBox(quarterTurns: 0, child: Icon(Icons.push_pin, size: 20, color: Color(0xff1D976C))) : RotatedBox(quarterTurns: 3, child: Icon(Icons.push_pin, size: 20, color: left)),
                     VerticalDivider(
                       color: Colors.transparent,
                     ),
                     Text(
                       "SIGN UP",
-                      style: TextStyle(
-                          color: left,
-                          fontSize: 15,
-                          fontFamily: 'Nunito-Regular',
-                          fontWeight: FontWeight.w400),
+                      style: TextStyle(color: left, fontSize: 15, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -358,11 +432,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
               child: Container(
             child: RoundedLoadingButton(
               color: Color(0xff1D976C),
-              child: Text('Register',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Nunito-Regular',
-                      fontSize: 18)),
+              child: Text('Register', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
               controller: _btnController,
               onPressed: () {
                 //   _signUp(
@@ -403,32 +473,20 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
             Center(
               child: RaisedButton(
                 onPressed: () {
-                  _onTap();
-                  // _emailLogin(
-                  //     email: _email.text,
-                  //     password: _password.text,
-                  //     context: context);
+                  // _onTap();
+                  handleSignIn();
                 }, //only after checking
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
                 padding: const EdgeInsets.all(0.0),
                 child: Ink(
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [Color(0xff93F9B9), Color(0xff1D976C)],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
+                    gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                   ),
                   child: Container(
-                    constraints: const BoxConstraints(
-                        minWidth: 88.0,
-                        minHeight: 36.0), // min sizes for Material buttons
+                    constraints: const BoxConstraints(minWidth: 88.0, minHeight: 36.0), // min sizes for Material buttons
                     alignment: Alignment.center,
-                    child: Icon(Icons.arrow_forward_ios,
-                        size: 20, color: Colors.white),
+                    child: Icon(Icons.arrow_forward_ios, size: 20, color: Colors.white),
                   ),
                 ),
               ),
@@ -460,8 +518,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 30.0, right: 30.0, top: 20),
+                        padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 20),
                         child: Row(
                           children: <Widget>[
                             new Expanded(
@@ -469,33 +526,33 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                                 obscureText: false,
                                 keyboardType: TextInputType.emailAddress,
                                 //controller here
+                                controller: _emailTextController,
                                 maxLength: 60,
                                 decoration: InputDecoration(
                                   counterText: '',
                                   isDense: true,
                                   labelText: 'Email',
                                   icon: Icon(Icons.mail_outline_sharp),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      20.0, 15.0, 20.0, 15.0),
+                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                   hintText: "Email",
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey, width: 2),
+                                    borderSide: BorderSide(color: Colors.grey, width: 2),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xff93F9B9), width: 2),
+                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
+                                // onChanged: (val) {
+                                //   email = val;
+                                // },
                               ),
                             ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            right: 30.0, left: 30, top: 20),
+                        padding: const EdgeInsets.only(right: 30.0, left: 30, top: 20),
                         child: Row(
                           children: <Widget>[
                             new Expanded(
@@ -504,32 +561,31 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                                 obscureText: _obscureText3,
                                 maxLength: 30,
                                 //controller here
+                                controller: _passwordTextController,
                                 decoration: InputDecoration(
                                   counterText: '',
                                   isDense: true,
                                   labelText: 'Password',
                                   icon: Icon(Icons.lock_outline_sharp),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      20.0, 15.0, 20.0, 15.0),
+                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                   hintText: "Password",
                                   suffixIcon: GestureDetector(
                                     onTap: () {
                                       _pretoggle();
                                     },
-                                    child: Icon(_obscureText3
-                                        ? Icons.visibility_off
-                                        : Icons.visibility),
+                                    child: Icon(_obscureText3 ? Icons.visibility_off : Icons.visibility),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey, width: 2),
+                                    borderSide: BorderSide(color: Colors.grey, width: 2),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xff93F9B9), width: 2),
+                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
+                                // onChanged: (val) {
+                                //   password = val;
+                                // },
                               ),
                             ),
                           ],
@@ -553,12 +609,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 onPressed: () {},
                 child: Text(
                   "Forgot Password?",
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontFamily: 'Nunito-Regular',
-                      fontWeight: FontWeight.w400),
+                  style: TextStyle(decoration: TextDecoration.underline, color: Colors.white, fontSize: 15, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w400),
                 )),
           ),
           Padding(
@@ -585,10 +636,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                   padding: EdgeInsets.only(left: 15.0, right: 15.0),
                   child: Text(
                     "Or",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        fontFamily: "Nunito"),
+                    style: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: "Nunito"),
                   ),
                 ),
                 Container(
@@ -613,7 +661,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(top: 10.0, right: 40.0),
+                padding: EdgeInsets.only(top: 10.0, right: 0.0),
                 child: Container(
                   decoration: new BoxDecoration(
                     color: Colors.white,
@@ -634,66 +682,64 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                     children: <Widget>[
                       Center(
                         child: new IconButton(
-                          icon: Image.asset('assets/images/gg.png'),
-                          iconSize: 40,
-                          onPressed: () {
-                            print("Google clicked");
-                            signInWithGoogle();
-                            // onPressed:
-                            // () => signInWithGoogle().whenComplete(() async {
-                            //       // User user = await FirebaseAuth.instance();
-                            //       FirebaseAuth auth = FirebaseAuth.instance;
-                            //       User user = auth.currentUser;
+                            icon: Image.asset('assets/images/gg.png'),
+                            iconSize: 40,
+                            onPressed: () {
+                              print("Google clicked");
+                              // signInWithGoogle();
+                              // onPressed:
+                              // () => signInWithGoogle().whenComplete(() async {
+                              //       // User user = await FirebaseAuth.instance();
+                              //       FirebaseAuth auth = FirebaseAuth.instance;
+                              //       User user = auth.currentUser;
 
-                            //       // Navigator.of(context).pushReplacement(
-                            //       //     MaterialPageRoute(
-                            //       //         builder: (context) =>
-                            //       //             Third(uid: user.uid)));
-                            //       Get.to(Third());
-                            //     })
-                            Get.to(Third());
-                          }
-                          
-                        ),
+                              //       // Navigator.of(context).pushReplacement(
+                              //       //     MaterialPageRoute(
+                              //       //         builder: (context) =>
+                              //       //             Third(uid: user.uid)));
+                              //       Get.to(Third());
+                              //     })
+                              Get.to(Third());
+                            }),
                       ),
                     ],
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.0),
-                child: Container(
-                  decoration: new BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(60),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white,
-                        blurRadius: 40.0, // soften the shadow
-                        spreadRadius: 0.0, //extend the shadow
-                        offset: Offset(
-                          0.0, // Move to right 10  horizontally
-                          -20.0, // Move to bottom 10 Vertically
-                        ),
-                      )
-                    ],
-                  ),
-                  child: Stack(
-                    children: <Widget>[
-                      Center(
-                        child: new IconButton(
-                          icon: Image.asset('assets/images/fb.png'),
-                          iconSize: 40,
-                          onPressed: () {
-                            print("Facebook clicked");
-                            handleFacebookSignInz();
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // Padding(
+              //   padding: EdgeInsets.only(top: 10.0),
+              //   child: Container(
+              //     decoration: new BoxDecoration(
+              //       color: Colors.white,
+              //       borderRadius: BorderRadius.circular(60),
+              //       boxShadow: [
+              //         BoxShadow(
+              //           color: Colors.white,
+              //           blurRadius: 40.0, // soften the shadow
+              //           spreadRadius: 0.0, //extend the shadow
+              //           offset: Offset(
+              //             0.0, // Move to right 10  horizontally
+              //             -20.0, // Move to bottom 10 Vertically
+              //           ),
+              //         )
+              //       ],
+              //     ),
+              //     child: Stack(
+              //       children: <Widget>[
+              //         Center(
+              //           child: new IconButton(
+              //             icon: Image.asset('assets/images/fb.png'),
+              //             iconSize: 40,
+              //             onPressed: () {
+              //               print("Facebook clicked");
+              //               // handleFacebookSignInz();
+              //             },
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],
@@ -723,8 +769,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 30.0, right: 30.0, top: 17),
+                        padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 17),
                         child: Row(
                           children: <Widget>[
                             // new Expanded(child: _emailFieldSup),
@@ -738,16 +783,13 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                                   isDense: true,
                                   labelText: 'Name',
                                   prefixIcon: Icon(Icons.account_box),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      20.0, 15.0, 20.0, 15.0),
+                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                   hintText: "Name",
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey, width: 2),
+                                    borderSide: BorderSide(color: Colors.grey, width: 2),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xff93F9B9), width: 2),
+                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
@@ -757,8 +799,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 30.0, right: 30.0, top: 20),
+                        padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 20),
                         child: Row(
                           children: <Widget>[
                             // new Expanded(child: _emailFieldSup),
@@ -773,16 +814,13 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                                   isDense: true,
                                   labelText: 'Email',
                                   prefixIcon: Icon(Icons.mail_outline_sharp),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      20.0, 15.0, 20.0, 15.0),
+                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                   hintText: "Email",
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey, width: 2),
+                                    borderSide: BorderSide(color: Colors.grey, width: 2),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xff93F9B9), width: 2),
+                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
@@ -792,8 +830,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            right: 30.0, left: 30, top: 20),
+                        padding: const EdgeInsets.only(right: 30.0, left: 30, top: 20),
                         child: Row(
                           children: <Widget>[
                             // new Expanded(
@@ -809,24 +846,19 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                                   isDense: true,
                                   labelText: 'Password',
                                   prefixIcon: Icon(Icons.lock_outline_sharp),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      20.0, 15.0, 20.0, 15.0),
+                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                   hintText: "Password",
                                   suffixIcon: GestureDetector(
                                     onTap: () {
                                       _toggle();
                                     },
-                                    child: Icon(_obscureText
-                                        ? Icons.visibility_off
-                                        : Icons.visibility),
+                                    child: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey, width: 2),
+                                    borderSide: BorderSide(color: Colors.grey, width: 2),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xff93F9B9), width: 2),
+                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
@@ -836,8 +868,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            right: 30.0, left: 30, top: 20),
+                        padding: const EdgeInsets.only(right: 30.0, left: 30, top: 20),
                         child: Row(
                           children: <Widget>[
                             // new Expanded(
@@ -853,24 +884,19 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                                   isDense: true,
                                   labelText: 'Re-Enter Password',
                                   prefixIcon: Icon(Icons.lock_outline_sharp),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      20.0, 15.0, 20.0, 15.0),
+                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                   hintText: "Re-Enter Password",
                                   suffixIcon: GestureDetector(
                                     onTap: () {
                                       _toggleRe();
                                     },
-                                    child: Icon(_obscureText2
-                                        ? Icons.visibility_off
-                                        : Icons.visibility),
+                                    child: Icon(_obscureText2 ? Icons.visibility_off : Icons.visibility),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey, width: 2),
+                                    borderSide: BorderSide(color: Colors.grey, width: 2),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xff93F9B9), width: 2),
+                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
@@ -887,15 +913,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 290.0),
                   child: Container(
-                    decoration: new BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                              blurRadius: 12,
-                              offset: Offset(0, 1),
-                              color: Colors.white.withOpacity(.3),
-                              spreadRadius: 8)
-                        ]),
+                    decoration: new BoxDecoration(borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(blurRadius: 12, offset: Offset(0, 1), color: Colors.white.withOpacity(.3), spreadRadius: 8)]),
                     width: 250,
                     child: _buildSignupbtn(),
                   ),
@@ -909,12 +927,10 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   }
 
   void _onSignInButtonPress() {
-    _pageController.animateToPage(0,
-        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+    _pageController.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 
   void _onSignUpButtonPress() {
-    _pageController?.animateToPage(1,
-        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+    _pageController?.animateToPage(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 }
