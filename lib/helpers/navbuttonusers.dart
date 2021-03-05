@@ -8,6 +8,7 @@ import 'package:get_rekk/pages/foradmin/reset.dart';
 import 'package:get_rekk/pages/foradmin/upgradepost.dart';
 import 'package:get_rekk/pages/forusers/cameratrial.dart';
 import 'package:get_rekk/pages/forusers/editinfo.dart';
+import 'package:get_rekk/pages/forusers/finalcamera.dart';
 import 'package:get_rekk/pages/forusers/loading.dart';
 import 'package:get_rekk/pages/forusers/userssched.dart';
 import 'package:get_rekk/pages/third.dart';
@@ -53,7 +54,7 @@ class _MyButton2State extends State<MyButton2> {
           switch (widget.selectedIndex) {
             case 0:
               print('Zero');
-              Get.offAll(Loading(), transition: Transition.native);
+              Get.offAll(UsersSched(), transition: Transition.native);
               break;
 
             case 1:
@@ -63,18 +64,15 @@ class _MyButton2State extends State<MyButton2> {
 
             case 2:
               print('Two');
-              Get.offAll(CameraApp(), transition: Transition.native);
+              Get.off(CameraApp(), transition: Transition.native);
               break;
 
             case 3:
               print('Three');
-              Get.offAll(ResetState(), transition: Transition.native);
+              Get.offAll(CameraFinal(), transition: Transition.native);
               break;
 
-            case 4:
-              print('Four');
-              Get.offAll(UpgradeposState(), transition: Transition.native);
-              break;
+           
 
             default:
               print('Index Not Found');

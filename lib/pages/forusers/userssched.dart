@@ -20,6 +20,8 @@ class UsersSched extends StatefulWidget {
   _UsersSchedState createState() => _UsersSchedState();
 }
 
+FirebaseAuth auth = FirebaseAuth.instance;
+User user = auth.currentUser;
 class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateMixin {
   @override
   // ignore: override_on_non_overriding_member
@@ -46,140 +48,140 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
     super.initState();
   }
 
-  Future getBadge() async {
-    String collectid;
+  // Future getBadge() async {
+  //   String collectid;
 
-    var a = await FirebaseFirestore.instance.collection('users').where("collectionId", isEqualTo: user.uid).get();
-    if (a.docs.isNotEmpty) {
-      var hello = a.docs[0];
-      collectid = hello.data()['badgeNum'];
-      UserSched.badge = collectid;
-      UserSched.badgename = hello.data()['fullName'];
-      print(UserSched.badge);
-      return true;
-    }
-    if (a.docs.isEmpty) {
-      return false;
-    }
-  }
+  //   var a = await FirebaseFirestore.instance.collection('users').where("collectionId", isEqualTo: user.uid).get();
+  //   if (a.docs.isNotEmpty) {
+  //     var hello = a.docs[0];
+  //     collectid = hello.data()['badgeNum'];
+  //     UserSched.badge = collectid;
+  //     UserSched.badgename = hello.data()['fullName'];
+  //     print(UserSched.badge);
+  //     return true;
+  //   }
+  //   if (a.docs.isEmpty) {
+  //     return false;
+  //   }
+  // }
 
-  Future getCheckBlock(String badge) async {
-    var a = await FirebaseFirestore.instance.collection('schedule').where('blockteam', arrayContains: UserSched.badge).get();
-    if (a.docs.isNotEmpty) {
-      var hello = a.docs[0];
-      UserSched.collectid.add(hello.data()['collectionid']);
-      print(UserSched.collectid);
-      // print("yes");
-      return true;
-    }
-    if (a.docs.isEmpty) {
-      return false;
-    }
-  }
+  // Future getCheckBlock(String badge) async {
+  //   var a = await FirebaseFirestore.instance.collection('schedule').where('blockteam', arrayContains: UserSched.badge).get();
+  //   if (a.docs.isNotEmpty) {
+  //     var hello = a.docs[0];
+  //     UserSched.collectid.add(hello.data()['collectionid']);
+  //     print(UserSched.collectid);
+  //     // print("yes");
+  //     return true;
+  //   }
+  //   if (a.docs.isEmpty) {
+  //     return false;
+  //   }
+  // }
 
-  Future getCheckSecu(String badge) async {
-    var a = await FirebaseFirestore.instance.collection('schedule').where('secuteam', arrayContains: UserSched.badge).get();
-    if (a.docs.isNotEmpty) {
-      var hello = a.docs[0];
-      UserSched.collectid.add(hello.data()['collectionid']);
-      return true;
-    }
-    if (a.docs.isEmpty) {
-      return false;
-    }
-  }
+  // Future getCheckSecu(String badge) async {
+  //   var a = await FirebaseFirestore.instance.collection('schedule').where('secuteam', arrayContains: UserSched.badge).get();
+  //   if (a.docs.isNotEmpty) {
+  //     var hello = a.docs[0];
+  //     UserSched.collectid.add(hello.data()['collectionid']);
+  //     return true;
+  //   }
+  //   if (a.docs.isEmpty) {
+  //     return false;
+  //   }
+  // }
 
-  Future getCheckInvest(String badge) async {
-    var a = await FirebaseFirestore.instance.collection('schedule').where('investteam', arrayContains: UserSched.badge).get();
-    if (a.docs.isNotEmpty) {
-      var hello = a.docs[0];
-      UserSched.collectid.add(hello.data()['collectionid']);
-      return true;
-    }
-    if (a.docs.isEmpty) {
-      return false;
-    }
-  }
+  // Future getCheckInvest(String badge) async {
+  //   var a = await FirebaseFirestore.instance.collection('schedule').where('investteam', arrayContains: UserSched.badge).get();
+  //   if (a.docs.isNotEmpty) {
+  //     var hello = a.docs[0];
+  //     UserSched.collectid.add(hello.data()['collectionid']);
+  //     return true;
+  //   }
+  //   if (a.docs.isEmpty) {
+  //     return false;
+  //   }
+  // }
 
-  Future getCheckSearch(String badge) async {
-    var a = await FirebaseFirestore.instance.collection('schedule').where('searchteam', arrayContains: UserSched.badge).get();
-    if (a.docs.isNotEmpty) {
-      var hello = a.docs[0];
-      UserSched.collectid.add(hello.data()['collectionid']);
-      return true;
-    }
-    if (a.docs.isEmpty) {
-      return false;
-    }
-  }
+  // Future getCheckSearch(String badge) async {
+  //   var a = await FirebaseFirestore.instance.collection('schedule').where('searchteam', arrayContains: UserSched.badge).get();
+  //   if (a.docs.isNotEmpty) {
+  //     var hello = a.docs[0];
+  //     UserSched.collectid.add(hello.data()['collectionid']);
+  //     return true;
+  //   }
+  //   if (a.docs.isEmpty) {
+  //     return false;
+  //   }
+  // }
 
-  Future getTeamlead(String badge) async {
-    var a = await FirebaseFirestore.instance.collection('schedule').where('teamlead', isEqualTo: UserSched.badgename).get();
-    if (a.docs.isNotEmpty) {
-      var hello = a.docs[0];
-      UserSched.collectid.add(hello.data()['collectionid']);
+  // Future getTeamlead(String badge) async {
+  //   var a = await FirebaseFirestore.instance.collection('schedule').where('teamlead', isEqualTo: UserSched.badgename).get();
+  //   if (a.docs.isNotEmpty) {
+  //     var hello = a.docs[0];
+  //     UserSched.collectid.add(hello.data()['collectionid']);
 
-      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('schedule').doc(hello.data()['collectionid']).set({
-        // 'collectionid2': collectionid2,
-        'scheduleuid': hello.data()['collectionid']
-      });
-      return true;
-    }
-    if (a.docs.isEmpty) {
-      return false;
-    }
-  }
+  //     FirebaseFirestore.instance.collection('users').doc(user.uid).collection('schedule').doc(hello.data()['collectionid']).set({
+  //       // 'collectionid2': collectionid2,
+  //       'scheduleuid': hello.data()['collectionid']
+  //     });
+  //     return true;
+  //   }
+  //   if (a.docs.isEmpty) {
+  //     return false;
+  //   }
+  // }
 
-  Future getSpotter(String badge) async {
-    var a = await FirebaseFirestore.instance.collection('schedule').where('spotter', isEqualTo: UserSched.badgename).get();
-    if (a.docs.isNotEmpty) {
-      var hello = a.docs[0];
-      UserSched.collectid.add(hello.data()['collectionid']);
-      return true;
-    }
-    if (a.docs.isEmpty) {
-      return false;
-    }
-  }
+  // Future getSpotter(String badge) async {
+  //   var a = await FirebaseFirestore.instance.collection('schedule').where('spotter', isEqualTo: UserSched.badgename).get();
+  //   if (a.docs.isNotEmpty) {
+  //     var hello = a.docs[0];
+  //     UserSched.collectid.add(hello.data()['collectionid']);
+  //     return true;
+  //   }
+  //   if (a.docs.isEmpty) {
+  //     return false;
+  //   }
+  // }
 
-  Future getSpokesperson(String badge) async {
-    var a = await FirebaseFirestore.instance.collection('schedule').where('spokesperson', isEqualTo: UserSched.badgename).get();
-    if (a.docs.isNotEmpty) {
-      var hello = a.docs[0];
-      UserSched.collectid.add(hello.data()['collectionid']);
-      return true;
-    }
-    if (a.docs.isEmpty) {
-      return false;
-    }
-  }
+  // Future getSpokesperson(String badge) async {
+  //   var a = await FirebaseFirestore.instance.collection('schedule').where('spokesperson', isEqualTo: UserSched.badgename).get();
+  //   if (a.docs.isNotEmpty) {
+  //     var hello = a.docs[0];
+  //     UserSched.collectid.add(hello.data()['collectionid']);
+  //     return true;
+  //   }
+  //   if (a.docs.isEmpty) {
+  //     return false;
+  //   }
+  // }
 
-  Future check() async {
-    var checkBlock = await getCheckBlock(UserSched.badge);
-    print(checkBlock);
-    var checkSecu = await getCheckSecu(UserSched.badge);
-    print(checkSecu);
-    var checkInvest = await getCheckInvest(UserSched.badge);
-    print(checkInvest);
-    var checkSearch = await getCheckSearch(UserSched.badge);
-    print(checkSearch);
-    var checkTeamlead = await getTeamlead(UserSched.badge);
-    print(checkTeamlead);
-    var checkSpotter = await getSpotter(UserSched.badge);
-    print(checkSpotter);
-    var checkSpokesperson = await getSpokesperson(UserSched.badge);
-    print(checkSpokesperson);
-    if (UserSched.collectid.length == 0) {
-      print('walanglaman');
-      UserSched.collectid.add('02391872');
-    }
+  // Future check() async {
+  //   var checkBlock = await getCheckBlock(UserSched.badge);
+  //   print(checkBlock);
+  //   var checkSecu = await getCheckSecu(UserSched.badge);
+  //   print(checkSecu);
+  //   var checkInvest = await getCheckInvest(UserSched.badge);
+  //   print(checkInvest);
+  //   var checkSearch = await getCheckSearch(UserSched.badge);
+  //   print(checkSearch);
+  //   var checkTeamlead = await getTeamlead(UserSched.badge);
+  //   print(checkTeamlead);
+  //   var checkSpotter = await getSpotter(UserSched.badge);
+  //   print(checkSpotter);
+  //   var checkSpokesperson = await getSpokesperson(UserSched.badge);
+  //   print(checkSpokesperson);
+  //   if (UserSched.collectid.length == 0) {
+  //     print('walanglaman');
+  //     UserSched.collectid.add('02391872');
+  //   }
 
-    // Timer(Duration(seconds: 3), () {
-    //   Get.offAll(UsersSched());
-    // });
+  //   // Timer(Duration(seconds: 3), () {
+  //   //   Get.offAll(UsersSched());
+  //   // });
 
-    print(UserSched.collectid);
-  }
+  //   print(UserSched.collectid);
+  // }
 
   getPosition(duration) {
     RenderBox renderBox = globalKey.currentContext.findRenderObject();

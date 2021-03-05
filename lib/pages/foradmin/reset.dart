@@ -498,7 +498,7 @@ Are you sure to reset password of account: $email
                                             Padding(
                                               padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 30, bottom: 80),
                                               child: Container(
-                                                  width: 365,
+                                                  width: 350,
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius: new BorderRadius.circular(10.0),

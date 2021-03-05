@@ -19,7 +19,7 @@ User user = auth.currentUser;
 getShop2() {
   // check();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Stream<QuerySnapshot> qn = _firestore.collection("schedule").where('collectionid', whereIn: UserSched.collectid).snapshots();
+   Stream<QuerySnapshot> qn = _firestore.collection("schedule").where('memberuid', arrayContains: user.uid).snapshots();
   return qn;
 }
 
@@ -1191,7 +1191,7 @@ class _UsersUpcomingStateState extends State<UsersUpcomingState> {
                     Padding(
                       padding: const EdgeInsets.only(top: 100.0, left: 16, right: 14),
                       child: Container(
-                        width: 360,
+                        width: 345,
                         height: 500,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -1204,7 +1204,7 @@ class _UsersUpcomingStateState extends State<UsersUpcomingState> {
                     Padding(
                       padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 50, bottom: 40),
                       child: Container(
-                        width: 365,
+                        width: 350,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: new BorderRadius.circular(10.0),

@@ -920,7 +920,7 @@ Auto-generated email is: $finaltryEmail@acpstwo.com
                                             Padding(
                                               padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 25, bottom: 40),
                                               child: Container(
-                                                  width: 365,
+                                                  width: 350,
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius: new BorderRadius.circular(10.0),

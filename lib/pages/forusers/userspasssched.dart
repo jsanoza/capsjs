@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_rekk/helpers/util.dart';
 import 'package:intl/intl.dart';
@@ -8,10 +9,13 @@ class UsersPassschedState extends StatefulWidget {
   _UsersPassschedState createState() => _UsersPassschedState();
 }
 
+FirebaseAuth auth = FirebaseAuth.instance;
+ User user = auth.currentUser;
+
 getShop2() {
   // var firestore = FirebaseFirestore.instanceFor();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Stream<QuerySnapshot> qn = _firestore.collection("schedule").where('collectionid', whereIn: UserSched.collectid).snapshots();
+   Stream<QuerySnapshot> qn = _firestore.collection("schedule").where('memberuid', arrayContains: user.uid).snapshots();
 
   // Stream<QuerySnapshot> qn = _firestore.collection("schedule").snapshots();
 
@@ -169,7 +173,7 @@ class _UsersPassschedState extends State<UsersPassschedState> {
                     Padding(
                       padding: const EdgeInsets.only(top: 100.0, left: 16, right: 14),
                       child: Container(
-                        width: 360,
+                        width: 345,
                         height: 500,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -182,7 +186,7 @@ class _UsersPassschedState extends State<UsersPassschedState> {
                     Padding(
                       padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 50, bottom: 40),
                       child: Container(
-                        width: 365,
+                        width: 350,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: new BorderRadius.circular(10.0),

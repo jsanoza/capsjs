@@ -1368,7 +1368,7 @@ class _UpcomingStateState extends State<UpcomingState> {
                     Padding(
                       padding: const EdgeInsets.only(top: 100.0, left: 16, right: 14),
                       child: Container(
-                        width: 360,
+                        width: 345,
                         height: 500,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -1381,7 +1381,7 @@ class _UpcomingStateState extends State<UpcomingState> {
                     Padding(
                       padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 50, bottom: 40),
                       child: Container(
-                        width: 365,
+                        width: 350,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: new BorderRadius.circular(10.0),

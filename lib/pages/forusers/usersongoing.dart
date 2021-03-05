@@ -27,7 +27,7 @@ class _UsersOngoingSchedState extends State<UsersOngoingSched> {
   getShop2() {
     // var firestore = FirebaseFirestore.instanceFor();
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    Stream<QuerySnapshot> qn = _firestore.collection("schedule").where('memuid', arrayContains: user.uid).snapshots();
+    Stream<QuerySnapshot> qn = _firestore.collection("schedule").where('memberuid', arrayContains: user.uid).snapshots();
     // Stream<QuerySnapshot> qn = _firestore.collection("schedule").snapshots();
     return qn;
   }
@@ -51,7 +51,7 @@ class _UsersOngoingSchedState extends State<UsersOngoingSched> {
               // final List<DocumentSnapshot> userList = snapshot.data.docs.where((DocumentSnapshot documentSnapshot) {
               //   return userSearchItemsName.contains(documentSnapshot['badgeNum']);
               // }).toList();
-              final filteredDocs = snapshot.data.docs.where((doc) => DateFormat('MM-dd-yyyy HH:mm a').parse(doc.data()['starttime']).isAfter(DateTime.now()) && DateFormat('MM-dd-yyyy HH:mm a').parse(doc.data()['endtime']).isAfter(DateTime.now())).toList();
+              final filteredDocs = snapshot.data.docs.where((doc) => DateFormat('MM-dd-yyyy HH:mm').parse(doc.data()['starttime']).isBefore(DateTime.now()) && DateFormat('MM-dd-yyyy HH:mm').parse(doc.data()['endtime']).isAfter(DateTime.now())).toList();
 
               return Container(
                 child: ListView.builder(
@@ -89,9 +89,9 @@ class _UsersOngoingSchedState extends State<UsersOngoingSched> {
                                 // child: CircleAvatar(
                                 //   backgroundImage: NetworkImage(_card["shopsdp"]),
                                 // ),
-                                child: Text(filteredDocs[index]['missionname']),
+                                child: Text(formattedTime2),
                               ),
-                              title: Text(''),
+                              title: Text(filteredDocs[index]['missionname']),
                               subtitle: Container(
                                 height: 50,
                                 child: Column(
@@ -104,7 +104,7 @@ class _UsersOngoingSchedState extends State<UsersOngoingSched> {
                                         child: Row(
                                           children: [
                                             Text(
-                                              '',
+                                              formattedTime1,
                                               style: TextStyle(color: Colors.black),
                                             ),
                                             Text(
@@ -112,7 +112,7 @@ class _UsersOngoingSchedState extends State<UsersOngoingSched> {
                                               style: TextStyle(color: Colors.black),
                                             ),
                                             Text(
-                                              '',
+                                              formattedTime,
                                               style: TextStyle(color: Colors.black),
                                             ),
                                           ],
@@ -173,7 +173,7 @@ class _UsersOngoingSchedState extends State<UsersOngoingSched> {
                     Padding(
                       padding: const EdgeInsets.only(top: 100.0, left: 16, right: 14),
                       child: Container(
-                        width: 360,
+                        width: 345,
                         height: 500,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -186,7 +186,7 @@ class _UsersOngoingSchedState extends State<UsersOngoingSched> {
                     Padding(
                       padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 50, bottom: 40),
                       child: Container(
-                        width: 365,
+                        width: 350,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: new BorderRadius.circular(10.0),

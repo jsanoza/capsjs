@@ -1060,7 +1060,7 @@ Confirm editing your user info?
                                               Padding(
                                                 padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 30, bottom: 20),
                                                 child: Container(
-                                                    width: 365,
+                                                    width: 350,
                                                     decoration: BoxDecoration(
                                                       color: Colors.white,
                                                       borderRadius: new BorderRadius.circular(10.0),
@@ -1185,7 +1185,7 @@ Confirm editing your user info?
                                       children: <Widget>[
                                         MyButton2(text: "User Schedules", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
                                         MyButton2(text: "OCR", iconData: Icons.camera, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 2),
-                                        // MyButton2(text: "Second Page", iconData: Icons.notifications, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
+                                        MyButton2(text: "OCR TRY", iconData: Icons.camera, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 3),
                                         // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                                       ],
                                     ),
