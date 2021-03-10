@@ -309,15 +309,15 @@ Ends at: $eeeTime
         });
         FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
           // 'collectionid2': collectionid2,
-          'lastactivity.datetime': Timestamp.now(),
+          'lastactivity_datetime': Timestamp.now(),
         }).then((value) {
           FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
             // 'collectionid2': collectionid2,
             'userid': user.uid,
             'userfullname': usercheck,
-            'this.collectionid': collectionid2,
+            'this_collectionid': collectionid2,
             'activity': activity,
-            'editcreate.datetime': Timestamp.now(),
+            'editcreate_datetime': Timestamp.now(),
             'editcreate.collectionid': oldcollectionid,
           });
         });
@@ -3874,11 +3874,15 @@ Ends at: $eeeTime
                                     height: menuContainerHeight,
                                     child: Column(
                                       children: <Widget>[
-                                        MyButton(text: "Home", iconData: Icons.person, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 0),
-                                        MyButton(text: "First Page", iconData: Icons.payment, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 1),
-                                        MyButton(text: "Second Page", iconData: Icons.notifications, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                                        MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
-                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 5),
+                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
+
+                                        // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 4),
+                                        // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                                        // MyButton(text: "Reset Password of User", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 5),
+                                        MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
+                                        MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
+
                                         // MyButton(
                                         //     text: "Fourth",
                                         //     iconData: Icons.settings,

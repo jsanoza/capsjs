@@ -165,9 +165,9 @@ class _PassschedStateState extends State<PassschedState> {
                 new Stack(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(top: 100.0, left: 16, right: 14),
+                      padding: const EdgeInsets.only(top: 100.0, left: 25, right: 14),
                       child: Container(
-                        width: 345,
+                        width: 340,
                         height: 500,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -178,9 +178,9 @@ class _PassschedStateState extends State<PassschedState> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 50, bottom: 40),
+                      padding: const EdgeInsets.only(left: 23.0, right: 10.0, top: 50, bottom: 40),
                       child: Container(
-                        width: 350,
+                        width: 345,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: new BorderRadius.circular(10.0),
@@ -212,8 +212,8 @@ class _PassschedStateState extends State<PassschedState> {
                                     decoration: BoxDecoration(
                                       gradient: new LinearGradient(
                                           colors: [
-                                            Colors.greenAccent,
-                                            Colors.green,
+                                            Color(0xff085078),
+                                            Color(0xff85D8CE),
                                           ],
                                           begin: const FractionalOffset(0.0, 0.0),
                                           end: const FractionalOffset(1.0, 1.0),

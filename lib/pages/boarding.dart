@@ -16,6 +16,7 @@ class _BoardingState extends State<Boarding> {
   @override
   void initState() {
     _pageController = PageController(initialPage: 0);
+
     super.initState();
   }
 
@@ -33,10 +34,7 @@ class _BoardingState extends State<Boarding> {
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xff93F9B9),
-                  Color(0xff1D976C),
-                ],
+                colors: [Color(0xff85D8CE), Color(0xff085078)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -52,19 +50,9 @@ class _BoardingState extends State<Boarding> {
                   },
                   controller: _pageController,
                   children: <Widget>[
-                    makePage(
-                        image: 'assets/images/5.png',
-                        title: Strings.stepOneTitle,
-                        content: Strings.stepOneContent),
-                    makePage(
-                        reverse: true,
-                        image: 'assets/images/4.png',
-                        title: Strings.stepTwoTitle,
-                        content: Strings.stepTwoContent),
-                    makePage(
-                        image: 'assets/images/3.png',
-                        title: Strings.stepThreeTitle,
-                        content: Strings.stepThreeContent),
+                    makePage(image: 'assets/images/pol8.png', title: Strings.stepOneTitle, content: Strings.stepOneContent),
+                    makePage(reverse: true, image: 'assets/images/pol9.png', title: Strings.stepTwoTitle, content: Strings.stepTwoContent),
+                    makePage(image: 'assets/images/pol11.png', title: Strings.stepThreeTitle, content: Strings.stepThreeContent),
                   ],
                 ),
                 Container(
@@ -87,7 +75,7 @@ class _BoardingState extends State<Boarding> {
                 color: Colors.white,
                 onPressed: () {
                   // Navigator.push(context, ScaleRoute(page: LoginPage()));
-                 Get.offAll(LogSign(), transition: Transition.fade);
+                  Get.offAll(LogSign(), transition: Transition.fade);
                 },
               ),
             ),
@@ -119,11 +107,7 @@ class _BoardingState extends State<Boarding> {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 25,
-                fontFamily: 'Nunito-Regular',
-                fontWeight: FontWeight.w500),
+            style: TextStyle(color: Colors.white, fontSize: 25, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w500),
           ),
           SizedBox(
             height: 5,
@@ -131,11 +115,7 @@ class _BoardingState extends State<Boarding> {
           Text(
             content,
             textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontFamily: 'Nunito-Regular',
-                fontWeight: FontWeight.w500),
+            style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w500),
           ),
           reverse
               ? Column(
@@ -161,8 +141,7 @@ class _BoardingState extends State<Boarding> {
       height: 6,
       width: isActive ? 30 : 6,
       margin: EdgeInsets.only(right: 5),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(5)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
     );
   }
 

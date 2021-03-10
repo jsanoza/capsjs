@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,30 +9,31 @@ import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:get_rekk/animations/custom_alert_success.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
 import 'package:get_rekk/helpers/util.dart';
-import 'package:http/http.dart' as http;
+import 'package:get_rekk/pages/foradmin/first.dart';
+import 'package:get_rekk/pages/foradmin/reset.dart';
+import 'package:get_rekk/pages/foradmin/upgradepost.dart';
+import 'package:get_rekk/pages/foradmin/upgradeuserlevel.dart';
+import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:uuid/uuid.dart';
 
 import '../loginsignup.dart';
 
-class ResetState extends StatefulWidget {
+class ManageUsers extends StatefulWidget {
   @override
-  _ResetState createState() => _ResetState();
+  _ManageUsersState createState() => _ManageUsersState();
 }
 
-//TO DO save to DB who ever did the changes
-class _ResetState extends State<ResetState> {
+class _ManageUsersState extends State<ManageUsers> {
   @override
   // ignore: override_on_non_overriding_member
   Offset _offset = Offset(0, 0);
   GlobalKey globalKey = GlobalKey();
-  TextEditingController _emailTextController;
+
   RoundedLoadingButtonController _btnController;
   List<double> limits = [];
   List<String> indexList2 = [];
-  String dropdownValue;
-  String searchString;
-  String uid;
+
   bool isMenuOpen = false;
   bool isShown = false;
   bool _blackVisible = false;
@@ -43,162 +43,10 @@ class _ResetState extends State<ResetState> {
   @override
   void initState() {
     limits = [0, 0, 0, 0, 0, 0];
-
     _btnController = RoundedLoadingButtonController();
     WidgetsBinding.instance.addPostFrameCallback(getPosition);
-    _emailTextController = TextEditingController();
-    isShown = false;
     SystemChannels.textInput.invokeMethod('TextInput.hide');
     super.initState();
-  }
-
-  var queryResultSet = [];
-  var tempSearchStore = [];
-
-  showAlertDialog(BuildContext context) {
-    String email = _emailTextController.text;
-    // set up the buttons
-    Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
-      onPressed: () {
-        Get.back();
-      },
-    );
-    Widget continueButton = FlatButton(
-      child: Text("Continue"),
-      onPressed: () {
-        sendReqChange();
-        Get.back();
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Confirm"),
-      content: Text(
-        '''
-Are you sure to reset password of account: $email
-''',
-        maxLines: 20,
-        style: TextStyle(fontSize: 16.0, color: Colors.black),
-      ),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
-  void _changeBlackVisible() {
-    _blackVisible = !_blackVisible;
-  }
-
-  void _showSuccessAlert({String title, String content, VoidCallback onPressed, BuildContext context}) {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) {
-        return CustomAlertDialog1(
-          content: content,
-          title: title,
-          onPressed: onPressed,
-        );
-      },
-    );
-  }
-
-  void _showErrorAlert({String title, String content, VoidCallback onPressed, BuildContext context}) {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) {
-        return CustomAlertDialog(
-          content: content,
-          title: title,
-          onPressed: onPressed,
-        );
-      },
-    );
-  }
-
-  Future sendReqChange() async {
-    var email = _emailTextController.text;
-    User user = auth.currentUser;
-    var currentUser = user.uid;
-    var collectionid2 = uuid.v1();
-    var usercheck;
-    var activity = 'Reset password of name: $email';
-    try {
-      var url = 'http://172.19.128.1/capstonejs/change.php';
-      var data = {
-        'emailSignup': email,
-      };
-      var response = await http.post(url, body: jsonEncode(data));
-      uid = response.body;
-      print(response.body);
-      if (response.body == 'Success') {
-        QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
-        username.docs.forEach((document) {
-          usercheck = document.data()['fullName'];
-        });
-
-        FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-          // 'collectionid2': collectionid2,
-          'lastactivity_datetime': Timestamp.now(),
-        }).then((value) {
-          FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
-            // 'collectionid2': collectionid2,
-            'userid': user.uid,
-            'userfullname': usercheck,
-            'this_collectionid': collectionid2,
-            'activity': activity,
-            'editcreate_datetime': Timestamp.now(),
-            'editcreate_collectionid': email,
-          });
-        });
-
-        _showSuccessAlert(
-            title: "Congrats!",
-            content: "Password Reset Successful!", //show error firebase
-            onPressed: _changeBlackVisible,
-            context: context);
-        FocusScope.of(context).requestFocus(new FocusNode());
-        SystemChannels.textInput.invokeMethod('TextInput.hide');
-        _btnController.success();
-        Timer(Duration(seconds: 3), () {
-          setState(() {
-            _btnController.reset();
-            _emailTextController.clear();
-            Get.snackbar(
-              "Success!",
-              "Password Reset Successful!",
-              duration: Duration(seconds: 3),
-            );
-          });
-        });
-      } else {
-        _showErrorAlert(
-            title: "Change Password failed.",
-            content: "Reset Password Error!", //show error firebase
-            onPressed: _changeBlackVisible,
-            context: context);
-      }
-    } catch (e) {
-      print("error!");
-      _showErrorAlert(
-          title: "Reset Pssword failed.",
-          content: "Reset Password Error!", //show error firebase
-          onPressed: _changeBlackVisible,
-          context: context);
-    }
   }
 
   getPosition(duration) {
@@ -227,9 +75,9 @@ Are you sure to reset password of account: $email
         Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 160, bottom: 10),
+              padding: const EdgeInsets.only(top: 20.0, right: 190, bottom: 10),
               child: Text(
-                "Reset Password",
+                "Navigate",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20.0,
@@ -241,136 +89,169 @@ Are you sure to reset password of account: $email
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Container(
-                width: 480,
+                width: Get.width,
+                height: 400,
                 child: Column(
                   children: [
-                    TextField(
-                      onChanged: (val) {
-                        setState(() {
-                          isShown = true;
-                          searchString = val.toUpperCase();
-                        });
-                      },
-                      controller: _emailTextController,
-                      decoration: InputDecoration(
-                          prefixIcon: IconButton(
-                            color: Colors.green,
-                            icon: Icon(Icons.mail_outline_sharp),
-                            iconSize: 20.0,
-                            onPressed: () {},
-                          ),
-                          contentPadding: EdgeInsets.only(left: 25.0),
-                          hintText: 'Search by email',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                    ),
-                    isShown
-                        ? Container(
-                            height: 100,
-                            child: StreamBuilder<QuerySnapshot>(
-                                stream: FirebaseFirestore.instance.collection('users').where('searchKey', arrayContains: searchString).snapshots(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasError) {
-                                    return Text("Error2");
-                                  }
-                                  switch (snapshot.connectionState) {
-                                    case ConnectionState.waiting:
-                                      return Center(
-                                          child: CircularProgressIndicator(
-                                        backgroundColor: Colors.white,
-                                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
-                                      ));
-                                    case ConnectionState.none:
-                                      return Center(
-                                          child: CircularProgressIndicator(
-                                        backgroundColor: Colors.white,
-                                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
-                                      ));
-                                    case ConnectionState.done:
-                                      return Text("done");
-                                    default:
-                                      return new ListView(
-                                          children: snapshot.data.docs.map((DocumentSnapshot document) {
-                                        return new ListTile(
-                                          title: GestureDetector(
-                                            child: Text(document['email']),
-                                            onTap: () {
-                                              print(document['email']);
-                                              setState(() {
-                                                _emailTextController.text = document['email'].toString();
-                                                isShown = false;
-                                                FocusScope.of(context).requestFocus(new FocusNode());
-                                                SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                              });
-                                            },
-                                          ),
-                                        );
-                                      }).toList());
-                                  }
-                                }),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(top: 10.0, right: 0, left: 0, bottom: 0),
-                            child: Container(
-                              // height: 200,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      RoundedLoadingButton(
-                                        color: Color(0xff1D976C),
-                                        child: Text('Reset', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
-                                        controller: _btnController,
-                                        onPressed: () {
-                                          //  sendData();
-                                          setState(() {
-                                            FocusScope.of(context).requestFocus(new FocusNode());
-                                            SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                            showAlertDialog(context);
-                                          });
-                                        },
-                                      ),
-                                      // RaisedButton(
-                                      //   onPressed: () {
-                                      //     sendReqChange();
-                                      //   },
-                                      //   shape: RoundedRectangleBorder(
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(80.0)),
-                                      //   padding: const EdgeInsets.all(0.0),
-                                      //   child: Ink(
-                                      //     decoration: const BoxDecoration(
-                                      //       gradient: LinearGradient(
-                                      //           colors: [
-                                      //             Color(0xff93F9B9),
-                                      //             Color(0xff1D976C)
-                                      //           ],
-                                      //           begin: const FractionalOffset(
-                                      //               0.0, 0.0),
-                                      //           end: const FractionalOffset(
-                                      //               1.0, 1.0),
-                                      //           stops: [0.0, 1.0],
-                                      //           tileMode: TileMode.clamp),
-                                      //       borderRadius: BorderRadius.all(
-                                      //           Radius.circular(80.0)),
-                                      //     ),
-                                      //     child: Container(
-                                      //       constraints: const BoxConstraints(
-                                      //           minWidth: 88.0,
-                                      //           minHeight:
-                                      //               36.0), // min sizes for Material buttons
-                                      //       alignment: Alignment.center,
-                                      //       child: Icon(Icons.check,
-                                      //           size: 20, color: Colors.white),
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                    ],
+                    // Padding(
+                    //   padding: const EdgeInsets.only(bottom: 10.0, right: 220),
+                    //   child: Text(
+                    //     "Select a user:",
+                    //     style: TextStyle(
+                    //       color: Colors.black,
+                    //       fontSize: 15.0,
+                    //       fontFamily: 'Nunito-Bold',
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    // ),
+                    GridView.count(
+                      shrinkWrap: true,
+                      primary: true,
+                      crossAxisCount: 2,
+                      padding: const EdgeInsets.all(0),
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {
+                            print('hello');
+                            Get.to(First());
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Stack(
+                              children: <Widget>[
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+                                    gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                   ),
-                                ],
-                              ),
+                                ),
+                                Center(
+                                  child: Icon(
+                                    Icons.how_to_reg,
+                                    color: Colors.white,
+                                    size: 60.0,
+                                  ),
+                                ),
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 100.0),
+                                    child: Text(
+                                      'Register New User',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Get.to(UpgradeposState());
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Stack(
+                              children: <Widget>[
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+                                    gradient: new LinearGradient(colors: [Color(0xff4286f4), Color(0xff373B44)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                  ),
+                                ),
+                                Center(
+                                  child: Icon(
+                                    Icons.trending_up,
+                                    color: Colors.white,
+                                    size: 60.0,
+                                  ),
+                                ),
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 100.0),
+                                    child: Text(
+                                      'Upgrade Position',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            print('hello');
+                            Get.to(UpgradeUserLevel());
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Stack(
+                              children: <Widget>[
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+                                    gradient: new LinearGradient(colors: [Color(0xff8360c3), Color(0xff2ebf91)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                  ),
+                                ),
+                                Center(
+                                  child: Icon(
+                                    Icons.bolt,
+                                    color: Colors.white,
+                                    size: 60.0,
+                                  ),
+                                ),
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 100.0),
+                                    child: Text(
+                                      'Upgrade Level',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            print('hello');
+                            Get.to(ResetState());
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Stack(
+                              children: <Widget>[
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+                                    gradient: new LinearGradient(colors: [Color(0xff00B4DB), Color(0xff0083B0)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                  ),
+                                ),
+                                Center(
+                                  child: Icon(
+                                    Icons.replay,
+                                    color: Colors.white,
+                                    size: 60.0,
+                                  ),
+                                ),
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 100.0),
+                                    child: Text(
+                                      'Reset Password',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -410,8 +291,8 @@ Are you sure to reset password of account: $email
         Container(
           height: 400,
           decoration: BoxDecoration(
-            borderRadius: new BorderRadius.only(bottomRight: new Radius.circular(30.0), bottomLeft: new Radius.circular(0.0)),
-            gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+            borderRadius: new BorderRadius.only(bottomRight: new Radius.circular(0.0), bottomLeft: new Radius.circular(30.0)),
+            gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
           ),
         ),
         GestureDetector(
@@ -450,7 +331,7 @@ Are you sure to reset password of account: $email
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
-                                      "Reset",
+                                      "Manage Users",
                                       style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Nunito-Bold'),
                                     ),
                                   ),
@@ -458,7 +339,7 @@ Are you sure to reset password of account: $email
                                     padding: const EdgeInsets.only(top: 1.0),
                                     child: AvatarGlow(
                                       startDelay: Duration(milliseconds: 0),
-                                      glowColor: Colors.lime,
+                                      glowColor: Colors.red,
                                       endRadius: 40.0,
                                       duration: Duration(milliseconds: 2000),
                                       repeat: true,
@@ -480,7 +361,7 @@ Are you sure to reset password of account: $email
                               ),
                             ),
                             background: Image.network(
-                              'https://cloudfront-us-east-1.images.arcpublishing.com/cmg/PZQVBPFW2FXTEMMO2EVXFTEXJA.jpg',
+                              'https://i1.wp.com/rmn.ph/wp-content/uploads/2018/02/9.-PNP-LOGO-CASE-1.jpg?fit=1152%2C648&ssl=1',
                               fit: BoxFit.cover,
                             )),
                         expandedHeight: 200,
@@ -597,12 +478,18 @@ Are you sure to reset password of account: $email
                                     height: menuContainerHeight,
                                     child: Column(
                                       children: <Widget>[
-                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
-                                        // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
-                                        MyButton(text: "Add Schedule", iconData: Icons.library_add_check, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 1),
-                                        // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 5),
-                                        MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
+                                        MyButton(text: "Schedule Details", iconData: Icons.person, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 0),
+                                        MyButton(text: "Add Schedule", iconData: Icons.payment, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 1),
+                                        // MyButton(text: "Register New User", iconData: Icons.notifications, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                                        // MyButton(text: "Reset User Password", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 5),
+                                        MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 2),
+                                        // MyButton(
+                                        //     text: "Fourth",
+                                        //     iconData: Icons.settings,
+                                        //     textSize: getSize(4),
+                                        //     height: (menuContainerHeight) / 5,
+                                        //     selectedIndex: 4),
                                       ],
                                     ),
                                   ),

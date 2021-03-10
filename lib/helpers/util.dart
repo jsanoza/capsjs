@@ -75,3 +75,9 @@ class UserSched {
   static List<String> searchteamname = [];
   static List<String> secuteamname = [];
 }
+
+class UserLog {
+  static String ppUrl;
+  static String rank;
+  static String fullName;
+}

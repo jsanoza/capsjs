@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:get_rekk/animations/custom_alert_success.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
+import 'package:get_rekk/helpers/util.dart';
 import 'package:http/http.dart' as http;
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:uuid/uuid.dart';
@@ -181,7 +182,7 @@ class _VehicleList extends State<VehicleList> {
                                 padding: const EdgeInsets.all(0.0),
                                 child: Ink(
                                   decoration: const BoxDecoration(
-                                    gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                   ),
                                   child: Container(
@@ -310,16 +311,16 @@ class _VehicleList extends State<VehicleList> {
 
                                           FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
                                             // 'collectionid2': collectionid2,
-                                            'lastactivity.datetime': Timestamp.now(),
+                                            'lastactivity_datetime': Timestamp.now(),
                                           }).then((value) {
                                             FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
                                               // 'collectionid2': collectionid2,
                                               'userid': user.uid,
                                               'userfullname': usercheck,
-                                              'this.collectionid': collectionid2,
+                                              'this_collectionid': collectionid2,
                                               'activity': activity,
-                                              'editcreate.datetime': Timestamp.now(),
-                                              'editcreate.collectionid': snapshot.data.docs[index]['query'].toString(),
+                                              'editcreate_datetime': Timestamp.now(),
+                                              'editcreate_collectionid': snapshot.data.docs[index]['query'].toString(),
                                             });
                                           });
 
@@ -535,7 +536,9 @@ class _VehicleList extends State<VehicleList> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
                           child: TextField(
-                            maxLength: 50,
+                            textCapitalization: TextCapitalization.characters,
+                            maxLength: 10,
+                            maxLengthEnforced: true,
                             controller: _vehicleplateTextController,
                             inputFormatters: [
                               new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
@@ -742,16 +745,16 @@ class _VehicleList extends State<VehicleList> {
                                               }).then((value) {
                                                 FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
                                                   // 'collectionid2': collectionid2,
-                                                  'lastactivity.datetime': Timestamp.now(),
+                                                  'lastactivity_datetime': Timestamp.now(),
                                                 }).then((value) {
                                                   FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
                                                     // 'collectionid2': collectionid2,
                                                     'userid': user.uid,
                                                     'userfullname': usercheck,
-                                                    'this.collectionid': collectionid2,
+                                                    'this_collectionid': collectionid2,
                                                     'activity': activity,
-                                                    'editcreate.datetime': Timestamp.now(),
-                                                    'editcreate.collectionid': vplate,
+                                                    'editcreate_datetime': Timestamp.now(),
+                                                    'editcreate_collectionid': vplate,
                                                   });
                                                 });
 
@@ -811,16 +814,16 @@ class _VehicleList extends State<VehicleList> {
                                               }).then((value) {
                                                 FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
                                                   // 'collectionid2': collectionid2,
-                                                  'lastactivity.datetime': Timestamp.now(),
+                                                  'lastactivity_datetime': Timestamp.now(),
                                                 }).then((value) {
                                                   FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
                                                     // 'collectionid2': collectionid2,
                                                     'userid': user.uid,
                                                     'userfullname': usercheck,
-                                                    'this.collectionid': collectionid2,
+                                                    'this_collectionid': collectionid2,
                                                     'activity': activity,
-                                                    'editcreate.datetime': Timestamp.now(),
-                                                    'editcreate.collectionid': vplate,
+                                                    'editcreate_datetime': Timestamp.now(),
+                                                    'editcreate_collectionid': vplate,
                                                   });
                                                 });
 
@@ -902,12 +905,12 @@ class _VehicleList extends State<VehicleList> {
     var collectionid2 = uuid.v1();
 
     FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-      'lastactivity.datetime': Timestamp.now(),
+      'lastactivity_datetime': Timestamp.now(),
     }).then((value) {
       FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
         'userid': user.uid,
         'activity': 'Logged out session.',
-        'editcreate.datetime': Timestamp.now(),
+        'editcreate_datetime': Timestamp.now(),
       });
     }).then((value) {
       auth.signOut();
@@ -927,7 +930,7 @@ class _VehicleList extends State<VehicleList> {
           height: 400,
           decoration: BoxDecoration(
             borderRadius: new BorderRadius.only(bottomRight: new Radius.circular(30.0), bottomLeft: new Radius.circular(0.0)),
-            gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+            gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
           ),
         ),
         GestureDetector(
@@ -951,7 +954,7 @@ class _VehicleList extends State<VehicleList> {
                     slivers: <Widget>[
                       SliverAppBar(
                         brightness: Brightness.light,
-                        backgroundColor: Color(0xff1D976C),
+                        backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
                         snap: true,
@@ -974,7 +977,7 @@ class _VehicleList extends State<VehicleList> {
                                     padding: const EdgeInsets.only(top: 1.0),
                                     child: AvatarGlow(
                                       startDelay: Duration(milliseconds: 0),
-                                      glowColor: Colors.lime,
+                                      glowColor: Colors.red,
                                       endRadius: 40.0,
                                       duration: Duration(milliseconds: 2000),
                                       repeat: true,
@@ -1013,7 +1016,7 @@ class _VehicleList extends State<VehicleList> {
                                         Stack(
                                           children: <Widget>[
                                             Padding(
-                                              padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 30, bottom: 80),
+                                              padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 30, bottom: 80),
                                               child: Container(
                                                   width: 350,
                                                   decoration: BoxDecoration(
@@ -1087,13 +1090,20 @@ class _VehicleList extends State<VehicleList> {
                                     child: Center(
                                       child: Column(
                                         children: <Widget>[
-                                          Image.asset(
-                                            "assets/images/hospital.png",
-                                            width: sidebarSize / 3,
+                                          Container(
+                                            height: 120,
+                                            width: 120,
+                                            // padding: EdgeInsets.all(8.0),
+                                            child: CircleAvatar(
+                                              backgroundImage: NetworkImage(UserLog.ppUrl),
+                                            ),
                                           ),
-                                          Text(
-                                            "Big PP",
-                                            style: TextStyle(color: Colors.black45),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 28.0),
+                                            child: Text(
+                                              UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                              style: TextStyle(color: Colors.black45),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -1108,11 +1118,11 @@ class _VehicleList extends State<VehicleList> {
                                     height: menuContainerHeight,
                                     child: Column(
                                       children: <Widget>[
-                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 0),
-                                        MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
-                                        MyButton(text: "Add Schedule", iconData: Icons.library_add_check, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 1),
-                                        MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                                        MyButton(text: "Reset User Password", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
+                                        // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
+                                        MyButton(text: "Add Schedule", iconData: Icons.library_add_check, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 1),
+                                        // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                                        // MyButton(text: "Reset User Password", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 3),
 
                                         // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                                         // MyButton(
@@ -1121,6 +1131,8 @@ class _VehicleList extends State<VehicleList> {
                                         //     textSize: getSize(4),
                                         //     height: (menuContainerHeight) / 5,
                                         //     selectedIndex: 4),
+                                        MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
+                                        MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                                       ],
                                     ),
                                   ),

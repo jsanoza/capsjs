@@ -7,6 +7,7 @@ import 'package:get_rekk/animations/bubble_indication_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_rekk/animations/custom_alert_dialog.dart';
+import 'package:get_rekk/helpers/util.dart';
 import 'package:rect_getter/rect_getter.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,6 +43,9 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   bool _obscureText2 = true;
   bool _obscureText = true;
   var data;
+  var ppUrlx;
+  var fullnamex;
+  var rankx;
   var uuid = Uuid();
 
   final Duration animationDuration = Duration(milliseconds: 500);
@@ -76,7 +80,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
       top: rect.top,
       bottom: Get.height - rect.bottom,
       child: Container(
-        decoration: BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [Color(0xff1D976C), Color(0xff93F9B9), Colors.white], center: Alignment(0.1, 0.2))),
+        decoration: BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [Color(0xff85D8CE), Color(0xff085078), Colors.white], center: Alignment(0.1, 0.2))),
       ),
     );
   }
@@ -105,7 +109,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 width: Get.width,
                 height: Get.height,
                 decoration: new BoxDecoration(
-                  gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                  gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
@@ -113,8 +117,8 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                     Stack(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.only(top: 80.0),
-                          child: new Image(width: 200.0, height: 150.0, fit: BoxFit.contain, image: new AssetImage('assets/images/logo2.png')),
+                          padding: EdgeInsets.only(top: 80.0, bottom: 30, left: 18, right: 18),
+                          child: new Image(width: Get.width, height: 150.0, fit: BoxFit.contain, image: new AssetImage('assets/images/logo1.png')),
                         ),
                       ],
                     ),
@@ -188,7 +192,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                           ),
                           new ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
-                            child: _buildSignUp(context),
+                            child: Container(),
                           ),
                         ],
                       ),
@@ -198,14 +202,14 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                       children: [
                         Container(
                           child: AnimatedWave(
-                            color: Color(0xff1D976C),
+                            color: Color(0xff85D8CE),
                             height: 80,
                             speed: 0.7,
                           ),
                         ),
                         Container(
                           child: AnimatedWave(
-                            color: Color(0xff87d4c5),
+                            color: Color(0xff3f4c6b),
                             height: 60,
                             speed: 1.0,
                             offset: pi,
@@ -213,7 +217,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                         ),
                         Container(
                           child: AnimatedWave(
-                            color: Color(0xff93F9B9),
+                            color: Color(0xff085078),
                             height: 60,
                             speed: 1.4,
                             offset: pi / 2,
@@ -291,28 +295,43 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
     var email = _emailTextController.text.trim();
     var password = _passwordTextController.text.trim();
     SharedPreferences level = await SharedPreferences.getInstance();
+    SharedPreferences ppUrlSP = await SharedPreferences.getInstance();
+    SharedPreferences fullNameSP = await SharedPreferences.getInstance();
+    SharedPreferences rankSP = await SharedPreferences.getInstance();
     String errorMessage;
     try {
       UserCredential result = await auth.signInWithEmailAndPassword(email: email, password: password);
 
       if (result != null) {
         var a = await FirebaseFirestore.instance.collection('userlevel').where("email", isEqualTo: email).get();
-        if (a.docs.isNotEmpty) {
+        var b = await FirebaseFirestore.instance.collection('users').where('email', isEqualTo: email).get();
+        if (a.docs.isNotEmpty && b.docs.isNotEmpty) {
           // print('Exists');
           var hello = a.docs[0];
+          var hello2 = b.docs[0];
           data = hello.data()['level'];
+          ppUrlx = hello2.data()['picUrl'];
+          fullnamex = hello2.data()['fullName'];
+          rankx = hello2.data()['rank'];
+
           await level.setString('level', data);
+          await ppUrlSP.setString('ppUrlSP', data);
+          await fullNameSP.setString('fullNameSP', data);
+          await rankSP.setString('rankSP', data);
+
           print(level.getString("level"));
           User user = auth.currentUser;
           var collectionid2 = uuid.v1();
-
+          UserLog.ppUrl = hello2.data()['picUrl'];
+          UserLog.fullName = hello2.data()['fullName'];
+          UserLog.rank = hello2.data()['rank'];
           FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-            'lastactivity.datetime': Timestamp.now(),
+            'lastactivity_datetime': Timestamp.now(),
           }).then((value) {
             FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
               'userid': user.uid,
               'activity': 'User logged into session.',
-              'editcreate.datetime': Timestamp.now(),
+              'editcreate_datetime': Timestamp.now(),
             });
           }).then((value) {
             // auth.signOut();
@@ -385,7 +404,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 onPressed: _onSignInButtonPress,
                 child: Row(
                   children: [
-                    isRequ ? RotatedBox(quarterTurns: 0, child: Icon(Icons.push_pin, size: 20, color: Color(0xff1D976C))) : RotatedBox(quarterTurns: 3, child: Icon(Icons.push_pin, size: 20, color: right)),
+                    isRequ ? RotatedBox(quarterTurns: 0, child: Icon(Icons.push_pin, size: 20, color: Color(0xff85D8CE))) : RotatedBox(quarterTurns: 3, child: Icon(Icons.push_pin, size: 20, color: right)),
                     VerticalDivider(
                       color: Colors.transparent,
                     ),
@@ -405,12 +424,12 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 onPressed: _onSignUpButtonPress,
                 child: Row(
                   children: [
-                    isRequ2 ? RotatedBox(quarterTurns: 0, child: Icon(Icons.push_pin, size: 20, color: Color(0xff1D976C))) : RotatedBox(quarterTurns: 3, child: Icon(Icons.push_pin, size: 20, color: left)),
+                    isRequ2 ? RotatedBox(quarterTurns: 0, child: Icon(Icons.push_pin, size: 20, color: Color(0xff85D8CE))) : RotatedBox(quarterTurns: 3, child: Icon(Icons.push_pin, size: 20, color: left)),
                     VerticalDivider(
                       color: Colors.transparent,
                     ),
                     Text(
-                      "SIGN UP",
+                      "INFO",
                       style: TextStyle(color: left, fontSize: 15, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -480,7 +499,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 padding: const EdgeInsets.all(0.0),
                 child: Ink(
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                   ),
                   child: Container(
@@ -518,7 +537,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 20),
+                        padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 30),
                         child: Row(
                           children: <Widget>[
                             new Expanded(
@@ -539,7 +558,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                                     borderSide: BorderSide(color: Colors.grey, width: 2),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
+                                    borderSide: BorderSide(color: Color(0xff85D8CE), width: 2),
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
@@ -579,7 +598,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                                     borderSide: BorderSide(color: Colors.grey, width: 2),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
+                                    borderSide: BorderSide(color: Color(0xff85D8CE), width: 2),
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
@@ -603,145 +622,145 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
               ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: FlatButton(
-                onPressed: () {},
-                child: Text(
-                  "Forgot Password?",
-                  style: TextStyle(decoration: TextDecoration.underline, color: Colors.white, fontSize: 15, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w400),
-                )),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 0.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: new LinearGradient(
-                        colors: [
-                          Colors.white10,
-                          Colors.white,
-                        ],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  width: 100.0,
-                  height: 1.0,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                  child: Text(
-                    "Or",
-                    style: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: "Nunito"),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: new LinearGradient(
-                        colors: [
-                          Colors.white,
-                          Colors.white10,
-                        ],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  width: 100.0,
-                  height: 1.0,
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 10.0, right: 0.0),
-                child: Container(
-                  decoration: new BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(60),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white,
-                        blurRadius: 40.0, // soften the shadow
-                        spreadRadius: 0.0, //extend the shadow
-                        offset: Offset(
-                          0.0, // Move to right 10  horizontally
-                          -20.0, // Move to bottom 10 Vertically
-                        ),
-                      )
-                    ],
-                  ),
-                  child: Stack(
-                    children: <Widget>[
-                      Center(
-                        child: new IconButton(
-                            icon: Image.asset('assets/images/gg.png'),
-                            iconSize: 40,
-                            onPressed: () {
-                              print("Google clicked");
-                              // signInWithGoogle();
-                              // onPressed:
-                              // () => signInWithGoogle().whenComplete(() async {
-                              //       // User user = await FirebaseAuth.instance();
-                              //       FirebaseAuth auth = FirebaseAuth.instance;
-                              //       User user = auth.currentUser;
+          // Padding(
+          //   padding: EdgeInsets.only(top: 10.0),
+          //   child: FlatButton(
+          //       onPressed: () {},
+          //       child: Text(
+          //         "Forgot Password?",
+          //         style: TextStyle(decoration: TextDecoration.underline, color: Colors.white, fontSize: 15, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w400),
+          //       )),
+          // ),
+          // Padding(
+          //   padding: EdgeInsets.only(top: 0.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: <Widget>[
+          //       Container(
+          //         decoration: BoxDecoration(
+          //           gradient: new LinearGradient(
+          //               colors: [
+          //                 Colors.white10,
+          //                 Colors.white,
+          //               ],
+          //               begin: const FractionalOffset(0.0, 0.0),
+          //               end: const FractionalOffset(1.0, 1.0),
+          //               stops: [0.0, 1.0],
+          //               tileMode: TileMode.clamp),
+          //         ),
+          //         width: 100.0,
+          //         height: 1.0,
+          //       ),
+          //       Padding(
+          //         padding: EdgeInsets.only(left: 15.0, right: 15.0),
+          //         child: Text(
+          //           "Or",
+          //           style: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: "Nunito"),
+          //         ),
+          //       ),
+          //       Container(
+          //         decoration: BoxDecoration(
+          //           gradient: new LinearGradient(
+          //               colors: [
+          //                 Colors.white,
+          //                 Colors.white10,
+          //               ],
+          //               begin: const FractionalOffset(0.0, 0.0),
+          //               end: const FractionalOffset(1.0, 1.0),
+          //               stops: [0.0, 1.0],
+          //               tileMode: TileMode.clamp),
+          //         ),
+          //         width: 100.0,
+          //         height: 1.0,
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: <Widget>[
+          //     Padding(
+          //       padding: EdgeInsets.only(top: 10.0, right: 0.0),
+          //       child: Container(
+          //         decoration: new BoxDecoration(
+          //           color: Colors.white,
+          //           borderRadius: BorderRadius.circular(60),
+          //           boxShadow: [
+          //             BoxShadow(
+          //               color: Colors.white,
+          //               blurRadius: 40.0, // soften the shadow
+          //               spreadRadius: 0.0, //extend the shadow
+          //               offset: Offset(
+          //                 0.0, // Move to right 10  horizontally
+          //                 -20.0, // Move to bottom 10 Vertically
+          //               ),
+          //             )
+          //           ],
+          //         ),
+          //         child: Stack(
+          //           children: <Widget>[
+          //             Center(
+          //               child: new IconButton(
+          //                   icon: Image.asset('assets/images/gg.png'),
+          //                   iconSize: 40,
+          //                   onPressed: () {
+          //                     print("Google clicked");
+          //                     // signInWithGoogle();
+          //                     // onPressed:
+          //                     // () => signInWithGoogle().whenComplete(() async {
+          //                     //       // User user = await FirebaseAuth.instance();
+          //                     //       FirebaseAuth auth = FirebaseAuth.instance;
+          //                     //       User user = auth.currentUser;
 
-                              //       // Navigator.of(context).pushReplacement(
-                              //       //     MaterialPageRoute(
-                              //       //         builder: (context) =>
-                              //       //             Third(uid: user.uid)));
-                              //       Get.to(Third());
-                              //     })
-                              Get.to(Third());
-                            }),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // Padding(
-              //   padding: EdgeInsets.only(top: 10.0),
-              //   child: Container(
-              //     decoration: new BoxDecoration(
-              //       color: Colors.white,
-              //       borderRadius: BorderRadius.circular(60),
-              //       boxShadow: [
-              //         BoxShadow(
-              //           color: Colors.white,
-              //           blurRadius: 40.0, // soften the shadow
-              //           spreadRadius: 0.0, //extend the shadow
-              //           offset: Offset(
-              //             0.0, // Move to right 10  horizontally
-              //             -20.0, // Move to bottom 10 Vertically
-              //           ),
-              //         )
-              //       ],
-              //     ),
-              //     child: Stack(
-              //       children: <Widget>[
-              //         Center(
-              //           child: new IconButton(
-              //             icon: Image.asset('assets/images/fb.png'),
-              //             iconSize: 40,
-              //             onPressed: () {
-              //               print("Facebook clicked");
-              //               // handleFacebookSignInz();
-              //             },
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-            ],
-          ),
+          //                     //       // Navigator.of(context).pushReplacement(
+          //                     //       //     MaterialPageRoute(
+          //                     //       //         builder: (context) =>
+          //                     //       //             Third(uid: user.uid)));
+          //                     //       Get.to(Third());
+          //                     //     })
+          //                     Get.to(Third());
+          //                   }),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //     // Padding(
+          //     //   padding: EdgeInsets.only(top: 10.0),
+          //     //   child: Container(
+          //     //     decoration: new BoxDecoration(
+          //     //       color: Colors.white,
+          //     //       borderRadius: BorderRadius.circular(60),
+          //     //       boxShadow: [
+          //     //         BoxShadow(
+          //     //           color: Colors.white,
+          //     //           blurRadius: 40.0, // soften the shadow
+          //     //           spreadRadius: 0.0, //extend the shadow
+          //     //           offset: Offset(
+          //     //             0.0, // Move to right 10  horizontally
+          //     //             -20.0, // Move to bottom 10 Vertically
+          //     //           ),
+          //     //         )
+          //     //       ],
+          //     //     ),
+          //     //     child: Stack(
+          //     //       children: <Widget>[
+          //     //         Center(
+          //     //           child: new IconButton(
+          //     //             icon: Image.asset('assets/images/fb.png'),
+          //     //             iconSize: 40,
+          //     //             onPressed: () {
+          //     //               print("Facebook clicked");
+          //     //               // handleFacebookSignInz();
+          //     //             },
+          //     //           ),
+          //     //         ),
+          //     //       ],
+          //     //     ),
+          //     //   ),
+          //     // ),
+          //   ],
+          // ),
         ],
       ),
     );

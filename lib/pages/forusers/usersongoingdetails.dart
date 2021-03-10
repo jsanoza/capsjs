@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
 import 'package:get_rekk/helpers/navbuttonusers.dart';
+import 'package:get_rekk/helpers/util.dart';
 import 'package:get_rekk/pages/foradmin/ongoingdetailspageone.dart';
 import 'package:get_rekk/pages/foradmin/ongoingdetailspagetwo.dart';
 import 'package:get_rekk/pages/forusers/usersongoingdetailspageone.dart';
@@ -206,13 +207,20 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
                           child: Center(
                             child: Column(
                               children: <Widget>[
-                                Image.asset(
-                                  "assets/images/hospital.png",
-                                  width: sidebarSize / 2,
+                                Container(
+                                  height: 120,
+                                  width: 120,
+                                  // padding: EdgeInsets.all(8.0),
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(UserLog.ppUrl),
+                                  ),
                                 ),
-                                Text(
-                                  "Big PP",
-                                  style: TextStyle(color: Colors.black45),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 28.0),
+                                  child: Text(
+                                    UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                    style: TextStyle(color: Colors.black45),
+                                  ),
                                 ),
                               ],
                             ),
@@ -229,7 +237,7 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
                             children: <Widget>[
                               MyButton2(text: "User Schedule", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
                               MyButton2(text: "Edit Info", iconData: Icons.edit, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 1),
-                              MyButton2(text: "OCR", iconData: Icons.camera, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
+                              // MyButton2(text: "OCR", iconData: Icons.camera, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
                               // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                               // MyButton(
                               //     text: "Fourth",

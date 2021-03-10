@@ -38,8 +38,8 @@ class _MyButton2State extends State<MyButton2> {
           children: <Widget>[
             Icon(
               widget.iconData,
-              color: Colors.lightGreen,
-              size: 20,
+              color: Color(0xff085078),
+              size: 25,
             ),
             SizedBox(
               width: 10,
@@ -71,8 +71,6 @@ class _MyButton2State extends State<MyButton2> {
               print('Three');
               Get.offAll(CameraFinal(), transition: Transition.native);
               break;
-
-           
 
             default:
               print('Index Not Found');

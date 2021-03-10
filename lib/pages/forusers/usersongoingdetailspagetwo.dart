@@ -674,6 +674,90 @@ class _UsersOngoingdetailsPageoneState extends State<UsersOngoingdetailsPageone>
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
+                                          "Vehicle List: (${Schedule.vehicle.length})",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 15.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0),
+                      child: Container(
+                        height: 180,
+                        width: 480,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                          color: Colors.white,
+                        ),
+                        child: Container(
+                          child: ListView.builder(
+                            itemCount: Schedule.vehicle.length,
+                            itemBuilder: (_, index) {
+                              // final DocumentSnapshot _card =
+                              //     userList[index];
+                              return Column(
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 18.0,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.rectangle,
+                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                        color: Colors.white,
+                                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                      ),
+                                      child: ListTile(
+                                        title: Text(Schedule.vehicle[index]),
+                                        onTap: () {},
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 18.0),
+                      child: Container(
+                        width: 352.5,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                          color: Colors.white,
+                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 18.0),
+                              child: Container(
+                                width: 300,
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
                                           "Investigation Sub Team: (${Schedule.investteamname.length})",
                                           style: TextStyle(
                                             color: Colors.black,

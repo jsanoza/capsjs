@@ -13,13 +13,12 @@ class UsersUpcomingState extends StatefulWidget {
 }
 
 FirebaseAuth auth = FirebaseAuth.instance;
-
 User user = auth.currentUser;
 
 getShop2() {
   // check();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-   Stream<QuerySnapshot> qn = _firestore.collection("schedule").where('memberuid', arrayContains: user.uid).snapshots();
+  Stream<QuerySnapshot> qn = _firestore.collection("schedule").where('memberuid', arrayContains: user.uid).snapshots();
   return qn;
 }
 
@@ -1189,9 +1188,9 @@ class _UsersUpcomingStateState extends State<UsersUpcomingState> {
                 new Stack(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(top: 100.0, left: 16, right: 14),
+                      padding: const EdgeInsets.only(top: 100.0, left: 25, right: 14),
                       child: Container(
-                        width: 345,
+                        width: 340,
                         height: 500,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -1202,9 +1201,9 @@ class _UsersUpcomingStateState extends State<UsersUpcomingState> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 50, bottom: 40),
+                      padding: const EdgeInsets.only(left: 23.0, right: 10.0, top: 50, bottom: 40),
                       child: Container(
-                        width: 350,
+                        width: 345,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: new BorderRadius.circular(10.0),
@@ -1234,15 +1233,7 @@ class _UsersUpcomingStateState extends State<UsersUpcomingState> {
                                 children: <Widget>[
                                   Container(
                                     decoration: BoxDecoration(
-                                      gradient: new LinearGradient(
-                                          colors: [
-                                            Colors.greenAccent,
-                                            Colors.green,
-                                          ],
-                                          begin: const FractionalOffset(0.0, 0.0),
-                                          end: const FractionalOffset(1.0, 1.0),
-                                          stops: [0.0, 1.0],
-                                          tileMode: TileMode.clamp),
+                                      gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                     ),
                                     width: 125.0,
                                     height: 1.0,

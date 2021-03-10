@@ -58,6 +58,8 @@ dependencies:
   simple_location_picker: ^0.0.3
   osm_nominatim: ^1.0.1
   rxdart: ^0.25.0
+  flutter_local_notifications:
+  workmanager:
 
 dev_dependencies:
   flutter_test:
@@ -91,7 +93,15 @@ flutter:
    - assets/images/fb.png
    - assets/images/fb2.png
    - assets/images/gg.png
-   - assets/images/email.png
+   - assets/images/pol6.png
+   - assets/images/pol7.png
+   - assets/images/pol8.png
+   - assets/images/pol9.png
+   - assets/images/pol11.png
+   - assets/images/cropped_pol10.png
+   - assets/images/acps.png
+   - assets/images/logo1.png
+   
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

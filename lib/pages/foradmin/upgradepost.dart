@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:get_rekk/animations/custom_alert_success.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
+import 'package:get_rekk/helpers/util.dart';
 import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:uuid/uuid.dart';
@@ -104,16 +105,16 @@ class _UpgradeposState extends State<UpgradeposState> {
           });
           FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
             // 'collectionid2': collectionid2,
-            'lastactivity.datetime': Timestamp.now(),
+            'lastactivity_datetime': Timestamp.now(),
           }).then((value) {
             FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
               // 'collectionid2': collectionid2,
               'userid': user.uid,
               'userfullname': usercheck,
-              'this.collectionid': collectionid2,
+              'this_collectionid': collectionid2,
               'activity': activity,
-              'editcreate.datetime': Timestamp.now(),
-              'editcreate.collectionid': collectionid,
+              'editcreate_datetime': Timestamp.now(),
+              'editcreate_collectionid': collectionid,
             });
           });
         } else {
@@ -125,10 +126,10 @@ class _UpgradeposState extends State<UpgradeposState> {
             // 'collectionid2': collectionid2,
             'userid': user.uid,
             'userfullname': usercheck,
-            'this.collectionid': collectionid2,
+            'this_collectionid': collectionid2,
             'activity': activity,
-            'editcreate.datetime': Timestamp.now(),
-            'editcreate.collectionid': collectionid,
+            'editcreate_datetime': Timestamp.now(),
+            'editcreate_collectionid': collectionid,
           });
         }
       }
@@ -465,12 +466,12 @@ $newValue
     var collectionid2 = uuid.v1();
 
     FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-      'lastactivity.datetime': Timestamp.now(),
+      'lastactivity_datetime': Timestamp.now(),
     }).then((value) {
       FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
         'userid': user.uid,
         'activity': 'Logged out session.',
-        'editcreate.datetime': Timestamp.now(),
+        'editcreate_datetime': Timestamp.now(),
       });
     }).then((value) {
       auth.signOut();
@@ -576,7 +577,7 @@ $newValue
                                         Stack(
                                           children: <Widget>[
                                             Padding(
-                                              padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 30, bottom: 80),
+                                              padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 30, bottom: 80),
                                               child: Container(
                                                   width: 350,
                                                   decoration: BoxDecoration(
@@ -648,13 +649,20 @@ $newValue
                                     child: Center(
                                       child: Column(
                                         children: <Widget>[
-                                          Image.asset(
-                                            "assets/images/hospital.png",
-                                            width: sidebarSize / 2,
+                                          Container(
+                                            height: 120,
+                                            width: 120,
+                                            // padding: EdgeInsets.all(8.0),
+                                            child: CircleAvatar(
+                                              backgroundImage: NetworkImage(UserLog.ppUrl),
+                                            ),
                                           ),
-                                          Text(
-                                            "Big PP",
-                                            style: TextStyle(color: Colors.black45),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 28.0),
+                                            child: Text(
+                                              UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                              style: TextStyle(color: Colors.black45),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -669,11 +677,12 @@ $newValue
                                     height: menuContainerHeight,
                                     child: Column(
                                       children: <Widget>[
-                                        MyButton(text: "Schedule Details", iconData: Icons.person, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 0),
-                                        MyButton(text: "Add Schedule", iconData: Icons.payment, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 1),
-                                        MyButton(text: "Register New User", iconData: Icons.notifications, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                                        MyButton(text: "Reset User Password", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
-                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 5),
+                                        MyButton(text: "Schedule Details", iconData: Icons.person, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
+                                        MyButton(text: "Add Schedule", iconData: Icons.payment, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 1),
+                                        // MyButton(text: "Register New User", iconData: Icons.notifications, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                                        // MyButton(text: "Reset User Password", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 5),
+                                        MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                                         // MyButton(
                                         //     text: "Fourth",
                                         //     iconData: Icons.settings,

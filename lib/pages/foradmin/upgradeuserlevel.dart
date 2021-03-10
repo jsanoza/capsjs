@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,44 +9,44 @@ import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:get_rekk/animations/custom_alert_success.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
 import 'package:get_rekk/helpers/util.dart';
-import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:uuid/uuid.dart';
 
 import '../loginsignup.dart';
 
-class ResetState extends StatefulWidget {
+class UpgradeUserLevel extends StatefulWidget {
   @override
-  _ResetState createState() => _ResetState();
+  _UpgradeUserLevelState createState() => _UpgradeUserLevelState();
 }
 
-//TO DO save to DB who ever did the changes
-class _ResetState extends State<ResetState> {
+class _UpgradeUserLevelState extends State<UpgradeUserLevel> {
   @override
   // ignore: override_on_non_overriding_member
   Offset _offset = Offset(0, 0);
   GlobalKey globalKey = GlobalKey();
-  TextEditingController _emailTextController;
+
   RoundedLoadingButtonController _btnController;
   List<double> limits = [];
   List<String> indexList2 = [];
   String dropdownValue;
   String searchString;
+  String oldPost;
   String uid;
   bool isMenuOpen = false;
   bool isShown = false;
   bool _blackVisible = false;
+  List<String> choices = ['admin', 'user'];
+  String newValue;
+  String collectionid;
+  String name;
   FirebaseAuth auth = FirebaseAuth.instance;
   var uuid = Uuid();
-
   @override
   void initState() {
     limits = [0, 0, 0, 0, 0, 0];
-
     _btnController = RoundedLoadingButtonController();
     WidgetsBinding.instance.addPostFrameCallback(getPosition);
-    _emailTextController = TextEditingController();
-    isShown = false;
     SystemChannels.textInput.invokeMethod('TextInput.hide');
     super.initState();
   }
@@ -55,19 +54,120 @@ class _ResetState extends State<ResetState> {
   var queryResultSet = [];
   var tempSearchStore = [];
 
+  Future getBadge(String badge) async {
+    var a = await FirebaseFirestore.instance.collection('userlevel').where("fullName", isEqualTo: badge).get();
+    if (a.docs.isNotEmpty) {
+      // print('Exists');
+      var hello = a.docs[0];
+      var data = hello.data()['level'];
+      // collectionid = hello.data()['collectionId'];
+      name = hello.data()['fullName'];
+      // print(collectionid);
+      return data;
+    }
+    if (a.docs.isEmpty) {
+      // print('nope');
+      return false;
+    }
+  }
+
+  Future check(fullName) async {
+    var outputFormat2x = DateFormat('MM-dd-yyyy hh:mm a');
+    var finalCreatex = outputFormat2x.format(DateTime.now());
+    // List<String> toadd = ["toadd at $finalCreatex"];
+
+    try {
+      // var badgeCheck = await getBadge(fullName);
+      // print(badgeCheck);
+      var collectionid2 = uuid.v1();
+      User user = auth.currentUser;
+      var currentUser = user.uid;
+      var usercheck;
+      var collectionidchange;
+      var activity = 'Edited User Level of: $name';
+
+      var badgeCheck = await getBadge(fullName);
+      print(badgeCheck);
+      print(newValue);
+      print(fullName);
+
+      if (badgeCheck == newValue) {
+        print('same');
+        _showErrorAlert(
+            title: "UPDATING FAILED",
+            content: 'Cannot update to the same level', //show error firebase
+            onPressed: _changeBlackVisible,
+            context: context);
+        _btnController.reset();
+        //show error alert here
+      } else {
+        //get logged in user
+        QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
+        username.docs.forEach((document) {
+          usercheck = document.data()['fullName'];
+        });
+        //get the chosen user uid
+        QuerySnapshot usernamex = await FirebaseFirestore.instance.collection('users').where('fullName', isEqualTo: fullName).get();
+        usernamex.docs.forEach((document) {
+          collectionidchange = document.data()['collectionId'];
+        });
+
+        print(usercheck);
+        print(collectionidchange);
+        FirebaseFirestore.instance.collection("userlevel").doc(collectionidchange).update({
+          "level": newValue,
+          // "timepostedit": finalCreatex,
+        }).then((value) {
+          FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+            // 'collectionid2': collectionid2,
+            'userid': user.uid,
+            'userfullname': usercheck,
+            'this_collectionid': collectionid2,
+            'activity': activity,
+            'editcreate_datetime': Timestamp.now(),
+            'editcreate_collectionid': collectionidchange,
+          });
+        }).then((value) {
+          _showSuccessAlert(
+              title: "Congrats!",
+              content: "Successfully Updated!", //show error firebase
+              onPressed: _changeBlackVisible,
+              context: context);
+          Timer(Duration(seconds: 2), () {
+            setState(() {
+              Get.snackbar(
+                "Success!",
+                "Successfully Updated!",
+                duration: Duration(seconds: 3),
+              );
+              _btnController.reset();
+            });
+          });
+        });
+      }
+    } catch (e) {
+      _showErrorAlert(
+          title: "UPDATING FAILED",
+          content: e.printError(), //show error firebase
+          onPressed: _changeBlackVisible,
+          context: context);
+    }
+  }
+
   showAlertDialog(BuildContext context) {
-    String email = _emailTextController.text;
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
       onPressed: () {
+        _btnController.reset();
         Get.back();
       },
     );
     Widget continueButton = FlatButton(
       child: Text("Continue"),
       onPressed: () {
-        sendReqChange();
+        // sendReqChange();
+        check(dropdownValue);
         Get.back();
       },
     );
@@ -77,7 +177,10 @@ class _ResetState extends State<ResetState> {
       title: Text("Confirm"),
       content: Text(
         '''
-Are you sure to reset password of account: $email
+Confirm updating level of: 
+$dropdownValue
+to:
+$newValue 
 ''',
         maxLines: 20,
         style: TextStyle(fontSize: 16.0, color: Colors.black),
@@ -129,78 +232,6 @@ Are you sure to reset password of account: $email
     );
   }
 
-  Future sendReqChange() async {
-    var email = _emailTextController.text;
-    User user = auth.currentUser;
-    var currentUser = user.uid;
-    var collectionid2 = uuid.v1();
-    var usercheck;
-    var activity = 'Reset password of name: $email';
-    try {
-      var url = 'http://172.19.128.1/capstonejs/change.php';
-      var data = {
-        'emailSignup': email,
-      };
-      var response = await http.post(url, body: jsonEncode(data));
-      uid = response.body;
-      print(response.body);
-      if (response.body == 'Success') {
-        QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
-        username.docs.forEach((document) {
-          usercheck = document.data()['fullName'];
-        });
-
-        FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-          // 'collectionid2': collectionid2,
-          'lastactivity_datetime': Timestamp.now(),
-        }).then((value) {
-          FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
-            // 'collectionid2': collectionid2,
-            'userid': user.uid,
-            'userfullname': usercheck,
-            'this_collectionid': collectionid2,
-            'activity': activity,
-            'editcreate_datetime': Timestamp.now(),
-            'editcreate_collectionid': email,
-          });
-        });
-
-        _showSuccessAlert(
-            title: "Congrats!",
-            content: "Password Reset Successful!", //show error firebase
-            onPressed: _changeBlackVisible,
-            context: context);
-        FocusScope.of(context).requestFocus(new FocusNode());
-        SystemChannels.textInput.invokeMethod('TextInput.hide');
-        _btnController.success();
-        Timer(Duration(seconds: 3), () {
-          setState(() {
-            _btnController.reset();
-            _emailTextController.clear();
-            Get.snackbar(
-              "Success!",
-              "Password Reset Successful!",
-              duration: Duration(seconds: 3),
-            );
-          });
-        });
-      } else {
-        _showErrorAlert(
-            title: "Change Password failed.",
-            content: "Reset Password Error!", //show error firebase
-            onPressed: _changeBlackVisible,
-            context: context);
-      }
-    } catch (e) {
-      print("error!");
-      _showErrorAlert(
-          title: "Reset Pssword failed.",
-          content: "Reset Password Error!", //show error firebase
-          onPressed: _changeBlackVisible,
-          context: context);
-    }
-  }
-
   getPosition(duration) {
     RenderBox renderBox = globalKey.currentContext.findRenderObject();
     final position = renderBox.localToGlobal(Offset.zero);
@@ -227,9 +258,9 @@ Are you sure to reset password of account: $email
         Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 160, bottom: 10),
+              padding: const EdgeInsets.only(top: 20.0, right: 190, bottom: 10),
               child: Text(
-                "Reset Password",
+                "Edit User Level",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20.0,
@@ -244,133 +275,179 @@ Are you sure to reset password of account: $email
                 width: 480,
                 child: Column(
                   children: [
-                    TextField(
-                      onChanged: (val) {
-                        setState(() {
-                          isShown = true;
-                          searchString = val.toUpperCase();
-                        });
-                      },
-                      controller: _emailTextController,
-                      decoration: InputDecoration(
-                          prefixIcon: IconButton(
-                            color: Colors.green,
-                            icon: Icon(Icons.mail_outline_sharp),
-                            iconSize: 20.0,
-                            onPressed: () {},
-                          ),
-                          contentPadding: EdgeInsets.only(left: 25.0),
-                          hintText: 'Search by email',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0, right: 220),
+                      child: Text(
+                        "Select a user:",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15.0,
+                          fontFamily: 'Nunito-Bold',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                    isShown
-                        ? Container(
-                            height: 100,
-                            child: StreamBuilder<QuerySnapshot>(
-                                stream: FirebaseFirestore.instance.collection('users').where('searchKey', arrayContains: searchString).snapshots(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasError) {
-                                    return Text("Error2");
-                                  }
-                                  switch (snapshot.connectionState) {
-                                    case ConnectionState.waiting:
-                                      return Center(
-                                          child: CircularProgressIndicator(
-                                        backgroundColor: Colors.white,
-                                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
-                                      ));
-                                    case ConnectionState.none:
-                                      return Center(
-                                          child: CircularProgressIndicator(
-                                        backgroundColor: Colors.white,
-                                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
-                                      ));
-                                    case ConnectionState.done:
-                                      return Text("done");
-                                    default:
-                                      return new ListView(
-                                          children: snapshot.data.docs.map((DocumentSnapshot document) {
-                                        return new ListTile(
-                                          title: GestureDetector(
-                                            child: Text(document['email']),
-                                            onTap: () {
-                                              print(document['email']);
-                                              setState(() {
-                                                _emailTextController.text = document['email'].toString();
-                                                isShown = false;
-                                                FocusScope.of(context).requestFocus(new FocusNode());
-                                                SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                              });
-                                            },
+                    Container(
+                      height: 100,
+                      width: 340,
+                      child: StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance.collection('userlevel').orderBy('level').snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Text('');
+                            } else if (snapshot.connectionState == ConnectionState.done) {
+                              return Text('');
+                            } else {
+                              if (snapshot.data == null) {
+                                return Text('');
+                              } else {
+                                return new Container(
+                                    width: 300,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 12.0, left: 12, top: 0, bottom: 12),
+                                      child: Stack(children: <Widget>[
+                                        Container(
+                                          width: double.infinity,
+                                          padding: EdgeInsets.all(10.0),
+                                          decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(2))),
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 5.0, top: 5),
+                                                child: Icon(Icons.how_to_reg, size: 20, color: Colors.green),
+                                              ),
+                                            ],
                                           ),
-                                        );
-                                      }).toList());
-                                  }
-                                }),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(top: 10.0, right: 0, left: 0, bottom: 0),
-                            child: Container(
-                              // height: 200,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      RoundedLoadingButton(
-                                        color: Color(0xff1D976C),
-                                        child: Text('Reset', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
-                                        controller: _btnController,
-                                        onPressed: () {
-                                          //  sendData();
-                                          setState(() {
-                                            FocusScope.of(context).requestFocus(new FocusNode());
-                                            SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                            showAlertDialog(context);
-                                          });
-                                        },
-                                      ),
-                                      // RaisedButton(
-                                      //   onPressed: () {
-                                      //     sendReqChange();
-                                      //   },
-                                      //   shape: RoundedRectangleBorder(
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(80.0)),
-                                      //   padding: const EdgeInsets.all(0.0),
-                                      //   child: Ink(
-                                      //     decoration: const BoxDecoration(
-                                      //       gradient: LinearGradient(
-                                      //           colors: [
-                                      //             Color(0xff93F9B9),
-                                      //             Color(0xff1D976C)
-                                      //           ],
-                                      //           begin: const FractionalOffset(
-                                      //               0.0, 0.0),
-                                      //           end: const FractionalOffset(
-                                      //               1.0, 1.0),
-                                      //           stops: [0.0, 1.0],
-                                      //           tileMode: TileMode.clamp),
-                                      //       borderRadius: BorderRadius.all(
-                                      //           Radius.circular(80.0)),
-                                      //     ),
-                                      //     child: Container(
-                                      //       constraints: const BoxConstraints(
-                                      //           minWidth: 88.0,
-                                      //           minHeight:
-                                      //               36.0), // min sizes for Material buttons
-                                      //       alignment: Alignment.center,
-                                      //       child: Icon(Icons.check,
-                                      //           size: 20, color: Colors.white),
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                    ],
-                                  ),
-                                ],
+                                        ),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(5.0),
+                                                border: Border.all(color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                                              ),
+                                              height: 50,
+                                              width: 340,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 40.0),
+                                                child: DropdownButton<String>(
+                                                  underline: SizedBox(),
+                                                  items: snapshot.data.docs.map((DocumentSnapshot document) {
+                                                    return new DropdownMenuItem<String>(
+                                                      value: document["fullName"].toString(),
+                                                      child: Text(document["fullName"].toString() + " - " + document["level"].toString()),
+                                                    );
+                                                  }).toList(),
+                                                  hint: new Text("Name"),
+                                                  isExpanded: true,
+                                                  value: dropdownValue,
+                                                  onChanged: (String newValuex) {
+                                                    dropdownValue = newValuex;
+                                                    setState(() {
+                                                      FocusScope.of(context).requestFocus(new FocusNode());
+                                                      SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ]),
+                                    ));
+                              }
+                            }
+                          }),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0, right: 185),
+                      child: Text(
+                        "Update level to:",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15.0,
+                          fontFamily: 'Nunito-Bold',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0, left: 12, top: 0, bottom: 12),
+                      child: Stack(children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(2))),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 5.0, top: 5),
+                                child: Icon(Icons.how_to_reg, size: 20, color: Colors.green),
                               ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            border: Border.all(color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                          ),
+                          height: 50,
+                          width: 340,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 40.0),
+                            child: DropdownButton<String>(
+                              underline: SizedBox(),
+                              items: choices.map((String val) {
+                                return new DropdownMenuItem<String>(
+                                  value: val,
+                                  child: new Text(val),
+                                );
+                              }).toList(),
+                              hint: new Text("Level"),
+                              isExpanded: true,
+                              value: newValue,
+                              onChanged: (String newValuex) {
+                                newValue = newValuex;
+                                setState(() {
+                                  FocusScope.of(context).requestFocus(new FocusNode());
+                                  SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                });
+                              },
                             ),
                           ),
+                        ),
+                      ]),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0, right: 0, left: 0, bottom: 0),
+                      child: Container(
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                RoundedLoadingButton(
+                                  color: Color(0xff1D976C),
+                                  child: Text('Update', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
+                                  controller: _btnController,
+                                  onPressed: () {
+                                    setState(() {
+                                      FocusScope.of(context).requestFocus(new FocusNode());
+                                      SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                      showAlertDialog(context);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -411,7 +488,7 @@ Are you sure to reset password of account: $email
           height: 400,
           decoration: BoxDecoration(
             borderRadius: new BorderRadius.only(bottomRight: new Radius.circular(30.0), bottomLeft: new Radius.circular(0.0)),
-            gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+            gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
           ),
         ),
         GestureDetector(
@@ -450,7 +527,7 @@ Are you sure to reset password of account: $email
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
-                                      "Reset",
+                                      "User Level",
                                       style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Nunito-Bold'),
                                     ),
                                   ),
@@ -458,7 +535,7 @@ Are you sure to reset password of account: $email
                                     padding: const EdgeInsets.only(top: 1.0),
                                     child: AvatarGlow(
                                       startDelay: Duration(milliseconds: 0),
-                                      glowColor: Colors.lime,
+                                      glowColor: Colors.red,
                                       endRadius: 40.0,
                                       duration: Duration(milliseconds: 2000),
                                       repeat: true,
@@ -597,12 +674,18 @@ Are you sure to reset password of account: $email
                                     height: menuContainerHeight,
                                     child: Column(
                                       children: <Widget>[
-                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
-                                        // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
-                                        MyButton(text: "Add Schedule", iconData: Icons.library_add_check, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 1),
-                                        // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                                        MyButton(text: "Schedule Details", iconData: Icons.person, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
+                                        MyButton(text: "Add Schedule", iconData: Icons.payment, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 1),
+                                        // MyButton(text: "Register New User", iconData: Icons.notifications, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                                        // MyButton(text: "Reset User Password", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
                                         MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 5),
                                         MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
+                                        // MyButton(
+                                        //     text: "Fourth",
+                                        //     iconData: Icons.settings,
+                                        //     textSize: getSize(4),
+                                        //     height: (menuContainerHeight) / 5,
+                                        //     selectedIndex: 4),
                                       ],
                                     ),
                                   ),

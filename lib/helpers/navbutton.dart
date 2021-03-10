@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_rekk/pages/foradmin/dashboard.dart';
+import 'package:get_rekk/pages/foradmin/editinfo.dart';
 import 'package:get_rekk/pages/foradmin/first.dart';
 import 'package:get_rekk/pages/foradmin/fourth.dart';
+import 'package:get_rekk/pages/foradmin/manageusers.dart';
 import 'package:get_rekk/pages/foradmin/newSched..dart';
 
 import 'package:get_rekk/pages/foradmin/reset.dart';
@@ -35,8 +37,8 @@ class _MyButtonState extends State<MyButton> {
           children: <Widget>[
             Icon(
               widget.iconData,
-              color: Colors.lightGreen,
-              size: 20,
+              color: Color(0xff085078),
+              size: 25,
             ),
             SizedBox(
               width: 10,
@@ -61,12 +63,12 @@ class _MyButtonState extends State<MyButton> {
 
             case 2:
               print('Two');
-              Get.offAll(First(), transition: Transition.native);
+              Get.offAll(EditInfo(), transition: Transition.native);
               break;
 
             case 3:
               print('Three');
-              Get.offAll(ResetState(), transition: Transition.native);
+              Get.offAll(ManageUsers(), transition: Transition.native);
               break;
 
             case 4:

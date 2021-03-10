@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:get_rekk/animations/custom_alert_success.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
+import 'package:get_rekk/helpers/util.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -38,24 +39,7 @@ class _FirstState extends State<First> {
   List<double> limits = [];
   List<String> indexList2 = [];
   List<String> choices = ['Team Leader', 'Spotter', 'Spokesperson', 'Patrolman'];
-  List<String> choicesRank = [
-    'Patrolman / Patrolwoman (Pat.) / Police Officer I (PO1)',
-    'Police Corporal (PCpl.) / Police Officer II (PO2)',
-    'Police Staff Sergeant (PSSgt.) / Police Officer III (PO3)',
-    'Police Master Sergeant (PMSgt.) / 	Senior Police Officer I (SPO1)',
-    'Police Senior Master Sergeant (PSMS) / Senior Police Officer II (SPO2)',
-    'Police Chief Master Sergeant (PCMS) / Senior Police Officer III (SPO3)',
-    'Police Executive Master Sergeant (PEMS) / Senior Police Officer IV (SPO4)',
-    'Police Lieutenant (P/LT) / Police Inspector (PINSP)',
-    'Police Captain (P/CAPT) / 	Police Senior Inspector (PS/INSP)',
-    'Police Major (P/MAJ) / Police Chief Inspector (PC/INSP)',
-    'Police Lieutenant Colonel (PLTCOL) / Police Superintendent (PSUPT)',
-    'Police Colonel (P/COL) / Police Senior Superintendent (PS/SUPT',
-    'Police Brigadier General (PBGEN) /	Police Chief Superintendent (PC/SUPT)',
-    'Police Major General (PMGEN) / 	Police Director (PDIR)',
-    'Police Lieutenant General (PLTGEN) / Police Deputy Director General (PDDG)',
-    'Police General (P/GEN) / Police Director General (PDGEN)'
-  ];
+  List<String> choicesRank = ['PO1', 'PO2', 'PO3', 'SPO1', 'SPO2', 'SPO3', 'SPO4', 'P/LT', 'P/CAPT', 'P/MAJ', 'PLTCOL', 'P/COL', 'PBGEN', 'PDIR', 'PDDG', 'PDGEN'];
   String dropdownValue;
   String newValue;
   String searchString;
@@ -227,7 +211,7 @@ With badge number: $bNum?
 
 Please double check the credentials.
 
-Auto-generated email is: $finaltryEmail@acpstwo.com
+Auto-generated email is: $finaltryEmail@acpsone.com
 ''',
         maxLines: 20,
         style: TextStyle(fontSize: 16.0, color: Colors.black),
@@ -266,7 +250,7 @@ Auto-generated email is: $finaltryEmail@acpstwo.com
       } else {
         print("wala");
         try {
-          var url = 'http://capstonejs.000webhostapp.com/simple.php';
+          var url = 'http://172.19.128.1/capstonejs/simple.php';
           var data = {
             'emailSignup': finalfinalEmail,
             'name': name,
@@ -334,7 +318,7 @@ Auto-generated email is: $finaltryEmail@acpstwo.com
     });
 
     try {
-      String picUrl = 'https://firebasestorage.googleapis.com/v0/b/capstonejs-cc692.appspot.com/o/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg?alt=media&token=6115e19e-e612-4e18-b730-9b32c9ee3f25';
+      String picUrl = 'https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg';
       FirebaseFirestore.instance.collection("users").doc(uid.toString()).set({
         'searchKey': indexList2,
         'collectionId': uid.toString(),
@@ -362,16 +346,16 @@ Auto-generated email is: $finaltryEmail@acpstwo.com
 
         FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
           // 'collectionid2': collectionid2,
-          'lastactivity.datetime': Timestamp.now(),
+          'lastactivity_datetime': Timestamp.now(),
         }).then((value) {
           FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
             // 'collectionid2': collectionid2,
             'userid': user.uid,
             'userfullname': usercheck,
-            'this.collectionid': collectionid2,
+            'this_collectionid': collectionid2,
             'activity': activity,
-            'editcreate.datetime': Timestamp.now(),
-            'editcreate.collectionid': uid.toString(),
+            'editcreate_datetime': Timestamp.now(),
+            'editcreate_collectionid': uid.toString(),
           });
         });
 
@@ -487,7 +471,7 @@ Auto-generated email is: $finaltryEmail@acpstwo.com
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
-                          child: Text("@acpstwo.com"),
+                          child: Text("@acpsone.com"),
                         )
                       ],
                     ),
@@ -799,12 +783,12 @@ Auto-generated email is: $finaltryEmail@acpstwo.com
     var collectionid2 = uuid.v1();
 
     FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-      'lastactivity.datetime': Timestamp.now(),
+      'lastactivity_datetime': Timestamp.now(),
     }).then((value) {
       FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
         'userid': user.uid,
         'activity': 'Logged out session.',
-        'editcreate.datetime': Timestamp.now(),
+        'editcreate_datetime': Timestamp.now(),
       });
     }).then((value) {
       auth.signOut();
@@ -850,6 +834,7 @@ Auto-generated email is: $finaltryEmail@acpstwo.com
                         // title:
                         // Allows the user to reveal the app bar if they begin scrolling back
                         // up the list of items.
+
                         brightness: Brightness.light,
                         backgroundColor: Color(0xff1D976C),
                         floating: true,
@@ -918,7 +903,7 @@ Auto-generated email is: $finaltryEmail@acpstwo.com
                                         new Stack(
                                           children: <Widget>[
                                             Padding(
-                                              padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 25, bottom: 40),
+                                              padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 25, bottom: 40),
                                               child: Container(
                                                   width: 350,
                                                   decoration: BoxDecoration(
@@ -990,13 +975,20 @@ Auto-generated email is: $finaltryEmail@acpstwo.com
                                     child: Center(
                                       child: Column(
                                         children: <Widget>[
-                                          Image.asset(
-                                            "assets/images/hospital.png",
-                                            width: sidebarSize / 2,
+                                          Container(
+                                            height: 120,
+                                            width: 120,
+                                            // padding: EdgeInsets.all(8.0),
+                                            child: CircleAvatar(
+                                              backgroundImage: NetworkImage(UserLog.ppUrl),
+                                            ),
                                           ),
-                                          Text(
-                                            "Big PP",
-                                            style: TextStyle(color: Colors.black45),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 28.0),
+                                            child: Text(
+                                              UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                              style: TextStyle(color: Colors.black45),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -1011,11 +1003,12 @@ Auto-generated email is: $finaltryEmail@acpstwo.com
                                     height: menuContainerHeight,
                                     child: Column(
                                       children: <Widget>[
-                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 0),
-                                        MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
-                                        MyButton(text: "Add Schedule", iconData: Icons.library_add_check, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 1),
-                                        MyButton(text: "Reset Users Password", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
-                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 5),
+                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
+                                        // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
+                                        MyButton(text: "Add Schedule", iconData: Icons.library_add_check, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 1),
+                                        // MyButton(text: "Reset Users Password", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 5),
+                                        MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                                         // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                                         // MyButton(
                                         //     text: "Fourth",

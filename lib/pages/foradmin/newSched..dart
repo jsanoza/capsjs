@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:get_rekk/animations/custom_alert_success.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
+import 'package:get_rekk/helpers/util.dart';
 import 'package:get_rekk/pages/loginsignup.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:http/http.dart' as http;
@@ -400,21 +401,25 @@ Ends at: $eeeTime
         "secuteam": FieldValue.arrayUnion(userSearchSecurityName),
         "querystarttime": a,
         "queryendtime": d,
-        "memuid": FieldValue.arrayUnion(memuid),
+        "memberuid": FieldValue.arrayUnion(memuid),
         "vehicle": vehiclelist,
+        'flaggedvehicles': '',
+        'lastflag': '',
+        'scannedvehicles': '',
+        'lastscan': '',
       }).then((value) {
         FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
           // 'collectionid2': collectionid2,
-          'lastactivity.datetime': Timestamp.now(),
+          'lastactivity_datetime': Timestamp.now(),
         }).then((value) {
           FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
             // 'collectionid2': collectionid2,
             'userid': user.uid,
             'userfullname': usercheck,
-            'this.collectionid': collectionid2,
+            'this_collectionid': collectionid2,
             'activity': activity,
-            'editcreate.datetime': Timestamp.now(),
-            'editcreate.collectionid': collectionid,
+            'editcreate_datetime': Timestamp.now(),
+            'editcreate_collectionid': collectionid,
           });
         });
 
@@ -474,6 +479,7 @@ Ends at: $eeeTime
   }
 
   getFuture() async {
+    print('imhere');
     QuerySnapshot getallLeader = await FirebaseFirestore.instance.collection('users').where('position', isEqualTo: 'Leader').get();
     getallLeader.docs.forEach((document) async {
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').doc(document.data()['collectionId']).collection('schedule').get();
@@ -481,10 +487,13 @@ Ends at: $eeeTime
         var g = DateFormat('MM-dd-yyyy HH:mm').parse(startTime);
         if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
           print('yes');
+          print(document.data()['fullName'].toString());
+          // allowedLeader.add(document.data()['fullName']);
         } else {
           setState(() {});
-          print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
           allowedLeader.add(document.data()['fullName']);
+          print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+
         }
       });
     });
@@ -1484,7 +1493,7 @@ Ends at: $eeeTime
                 appBar: AppBar(
                   leading: BackButton(color: Colors.white),
                   title: Text("Details", style: TextStyle(color: Colors.white)),
-                  backgroundColor: Color(0xff1D976C),
+                  backgroundColor: Color(0xff085078),
                 ),
                 body: new FlutterMap(
                   options: new MapOptions(
@@ -1656,7 +1665,7 @@ Ends at: $eeeTime
                                                           padding: const EdgeInsets.all(0.0),
                                                           child: Ink(
                                                             decoration: const BoxDecoration(
-                                                              gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                              gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                               borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                             ),
                                                             child: Container(
@@ -1697,7 +1706,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -1722,7 +1731,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -1862,7 +1871,7 @@ Ends at: $eeeTime
                                                 isExpanded: true,
                                                 underline: Container(
                                                   height: 2,
-                                                  color: Color(0xff93F9B9),
+                                                  color: Color(0xff085078),
                                                 ),
                                                 onChanged: (String newValue) {
                                                   setState(() {
@@ -1904,7 +1913,7 @@ Ends at: $eeeTime
                                                 isExpanded: true,
                                                 underline: Container(
                                                   height: 2,
-                                                  color: Color(0xff93F9B9),
+                                                  color: Color(0xff085078),
                                                 ),
                                                 onChanged: (String newValue) {
                                                   setState(() {
@@ -1946,7 +1955,7 @@ Ends at: $eeeTime
                                                 isExpanded: true,
                                                 underline: Container(
                                                   height: 2,
-                                                  color: Color(0xff93F9B9),
+                                                  color: Color(0xff085078),
                                                 ),
                                                 onChanged: (String newValue) {
                                                   setState(() {
@@ -1992,7 +2001,7 @@ Ends at: $eeeTime
                                               padding: const EdgeInsets.all(0.0),
                                               child: Ink(
                                                 decoration: const BoxDecoration(
-                                                  gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                  gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                   borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                 ),
                                                 child: Container(
@@ -2016,7 +2025,7 @@ Ends at: $eeeTime
                                               padding: const EdgeInsets.all(0.0),
                                               child: Ink(
                                                 decoration: const BoxDecoration(
-                                                  gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                  gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                   borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                 ),
                                                 child: Container(
@@ -2130,7 +2139,7 @@ Ends at: $eeeTime
                                     Center(
                                       child: RaisedButton(
                                         onPressed: () {
-                                          DatePicker.showDateTimePicker(context, showTitleActions: true, onChanged: (date) {
+                                          DatePicker.showDateTimePicker(context, showTitleActions: true, minTime: DateTime.now(), onChanged: (date) {
                                             print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
                                           }, onConfirm: (date) {
                                             var outputFormat2 = DateFormat('MM-dd-yyyy HH:mm a');
@@ -2161,7 +2170,7 @@ Ends at: $eeeTime
                                         padding: const EdgeInsets.all(0.0),
                                         child: Ink(
                                           decoration: const BoxDecoration(
-                                            gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                            gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                             borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                           ),
                                           child: Container(
@@ -2239,7 +2248,7 @@ Ends at: $eeeTime
                                       Center(
                                         child: RaisedButton(
                                           onPressed: () {
-                                            DatePicker.showDateTimePicker(context, showTitleActions: true, onChanged: (date) {
+                                            DatePicker.showDateTimePicker(context, showTitleActions: true, minTime: DateTime.now(), onChanged: (date) {
                                               print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
                                             }, onConfirm: (date) {
                                               var outputFormat2 = DateFormat('MM-dd-yyyy HH:mm a');
@@ -2275,7 +2284,7 @@ Ends at: $eeeTime
                                           padding: const EdgeInsets.all(0.0),
                                           child: Ink(
                                             decoration: const BoxDecoration(
-                                              gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                              gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                               borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                             ),
                                             child: Container(
@@ -2346,7 +2355,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2507,7 +2516,7 @@ Ends at: $eeeTime
                                   counterText: '',
                                   isDense: true,
                                   prefixIcon: IconButton(
-                                    color: Colors.green,
+                                    color: Color(0xff085078),
                                     icon: Icon(Icons.turned_in),
                                     iconSize: 20.0,
                                     onPressed: () {},
@@ -2534,7 +2543,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2560,7 +2569,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2658,7 +2667,7 @@ Ends at: $eeeTime
                                             padding: const EdgeInsets.all(0.0),
                                             child: Ink(
                                               decoration: const BoxDecoration(
-                                                gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                 borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                               ),
                                               child: Container(
@@ -2812,7 +2821,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2838,7 +2847,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2946,7 +2955,7 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -3108,7 +3117,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -3134,7 +3143,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -3242,7 +3251,7 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -3407,7 +3416,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -3433,7 +3442,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -3541,7 +3550,7 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -3703,7 +3712,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -3729,7 +3738,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -3819,7 +3828,7 @@ Ends at: $eeeTime
                                 counterText: '',
                                 isDense: true,
                                 prefixIcon: IconButton(
-                                  color: Colors.green,
+                                  color: Color(0xff085078),
                                   icon: Icon(Icons.style),
                                   iconSize: 20.0,
                                   onPressed: () {},
@@ -3859,7 +3868,7 @@ Ends at: $eeeTime
                                 counterText: '',
                                 isDense: true,
                                 prefixIcon: IconButton(
-                                  color: Colors.green,
+                                  color: Color(0xff085078),
                                   icon: Icon(Icons.contact_mail),
                                   iconSize: 20.0,
                                   onPressed: () {},
@@ -3897,7 +3906,7 @@ Ends at: $eeeTime
                                 counterText: '',
                                 isDense: true,
                                 prefixIcon: IconButton(
-                                  color: Colors.green,
+                                  color: Color(0xff085078),
                                   icon: Icon(Icons.local_car_wash),
                                   iconSize: 20.0,
                                   onPressed: () {},
@@ -3935,7 +3944,7 @@ Ends at: $eeeTime
                                 counterText: '',
                                 isDense: true,
                                 prefixIcon: IconButton(
-                                  color: Colors.green,
+                                  color: Color(0xff085078),
                                   icon: Icon(Icons.directions_car),
                                   iconSize: 20.0,
                                   onPressed: () {},
@@ -4033,7 +4042,7 @@ Ends at: $eeeTime
                                   padding: const EdgeInsets.all(0.0),
                                   child: Ink(
                                     decoration: const BoxDecoration(
-                                      gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                      gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                       borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                     ),
                                     child: Container(
@@ -4264,7 +4273,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -4290,7 +4299,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -4358,7 +4367,7 @@ Ends at: $eeeTime
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     RoundedLoadingButton(
-                                      color: Color(0xff1D976C),
+                                      color: Color(0xff085078),
                                       child: Text('Schedule', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
                                       controller: _btnController,
                                       onPressed: () {
@@ -4411,12 +4420,12 @@ Ends at: $eeeTime
     var collectionid2 = uuid.v1();
 
     FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-      'lastactivity.datetime': Timestamp.now(),
+      'lastactivity_datetime': Timestamp.now(),
     }).then((value) {
       FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
         'userid': user.uid,
         'activity': 'Logged out session.',
-        'editcreate.datetime': Timestamp.now(),
+        'editcreate_datetime': Timestamp.now(),
       });
     }).then((value) {
       auth.signOut();
@@ -4436,7 +4445,7 @@ Ends at: $eeeTime
           height: 400,
           decoration: BoxDecoration(
             borderRadius: new BorderRadius.only(bottomRight: new Radius.circular(30.0), bottomLeft: new Radius.circular(0.0)),
-            gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+            gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
           ),
         ),
         GestureDetector(
@@ -4460,7 +4469,7 @@ Ends at: $eeeTime
                     slivers: <Widget>[
                       SliverAppBar(
                         brightness: Brightness.light,
-                        backgroundColor: Color(0xff1D976C),
+                        backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
                         snap: true,
@@ -4483,7 +4492,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.only(top: 1.0),
                                     child: AvatarGlow(
                                       startDelay: Duration(milliseconds: 0),
-                                      glowColor: Colors.lime,
+                                      glowColor: Colors.red,
                                       endRadius: 40.0,
                                       duration: Duration(milliseconds: 2000),
                                       repeat: true,
@@ -4505,7 +4514,7 @@ Ends at: $eeeTime
                               ),
                             ),
                             background: Image.network(
-                              'https://cloudfront-us-east-1.images.arcpublishing.com/cmg/PZQVBPFW2FXTEMMO2EVXFTEXJA.jpg',
+                              'https://api.time.com/wp-content/uploads/2019/11/ap19325148988681.jpg',
                               fit: BoxFit.cover,
                             )),
                         expandedHeight: 200,
@@ -4582,13 +4591,20 @@ Ends at: $eeeTime
                                     child: Center(
                                       child: Column(
                                         children: <Widget>[
-                                          Image.asset(
-                                            "assets/images/hospital.png",
-                                            width: sidebarSize / 2,
+                                          Container(
+                                            height: 120,
+                                            width: 120,
+                                            // padding: EdgeInsets.all(8.0),
+                                            child: CircleAvatar(
+                                              backgroundImage: NetworkImage(UserLog.ppUrl),
+                                            ),
                                           ),
-                                          Text(
-                                            "Big PP",
-                                            style: TextStyle(color: Colors.black45),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 28.0),
+                                            child: Text(
+                                              UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                              style: TextStyle(color: Colors.black45),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -4603,11 +4619,14 @@ Ends at: $eeeTime
                                     height: menuContainerHeight,
                                     child: Column(
                                       children: <Widget>[
-                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 0),
-                                        MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
-                                        MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                                        MyButton(text: "Reset Password of User", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
-                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 5),
+                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
+
+                                        // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 4),
+                                        // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                                        // MyButton(text: "Reset Password of User", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 5),
+                                        MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
+                                        MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                                       ],
                                     ),
                                   ),
@@ -4642,8 +4661,8 @@ Ends at: $eeeTime
                                         children: [
                                           Icon(
                                             Icons.logout,
-                                            color: Colors.lightGreen,
-                                            size: 20.0,
+                                            color: Color(0xff085078),
+                                            size: 25.0,
                                           ),
                                           Text(
                                             '  Logout',

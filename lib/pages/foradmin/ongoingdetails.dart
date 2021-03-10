@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
+import 'package:get_rekk/helpers/util.dart';
 import 'package:get_rekk/pages/foradmin/ongoingdetailspageone.dart';
 import 'package:get_rekk/pages/foradmin/ongoingdetailspagetwo.dart';
 import 'package:uuid/uuid.dart';
@@ -64,12 +65,12 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
     var collectionid2 = uuid.v1();
 
     FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-      'lastactivity.datetime': Timestamp.now(),
+      'lastactivity_datetime': Timestamp.now(),
     }).then((value) {
       FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
         'userid': user.uid,
         'activity': 'Logged out session.',
-        'editcreate.datetime': Timestamp.now(),
+        'editcreate_datetime': Timestamp.now(),
       });
     }).then((value) {
       auth.signOut();
@@ -229,13 +230,20 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                           child: Center(
                             child: Column(
                               children: <Widget>[
-                                Image.asset(
-                                  "assets/images/hospital.png",
-                                  width: sidebarSize / 2,
+                                Container(
+                                  height: 120,
+                                  width: 120,
+                                  // padding: EdgeInsets.all(8.0),
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(UserLog.ppUrl),
+                                  ),
                                 ),
-                                Text(
-                                  "Big PP",
-                                  style: TextStyle(color: Colors.black45),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 28.0),
+                                  child: Text(
+                                    UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                    style: TextStyle(color: Colors.black45),
+                                  ),
                                 ),
                               ],
                             ),
@@ -251,16 +259,24 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                           child: Column(
                             children: <Widget>[
                               MyButton(text: "Add Schedules", iconData: Icons.library_add_check, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 1),
-                              MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
-                              MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                              MyButton(text: "Reset Users Password", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
-                              MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 5),
-                              // MyButton(
+                              // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
+                              // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                              // MyButton(text: "Reset Users Password", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                              // MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 5),
+                              // // MyButton(
                               //     text: "Fourth",
                               //     iconData: Icons.settings,
                               //     textSize: getSize(4),
                               //     height: (menuContainerHeight) / 5,
                               //     selectedIndex: 4),
+                              // MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
+
+                              // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 4),
+                              // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                              // MyButton(text: "Reset Password of User", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                              MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 5),
+                              MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
+                              MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                             ],
                           ),
                         ),

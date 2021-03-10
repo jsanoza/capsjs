@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
+import 'package:get_rekk/helpers/util.dart';
 import 'package:get_rekk/pages/foradmin/ongoingsched.dart';
 import 'package:get_rekk/pages/foradmin/passsched.dart';
 import 'package:get_rekk/pages/foradmin/upcomsched.dart';
@@ -64,12 +65,12 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
     var collectionid2 = uuid.v1();
 
     FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-      'lastactivity.datetime': Timestamp.now(),
+      'lastactivity_datetime': Timestamp.now(),
     }).then((value) {
       FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
         'userid': user.uid,
         'activity': 'Logged out session.',
-        'editcreate.datetime': Timestamp.now(),
+        'editcreate_datetime': Timestamp.now(),
       });
     }).then((value) {
       auth.signOut();
@@ -81,7 +82,7 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     double sidebarSize = Get.width * 0.60;
     double menuContainerHeight = Get.height / 2;
-
+    // print(UserLog.ppUrl);
     return Scaffold(
         body: DefaultTabController(
       length: 3,
@@ -100,7 +101,7 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
                   // Allows the user to reveal the app bar if they begin scrolling back
                   // up the list of items.
                   brightness: Brightness.light,
-                  backgroundColor: Color(0xff1D976C),
+                  backgroundColor: Color(0xff085078),
                   floating: true,
                   pinned: true,
                   snap: true,
@@ -124,7 +125,7 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
                               padding: const EdgeInsets.only(top: 1.0),
                               child: AvatarGlow(
                                 startDelay: Duration(milliseconds: 0),
-                                glowColor: Colors.lime,
+                                glowColor: Colors.red,
                                 endRadius: 40.0,
                                 duration: Duration(milliseconds: 2000),
                                 repeat: true,
@@ -146,7 +147,7 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
                         ),
                       ),
                       background: Image.network(
-                        'https://cloudfront-us-east-1.images.arcpublishing.com/cmg/PZQVBPFW2FXTEMMO2EVXFTEXJA.jpg',
+                        'http://assets.rappler.com/06696A2E78D4413381305F1C37AA81A8/img/274588CF4DB844A3BDD42F0D16CF98A9/marikina-cainta-checkpoint-covid-19-lockdown-march-15-2020-004.jpg',
                         fit: BoxFit.cover,
                       )),
                   // Make the initial height of the SliverAppBar larger than normal.
@@ -226,13 +227,21 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
                           child: Center(
                             child: Column(
                               children: <Widget>[
-                                Image.asset(
-                                  "assets/images/hospital.png",
-                                  width: sidebarSize / 2,
+                                Container(
+                                  height: 120,
+                                  width: 120,
+                                  // padding: EdgeInsets.all(8.0),
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(UserLog.ppUrl),
+                                  ),
                                 ),
-                                Text(
-                                  "Big PP",
-                                  style: TextStyle(color: Colors.black45),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 28.0),
+                                  child: Text(
+                                    // '',
+                                    UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                    style: TextStyle(color: Colors.black45),
+                                  ),
                                 ),
                               ],
                             ),
@@ -247,11 +256,14 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
                           height: menuContainerHeight,
                           child: Column(
                             children: <Widget>[
-                              MyButton(text: "Add Schedules", iconData: Icons.library_add_check, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 1),
-                              MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
-                              MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                              MyButton(text: "Reset Users Password", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
-                              MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 5),
+                              MyButton(text: "Add Schedules", iconData: Icons.library_add_check, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 1),
+                              // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 4),
+
+                              // MyButton(text: "Reset Users Password", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                              MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 5),
+                              MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
+                              MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
+
                               // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                               // MyButton(
                               //     text: "Fourth",
@@ -290,8 +302,8 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
                               children: [
                                 Icon(
                                   Icons.logout,
-                                  color: Colors.lightGreen,
-                                  size: 20.0,
+                                  color: Color(0xff085078),
+                                  size: 25.0,
                                 ),
                                 Text(
                                   '  Logout',

@@ -20,13 +20,12 @@ import 'package:uuid/uuid.dart';
 
 import '../loginsignup.dart';
 
-class EditInfoState extends StatefulWidget {
+class EditInfo extends StatefulWidget {
   @override
   _EditInfoState createState() => _EditInfoState();
 }
 
-//TO DO save to DB who ever did the changes
-class _EditInfoState extends State<EditInfoState> {
+class _EditInfoState extends State<EditInfo> {
   @override
   // ignore: override_on_non_overriding_member
   Offset _offset = Offset(0, 0);
@@ -306,6 +305,7 @@ Confirm editing your user info?
           'editcreate_collectionid': user.uid,
         });
       });
+
       await ppUrlSP.setString('ppUrlSP', dUrl.toString());
       print("im here");
       _showSuccessAlert(
@@ -482,7 +482,7 @@ Confirm editing your user info?
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 8.0, left: 20),
+                                    padding: const EdgeInsets.only(top: 8.0, left: 20, bottom: 20),
                                     child: Text(
                                       snapshot.data.docs[0]['rank'] + ' ' + snapshot.data.docs[0]['fullName'],
                                       style: TextStyle(
@@ -1044,7 +1044,7 @@ Confirm editing your user info?
                               ),
                             ),
                             background: Image.network(
-                              'https://www.nationalswa.com/wp-content/uploads/2019/06/maxresdefault.jpg',
+                              'https://ewscripps.brightspotcdn.com/f7/b3/371734ee4728a320f0702d75ad2b/semmes.jpeg',
                               fit: BoxFit.cover,
                             )),
                         expandedHeight: 200,
@@ -1194,7 +1194,13 @@ Confirm editing your user info?
                                     height: menuContainerHeight,
                                     child: Column(
                                       children: <Widget>[
-                                        MyButton2(text: "User Schedules", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
+                                        MyButton(text: "Add Schedules", iconData: Icons.library_add_check, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 1),
+                                        // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 4),
+                                        // MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 2),
+                                        // MyButton(text: "Reset Users Password", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 5),
+                                        MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 3),
+
                                         // MyButton2(text: "OCR", iconData: Icons.camera, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 2),
                                         // MyButton2(text: "OCR TRY", iconData: Icons.camera, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 3),
                                         // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
@@ -1212,8 +1218,8 @@ Confirm editing your user info?
                                         children: [
                                           Icon(
                                             Icons.logout,
-                                            color: Color(0xff085078),
-                                            size: 25.0,
+                                            color: Colors.lightGreen,
+                                            size: 20.0,
                                           ),
                                           Text(
                                             '  Logout',

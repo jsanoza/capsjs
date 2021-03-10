@@ -22,6 +22,7 @@ class UsersSched extends StatefulWidget {
 
 FirebaseAuth auth = FirebaseAuth.instance;
 User user = auth.currentUser;
+
 class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateMixin {
   @override
   // ignore: override_on_non_overriding_member
@@ -226,7 +227,7 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
                   // Allows the user to reveal the app bar if they begin scrolling back
                   // up the list of items.
                   brightness: Brightness.light,
-                  backgroundColor: Color(0xff1D976C),
+                  backgroundColor: Color(0xff085078),
                   floating: true,
                   pinned: true,
                   snap: true,
@@ -250,7 +251,7 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
                               padding: const EdgeInsets.only(top: 1.0),
                               child: AvatarGlow(
                                 startDelay: Duration(milliseconds: 0),
-                                glowColor: Colors.lime,
+                                glowColor: Colors.red,
                                 endRadius: 40.0,
                                 duration: Duration(milliseconds: 2000),
                                 repeat: true,
@@ -272,7 +273,7 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
                         ),
                       ),
                       background: Image.network(
-                        'https://cloudfront-us-east-1.images.arcpublishing.com/cmg/PZQVBPFW2FXTEMMO2EVXFTEXJA.jpg',
+                        'https://news-banner.com/wp-content/uploads/2017/03/PoliceBadgebackground.mgn_BG.jpg',
                         fit: BoxFit.cover,
                       )),
                   // Make the initial height of the SliverAppBar larger than normal.
@@ -352,13 +353,20 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
                           child: Center(
                             child: Column(
                               children: <Widget>[
-                                Image.asset(
-                                  "assets/images/hospital.png",
-                                  width: sidebarSize / 2,
+                                Container(
+                                  height: 120,
+                                  width: 120,
+                                  // padding: EdgeInsets.all(8.0),
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(UserLog.ppUrl),
+                                  ),
                                 ),
-                                Text(
-                                  "Big PP",
-                                  style: TextStyle(color: Colors.black45),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 28.0),
+                                  child: Text(
+                                    UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                    style: TextStyle(color: Colors.black45),
+                                  ),
                                 ),
                               ],
                             ),
@@ -374,7 +382,7 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
                           child: Column(
                             children: <Widget>[
                               MyButton2(text: "Edit Info", iconData: Icons.edit, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 1),
-                              MyButton2(text: "OCR", iconData: Icons.camera, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 2),
+
                               // MyButton2(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
                               // MyButton(text: "Reset Users Password", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                               // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
@@ -398,8 +406,8 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
                               children: [
                                 Icon(
                                   Icons.logout,
-                                  color: Colors.lightGreen,
-                                  size: 20.0,
+                                  color: Color(0xff085078),
+                                  size: 25.0,
                                 ),
                                 Text(
                                   '  Logout',
