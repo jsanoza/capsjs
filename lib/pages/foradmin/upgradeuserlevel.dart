@@ -257,17 +257,21 @@ $newValue
       children: <Widget>[
         Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 190, bottom: 10),
-              child: Text(
-                "Edit User Level",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
-                  fontFamily: 'Nunito-Bold',
-                  fontWeight: FontWeight.bold,
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, left: 20, bottom: 10),
+                  child: Text(
+                    "Edit User Level",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontFamily: 'Nunito-Bold',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -275,17 +279,21 @@ $newValue
                 width: 480,
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, right: 220),
-                      child: Text(
-                        "Select a user:",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.0,
-                          fontFamily: 'Nunito-Bold',
-                          fontWeight: FontWeight.bold,
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0, left: 20),
+                          child: Text(
+                            "Select a user:",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15.0,
+                              fontFamily: 'Nunito-Bold',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                     Container(
                       height: 100,
@@ -314,7 +322,7 @@ $newValue
                                             children: [
                                               Padding(
                                                 padding: const EdgeInsets.only(left: 5.0, top: 5),
-                                                child: Icon(Icons.how_to_reg, size: 20, color: Colors.green),
+                                                child: Icon(Icons.how_to_reg, size: 20, color: Color(0xff085078)),
                                               ),
                                             ],
                                           ),
@@ -326,7 +334,7 @@ $newValue
                                               padding: EdgeInsets.symmetric(horizontal: 8.0),
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(5.0),
-                                                border: Border.all(color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                                                border: Border.all(color: Color(0xff085078), style: BorderStyle.solid, width: 0.80),
                                               ),
                                               height: 50,
                                               width: 340,
@@ -361,17 +369,21 @@ $newValue
                             }
                           }),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, right: 185),
-                      child: Text(
-                        "Update level to:",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.0,
-                          fontFamily: 'Nunito-Bold',
-                          fontWeight: FontWeight.bold,
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0, left: 20),
+                          child: Text(
+                            "Update level to:",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15.0,
+                              fontFamily: 'Nunito-Bold',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 12.0, left: 12, top: 0, bottom: 12),
@@ -384,7 +396,7 @@ $newValue
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(left: 5.0, top: 5),
-                                child: Icon(Icons.how_to_reg, size: 20, color: Colors.green),
+                                child: Icon(Icons.how_to_reg, size: 20, color: Color(0xff085078)),
                               ),
                             ],
                           ),
@@ -393,7 +405,7 @@ $newValue
                           padding: EdgeInsets.symmetric(horizontal: 8.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            border: Border.all(color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                            border: Border.all(color: Color(0xff085078), style: BorderStyle.solid, width: 0.80),
                           ),
                           height: 50,
                           width: 340,
@@ -427,22 +439,17 @@ $newValue
                       child: Container(
                         child: Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                RoundedLoadingButton(
-                                  color: Color(0xff1D976C),
-                                  child: Text('Update', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
-                                  controller: _btnController,
-                                  onPressed: () {
-                                    setState(() {
-                                      FocusScope.of(context).requestFocus(new FocusNode());
-                                      SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                      showAlertDialog(context);
-                                    });
-                                  },
-                                ),
-                              ],
+                            RoundedLoadingButton(
+                              color: Color(0xff085078),
+                              child: Text('Update', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
+                              controller: _btnController,
+                              onPressed: () {
+                                setState(() {
+                                  FocusScope.of(context).requestFocus(new FocusNode());
+                                  SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                  showAlertDialog(context);
+                                });
+                              },
                             ),
                           ],
                         ),
@@ -512,11 +519,11 @@ $newValue
                     slivers: <Widget>[
                       SliverAppBar(
                         brightness: Brightness.light,
-                        backgroundColor: Color(0xff1D976C),
+                        backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
                         snap: true,
-                        shadowColor: Colors.green,
+                        shadowColor: Color(0xff085078),
                         flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,
                             title: Padding(
@@ -567,26 +574,18 @@ $newValue
                           (BuildContext context, int pdIndex) {
                             return SingleChildScrollView(
                               child: Column(children: [
-                                Row(
-                                  children: [
-                                    Column(
-                                      children: <Widget>[
-                                        Stack(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 30, bottom: 80),
-                                              child: Container(
-                                                  width: 350,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: new BorderRadius.circular(10.0),
-                                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                                                  ),
-                                                  child: _buildMain2()),
-                                            ),
-                                          ],
-                                        )
-                                      ],
+                                Stack(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 30, bottom: 80),
+                                      child: Container(
+                                          width: Get.width,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: new BorderRadius.circular(10.0),
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                                          ),
+                                          child: _buildMain2()),
                                     ),
                                   ],
                                 )
@@ -717,8 +716,8 @@ $newValue
                                         children: [
                                           Icon(
                                             Icons.logout,
-                                            color: Colors.lightGreen,
-                                            size: 20.0,
+                                            color: Color(0xff085078),
+                                            size: 25.0,
                                           ),
                                           Text(
                                             '  Logout',

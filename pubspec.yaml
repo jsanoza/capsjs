@@ -60,6 +60,8 @@ dependencies:
   rxdart: ^0.25.0
   flutter_local_notifications:
   workmanager:
+  auto_size_text: ^2.1.0
+  otp_text_field: ^1.0.2
 
 dev_dependencies:
   flutter_test:
@@ -101,7 +103,16 @@ flutter:
    - assets/images/cropped_pol10.png
    - assets/images/acps.png
    - assets/images/logo1.png
-   
+   - assets/images/info.png
+   - assets/images/abcdef.jpg
+   - assets/images/ghi.jpg
+   - assets/images/wokay.jpg
+   - assets/images/half.png
+   - assets/images/half2.png
+   - assets/images/half3.png
+   - assets/images/bubble.png
+   - assets/images/bubblemirror.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

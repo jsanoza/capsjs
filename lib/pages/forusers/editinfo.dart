@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +19,9 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
+import '../changephonenumber.dart';
 import '../loginsignup.dart';
+import '../phoneverification.dart';
 
 class EditInfoState extends StatefulWidget {
   @override
@@ -37,7 +40,15 @@ class _EditInfoState extends State<EditInfoState> {
   TextEditingController _contactRegTextController;
   RoundedLoadingButtonController _btnController;
   RoundedLoadingButtonController _btnController1;
+  GlobalKey _toolTipKey2 = GlobalKey();
   bool checkCurrentPasswordValid = true;
+  GlobalKey _toolTipKey = GlobalKey();
+
+  GlobalKey _toolTipKey3 = GlobalKey();
+  GlobalKey _toolTipKey4 = GlobalKey();
+  bool _passError = false;
+  bool _passError2 = false;
+  bool allGoods = false;
   List<double> limits = [];
   List<String> indexList2 = [];
   File _image;
@@ -52,6 +63,8 @@ class _EditInfoState extends State<EditInfoState> {
   FirebaseAuth auth = FirebaseAuth.instance;
   String post;
   String oldContact;
+  bool isVerified = false;
+  String finalpassword;
   @override
   void initState() {
     _rePasswordTextController = TextEditingController();
@@ -227,6 +240,24 @@ Confirm editing your user info?
     });
   }
 
+  signOut() {
+    User user = auth.currentUser;
+    var collectionid2 = uuid.v1();
+
+    FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
+      'lastactivity_datetime': Timestamp.now(),
+    }).then((value) {
+      FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+        'userid': user.uid,
+        'activity': 'Logged out session.',
+        'editcreate_datetime': Timestamp.now(),
+      });
+    }).then((value) {
+      auth.signOut();
+      Get.offAll(LogSign());
+    });
+  }
+
   double getSize(int x) {
     double size = (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 25 : 12;
     return size;
@@ -289,7 +320,7 @@ Confirm editing your user info?
 
       FirebaseFirestore.instance.collection("users").doc(user.uid.toString()).update({
         "picUrl": dUrl.toString(),
-        "contact": _contactRegTextController.text.isEmpty ? oldContact.toString() : _contactRegTextController.text.toString(),
+        // "contact": _contactRegTextController.text.isEmpty ? oldContact.toString() : _contactRegTextController.text.toString(),
       });
 
       FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
@@ -457,6 +488,8 @@ Confirm editing your user info?
                   post = snapshot.data.docs[0]['position'].toString();
                   oldContact = snapshot.data.docs[0]['contact'].toString();
                 }
+
+                isVerified = snapshot.data.docs[0]['isphoneverified'];
                 return Column(
                   children: <Widget>[
                     Column(
@@ -468,8 +501,9 @@ Confirm editing your user info?
                             children: [
                               Stack(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 230.0, bottom: 20, top: 70),
+                                  Positioned(
+                                    top: 90,
+                                    right: 10,
                                     child: new Container(
                                       width: 100.00,
                                       height: 100.00,
@@ -483,11 +517,11 @@ Confirm editing your user info?
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8.0, left: 20),
-                                    child: Text(
+                                    child: AutoSizeText(
                                       snapshot.data.docs[0]['rank'] + ' ' + snapshot.data.docs[0]['fullName'],
                                       style: TextStyle(
                                         color: Colors.black,
-                                        fontSize: 30.0,
+                                        fontSize: 20.0,
                                         fontFamily: 'Nunito-Bold',
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -580,13 +614,69 @@ Confirm editing your user info?
                                           "Contact Number:",
                                           style: TextStyle(
                                             color: Colors.black,
-                                            fontSize: 18.0,
+                                            fontSize: 15.0,
                                             fontFamily: 'Nunito-Bold',
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 250.0, left: 20),
+                                    child: Row(
+                                      children: [
+                                        isVerified
+                                            ? GestureDetector(
+                                                onTap: () {
+                                                  final dynamic tooltip = _toolTipKey.currentState;
+                                                  tooltip.ensureTooltipVisible();
+                                                },
+                                                child: Tooltip(
+                                                  key: _toolTipKey,
+                                                  // ignore: missing_required_param
+                                                  child: IconButton(
+                                                    icon: Icon(Icons.verified, size: 30.0, color: Colors.green),
+                                                  ),
+                                                  message: 'Phone number is verified!',
+                                                  padding: EdgeInsets.all(20),
+                                                  margin: EdgeInsets.all(20),
+                                                  showDuration: Duration(seconds: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.blue.withOpacity(0.9),
+                                                    borderRadius: const BorderRadius.all(Radius.circular(4)),
+                                                  ),
+                                                  textStyle: TextStyle(color: Colors.white),
+                                                  preferBelow: true,
+                                                  verticalOffset: 20,
+                                                ),
+                                              )
+                                            : GestureDetector(
+                                                onTap: () {
+                                                  final dynamic tooltip = _toolTipKey.currentState;
+                                                  tooltip.ensureTooltipVisible();
+                                                },
+                                                child: Tooltip(
+                                                  key: _toolTipKey,
+                                                  // ignore: missing_required_param
+                                                  child: IconButton(
+                                                    icon: Icon(Icons.error_outline, size: 30.0, color: Colors.red),
+                                                  ),
+                                                  message: 'Phone number is not verified!',
+                                                  padding: EdgeInsets.all(20),
+                                                  margin: EdgeInsets.all(20),
+                                                  showDuration: Duration(seconds: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.blue.withOpacity(0.9),
+                                                    borderRadius: const BorderRadius.all(Radius.circular(4)),
+                                                  ),
+                                                  textStyle: TextStyle(color: Colors.white),
+                                                  preferBelow: true,
+                                                  verticalOffset: 20,
+                                                ),
+                                              ),
                                         Padding(
-                                          padding: const EdgeInsets.only(left: 18.0),
+                                          padding: const EdgeInsets.only(left: 0.0),
                                           child: Text(
                                             snapshot.data.docs[0]['contact'],
                                             style: TextStyle(
@@ -596,6 +686,24 @@ Confirm editing your user info?
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.edit, size: 25.0, color: Colors.red),
+                                          onPressed: () {
+                                            if (isVerified = true) {
+                                              Get.to(ChangePhone(
+                                                isVerified: isVerified,
+                                                fromWhere: 'editUser',
+                                              ));
+                                            } else {
+                                              Get.to(
+                                                Phone(
+                                                  isVerified: isVerified,
+                                                  fromWhere: 'editUser',
+                                                ),
+                                              );
+                                            }
+                                          },
                                         ),
                                       ],
                                     ),
@@ -620,17 +728,21 @@ Confirm editing your user info?
       children: <Widget>[
         Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 200, bottom: 10),
-              child: Text(
-                "Editable Info",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
-                  fontFamily: 'Nunito-Bold',
-                  fontWeight: FontWeight.bold,
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, left: 20, bottom: 10),
+                  child: Text(
+                    "Upload Photo",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontFamily: 'Nunito-Bold',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -638,17 +750,21 @@ Confirm editing your user info?
                 width: 480,
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, right: 220),
-                      child: Text(
-                        "Profile Photo",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.0,
-                          fontFamily: 'Nunito-Bold',
-                          fontWeight: FontWeight.bold,
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0, left: 20),
+                          child: Text(
+                            "Profile Photo",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15.0,
+                              fontFamily: 'Nunito-Bold',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
@@ -683,56 +799,51 @@ Confirm editing your user info?
                         },
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12.0, left: 12, top: 10, bottom: 12),
-                      child: Container(
-                        width: 480,
-                        child: Column(
-                          children: [
-                            TextField(
-                              keyboardType: TextInputType.number,
-                              maxLength: 11,
-                              controller: _contactRegTextController,
-                              decoration: InputDecoration(
-                                  counterText: '',
-                                  isDense: true,
-                                  prefixIcon: IconButton(
-                                    color: Color(0xff085078),
-                                    icon: Icon(Icons.contact_page),
-                                    iconSize: 20.0,
-                                    onPressed: () {},
-                                  ),
-                                  contentPadding: EdgeInsets.only(left: 25.0),
-                                  hintText: 'Contact Number',
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(right: 12.0, left: 12, top: 10, bottom: 12),
+                    //   child: Container(
+                    //     width: 480,
+                    //     child: Column(
+                    //       children: [
+                    //         TextField(
+                    //           keyboardType: TextInputType.number,
+                    //           maxLength: 11,
+                    //           controller: _contactRegTextController,
+                    //           decoration: InputDecoration(
+                    //               counterText: '',
+                    //               isDense: true,
+                    //               prefixIcon: IconButton(
+                    //                 color: Color(0xff085078),
+                    //                 icon: Icon(Icons.contact_page),
+                    //                 iconSize: 20.0,
+                    //                 onPressed: () {},
+                    //               ),
+                    //               contentPadding: EdgeInsets.only(left: 25.0),
+                    //               hintText: 'Contact Number',
+                    //               border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0, right: 0, left: 0, bottom: 0),
                       child: Container(
                         // height: 200,
                         child: Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                RoundedLoadingButton(
-                                  color: Color(0xff085078),
-                                  child: Text('Update Info', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
-                                  controller: _btnController,
-                                  onPressed: () {
-                                    //  sendData();
-                                    setState(() {
-                                      FocusScope.of(context).requestFocus(new FocusNode());
-                                      SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                      showAlertDialog(context);
-                                    });
-                                  },
-                                ),
-                              ],
+                            RoundedLoadingButton(
+                              color: Color(0xff085078),
+                              child: Text('Upload', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
+                              controller: _btnController,
+                              onPressed: () {
+                                //  sendData();
+                                setState(() {
+                                  FocusScope.of(context).requestFocus(new FocusNode());
+                                  SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                  showAlertDialog(context);
+                                });
+                              },
                             ),
                           ],
                         ),
@@ -754,200 +865,378 @@ Confirm editing your user info?
         Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 150, bottom: 10),
-              child: Text(
-                "Change Password",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
-                  fontFamily: 'Nunito-Bold',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.only(top: 0.0, right: 8, left: 8, bottom: 30),
               child: Container(
-                width: 480,
+                height: 500,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: new BorderRadius.circular(10.0),
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                ),
                 child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, right: 160),
-                      child: Text(
-                        "Enter Old Password:",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.0,
-                          fontFamily: 'Nunito-Bold',
-                          fontWeight: FontWeight.bold,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20.0, left: 20, bottom: 10),
+                          child: Text(
+                            "Change Password",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20.0,
+                              fontFamily: 'Nunito-Bold',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 12.0, left: 12, top: 10, bottom: 12),
+                      padding: const EdgeInsets.only(top: 0.0, left: 10),
+                      child: Text('If you have not changed your default password, \nWe highly suggest you change it now.', style: TextStyle(color: Colors.red, fontFamily: 'Nunito-Regular', fontSize: 14)),
+                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 10.0, left: 0),
+                    //   child: AutoSizeText('' + _emailRegTextControllerx1.text + '@acpsone.com', style: TextStyle(color: Colors.red, fontFamily: 'Nunito-Regular', fontSize: 20)),
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
                       child: Container(
                         width: 480,
                         child: Column(
                           children: [
-                            TextField(
-                              maxLength: 11,
-                              obscureText: _obscureText1,
-                              controller: _oldPasswordTextController,
-                              decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                labelText: 'Old Password',
-                                prefixIcon: Icon(
-                                  Icons.lock_outline_sharp,
-                                  color: Color(0xff085078),
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: "Old Password",
-                                suffixIcon: GestureDetector(
-                                  onTap: () {
-                                    _oldpretoggle();
-                                  },
-                                  child: Icon(_obscureText1 ? Icons.visibility_off : Icons.visibility),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey, width: 2),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
-                                  borderRadius: BorderRadius.circular(20.0),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 0.0, left: 20, top: 0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Enter Old Password:",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.0,
+                                      fontFamily: 'Nunito-Bold',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      final dynamic tooltip = _toolTipKey2.currentState;
+                                      tooltip.ensureTooltipVisible();
+                                    },
+                                    child: Tooltip(
+                                      key: _toolTipKey2,
+                                      // ignore: missing_required_param
+                                      child: IconButton(
+                                        icon: Icon(Icons.info, size: 20.0, color: Colors.blue),
+                                      ),
+                                      message: 'Please enter your old password',
+                                      padding: EdgeInsets.all(20),
+                                      margin: EdgeInsets.all(20),
+                                      showDuration: Duration(seconds: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.withOpacity(0.9),
+                                        borderRadius: const BorderRadius.all(Radius.circular(4)),
+                                      ),
+                                      textStyle: TextStyle(color: Colors.white),
+                                      preferBelow: true,
+                                      verticalOffset: 20,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12.0, left: 12, top: 0, bottom: 0),
+                              child: Container(
+                                width: 480,
+                                child: Column(
+                                  children: [
+                                    TextField(
+                                      maxLength: 15,
+                                      obscureText: _obscureText1,
+                                      controller: _oldPasswordTextController,
+                                      decoration: InputDecoration(
+                                        counterText: '',
+                                        isDense: true,
+                                        labelText: 'Old Password',
+                                        prefixIcon: Icon(
+                                          Icons.lock_outline_sharp,
+                                          color: Color(0xff085078),
+                                        ),
+                                        contentPadding: EdgeInsets.only(left: 25.0),
+                                        hintText: "Old Password",
+                                        suffixIcon: GestureDetector(
+                                          onTap: () {
+                                            _oldpretoggle();
+                                          },
+                                          child: Icon(_obscureText1 ? Icons.visibility_off : Icons.visibility),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.grey, width: 2),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
+                                          borderRadius: BorderRadius.circular(20.0),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, right: 160, top: 20),
-                      child: Text(
-                        "Enter New Password:",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.0,
-                          fontFamily: 'Nunito-Bold',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12.0, left: 12, top: 10, bottom: 12),
-                      child: Container(
-                        width: 480,
-                        child: Column(
-                          children: [
-                            TextField(
-                              maxLength: 11,
-                              obscureText: _obscureText3,
-                              controller: _frstPasswordTextController,
-                              decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                labelText: 'Password',
-                                prefixIcon: Icon(
-                                  Icons.lock_outline_sharp,
-                                  color: Color(0xff085078),
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: "Password",
-                                suffixIcon: GestureDetector(
-                                  onTap: () {
-                                    _pretoggle();
-                                  },
-                                  child: Icon(_obscureText3 ? Icons.visibility_off : Icons.visibility),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey, width: 2),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
-                                  borderRadius: BorderRadius.circular(20.0),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 0.0, left: 20, top: 0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Enter New Password:",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.0,
+                                      fontFamily: 'Nunito-Bold',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      final dynamic tooltip = _toolTipKey3.currentState;
+                                      tooltip.ensureTooltipVisible();
+                                    },
+                                    child: Tooltip(
+                                      key: _toolTipKey3,
+                                      // ignore: missing_required_param
+                                      child: IconButton(
+                                        icon: Icon(Icons.info, size: 20.0, color: Colors.blue),
+                                      ),
+                                      message: 'Common Allowed Characters (!@#*~)\n'
+                                          'Minimum 1 Upper case\n'
+                                          'Minimum 1 lower case\n'
+                                          'Minimum 1 Numeric Number\n'
+                                          'Minimum 1 Special Character\n'
+                                          'Minimum 8 characters & Maximum 15 characters\n',
+                                      padding: EdgeInsets.all(20),
+                                      margin: EdgeInsets.all(20),
+                                      showDuration: Duration(seconds: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.withOpacity(0.9),
+                                        borderRadius: const BorderRadius.all(Radius.circular(4)),
+                                      ),
+                                      textStyle: TextStyle(color: Colors.white),
+                                      preferBelow: true,
+                                      verticalOffset: 20,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12.0, left: 12, top: 0, bottom: 0),
+                              child: Container(
+                                width: 480,
+                                child: Column(
+                                  children: [
+                                    Focus(
+                                      child: TextField(
+                                        maxLength: 15,
+                                        obscureText: _obscureText3,
+                                        controller: _frstPasswordTextController,
+                                        decoration: InputDecoration(
+                                          counterText: '',
+                                          isDense: true,
+                                          labelText: 'New Password',
+                                          prefixIcon: Icon(
+                                            Icons.lock_outline_sharp,
+                                            color: Color(0xff085078),
+                                          ),
+                                          contentPadding: EdgeInsets.only(left: 25.0),
+                                          hintText: "New Password",
+                                          suffixIcon: GestureDetector(
+                                            onTap: () {
+                                              _pretoggle();
+                                            },
+                                            child: Icon(_obscureText3 ? Icons.visibility_off : Icons.visibility),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: _passError ? BorderSide(color: Colors.red, width: 2) : BorderSide(color: Colors.grey, width: 2),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
+                                            borderRadius: BorderRadius.circular(20.0),
+                                          ),
+                                        ),
+                                      ),
+                                      onFocusChange: (hasFocus) {
+                                        setState(() {});
+                                        if (!hasFocus) {
+                                          bool passValid = RegExp("^(?=.{8,32}\$)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%^&*(),.?:{}|<>]).*").hasMatch(_frstPasswordTextController.text);
+
+                                          if (_frstPasswordTextController.text.isEmpty || !passValid || _frstPasswordTextController.text.length < 8) {
+                                            print('error password error');
+                                            _passError = true;
+                                          } else {
+                                            if (_rePasswordTextController.text.isNotEmpty && _rePasswordTextController.text != _frstPasswordTextController.text) {
+                                              _passError = true;
+                                            } else {
+                                              _passError = false;
+                                              print('goods');
+                                            }
+                                          }
+                                        }
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, right: 130, top: 20),
-                      child: Text(
-                        "Re-Enter New Password:",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.0,
-                          fontFamily: 'Nunito-Bold',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12.0, left: 12, top: 10, bottom: 12),
-                      child: Container(
-                        width: 480,
-                        child: Column(
-                          children: [
-                            TextField(
-                              maxLength: 11,
-                              obscureText: _obscureText2,
-                              controller: _rePasswordTextController,
-                              decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                labelText: 'Re-enter Password',
-                                prefixIcon: Icon(
-                                  Icons.lock_outline_sharp,
-                                  color: Color(0xff085078),
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: "Re-enter Password",
-                                suffixIcon: GestureDetector(
-                                  onTap: () {
-                                    _toggleRe();
-                                  },
-                                  child: Icon(_obscureText2 ? Icons.visibility_off : Icons.visibility),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey, width: 2),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
-                                  borderRadius: BorderRadius.circular(20.0),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 0.0, left: 20, top: 0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Re-Enter New Password:",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.0,
+                                      fontFamily: 'Nunito-Bold',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      final dynamic tooltip = _toolTipKey4.currentState;
+                                      tooltip.ensureTooltipVisible();
+                                    },
+                                    child: Tooltip(
+                                      key: _toolTipKey4,
+                                      // ignore: missing_required_param
+                                      child: IconButton(
+                                        icon: Icon(Icons.info, size: 20.0, color: Colors.blue),
+                                      ),
+                                      message: 'Common Allowed Characters (!@#*~)\n'
+                                          'Minimum 1 Upper case\n'
+                                          'Minimum 1 lower case\n'
+                                          'Minimum 1 Numeric Number\n'
+                                          'Minimum 1 Special Character\n'
+                                          'Minimum 8 characters & Maximum 15 characters\n',
+                                      padding: EdgeInsets.all(20),
+                                      margin: EdgeInsets.all(20),
+                                      showDuration: Duration(seconds: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.withOpacity(0.9),
+                                        borderRadius: const BorderRadius.all(Radius.circular(4)),
+                                      ),
+                                      textStyle: TextStyle(color: Colors.white),
+                                      preferBelow: true,
+                                      verticalOffset: 20,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12.0, left: 12, top: 0, bottom: 0),
+                              child: Container(
+                                width: 480,
+                                child: Column(
+                                  children: [
+                                    Focus(
+                                      child: TextField(
+                                        maxLength: 15,
+                                        obscureText: _obscureText2,
+                                        controller: _rePasswordTextController,
+                                        decoration: InputDecoration(
+                                          counterText: '',
+                                          isDense: true,
+                                          labelText: 'Re-enter Password',
+                                          prefixIcon: Icon(
+                                            Icons.lock_outline_sharp,
+                                            color: Color(0xff085078),
+                                          ),
+                                          contentPadding: EdgeInsets.only(left: 25.0),
+                                          hintText: "Re-enter Password",
+                                          suffixIcon: GestureDetector(
+                                            onTap: () {
+                                              _toggleRe();
+                                            },
+                                            child: Icon(_obscureText2 ? Icons.visibility_off : Icons.visibility),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: _passError2 ? BorderSide(color: Colors.red, width: 2) : BorderSide(color: Colors.grey, width: 2),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
+                                            borderRadius: BorderRadius.circular(20.0),
+                                          ),
+                                        ),
+                                      ),
+                                      onFocusChange: (hasFocus) {
+                                        setState(() {});
+                                        if (!hasFocus) {
+                                          bool passValid = RegExp("^(?=.{8,32}\$)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%^&*(),.?:{}|<>]).*").hasMatch(_rePasswordTextController.text);
+                                          if (_rePasswordTextController.text.isEmpty || !passValid || _rePasswordTextController.text.length < 8) {
+                                            print('error password error');
+                                            _passError2 = true;
+                                          } else {
+                                            if (_frstPasswordTextController.text != _rePasswordTextController.text) {
+                                              _passError2 = true;
+                                            } else {
+                                              setState(() {
+                                                finalpassword = _rePasswordTextController.text;
+                                                // finalemail = _emailRegTextControllerx1.text + '@acpsone.com';
+                                                _passError2 = false;
+                                                allGoods = true;
+                                                print('goods');
+                                              });
+                                            }
+                                          }
+                                        }
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0, right: 0, left: 0, bottom: 0),
-                      child: Container(
-                        // height: 200,
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                RoundedLoadingButton(
-                                  color: Color(0xff085078),
-                                  child: Text('Change Password', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
-                                  controller: _btnController1,
-                                  onPressed: () {
-                                    //  sendData();
-                                    setState(() {
-                                      FocusScope.of(context).requestFocus(new FocusNode());
-                                      SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                      showAlertDialog2(context);
-                                      // changePass();
-                                    });
-                                  },
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20.0, right: 0, left: 0, bottom: 0),
+                              child: Container(
+                                // height: 200,
+                                child: Column(
+                                  children: [
+                                    RoundedLoadingButton(
+                                      color: Color(0xff085078),
+                                      child: Text('Change Password', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
+                                      controller: _btnController1,
+                                      onPressed: () {
+                                        //  sendData();
+
+                                        if (allGoods == true && _oldPasswordTextController.text.length > 8) {
+                                          // _showSuccessAlert(
+                                          //     title: "Verification completed.",
+                                          //     content: "Congrats your password has\n been change!", //show error firebase
+                                          //     onPressed: _changeBlackVisible,
+                                          //     context: context);
+
+                                          setState(() {
+                                            FocusScope.of(context).requestFocus(new FocusNode());
+                                            SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                            // showAlertDialog(context);
+                                            // _btnController3.reset();
+                                            showAlertDialog2(context);
+                                            // changePass();
+                                          });
+                                        } else {
+                                          _showErrorAlert(
+                                              title: "Change Password failed.",
+                                              content: "Invalid inputs", //show error firebase
+                                              onPressed: _changeBlackVisible,
+                                              context: context);
+                                          _btnController1.reset();
+                                        }
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ],
                         ),
@@ -1044,7 +1333,7 @@ Confirm editing your user info?
                               ),
                             ),
                             background: Image.network(
-                              'https://www.nationalswa.com/wp-content/uploads/2019/06/maxresdefault.jpg',
+                              'https://www.racq.com.au/-/media/racqgroupmvc/feature/live/news/crashes/police-crash.jpg?h=623&w=935&rev=42f176f3bbfd46899f3acf31591ae87f&hash=8272D24DD8207FF2030977B0B55276750FB3E301',
                               fit: BoxFit.cover,
                             )),
                         expandedHeight: 200,
@@ -1055,26 +1344,18 @@ Confirm editing your user info?
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Column(
-                                        children: <Widget>[
-                                          Stack(
-                                            children: <Widget>[
-                                              Padding(
-                                                padding: const EdgeInsets.only(left: 21.0, right: 10.0, top: 30, bottom: 20),
-                                                child: Container(
-                                                    width: 350,
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius: new BorderRadius.circular(10.0),
-                                                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                                                    ),
-                                                    child: _buildMain2()),
-                                              ),
-                                            ],
-                                          )
-                                        ],
+                                  Stack(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 20),
+                                        child: Container(
+                                            width: Get.width,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: new BorderRadius.circular(10.0),
+                                              boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                                            ),
+                                            child: _buildMain2()),
                                       ),
                                     ],
                                   ),
@@ -1082,7 +1363,7 @@ Confirm editing your user info?
                                   new Stack(
                                     children: <Widget>[
                                       Padding(
-                                        padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 0, bottom: 20),
+                                        padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0, bottom: 20),
                                         child: Container(
                                             width: 365,
                                             decoration: BoxDecoration(
@@ -1099,14 +1380,7 @@ Confirm editing your user info?
                                     children: <Widget>[
                                       Padding(
                                         padding: const EdgeInsets.only(left: 14.0, right: 10.0, top: 0, bottom: 20),
-                                        child: Container(
-                                            width: 365,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: new BorderRadius.circular(10.0),
-                                              boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                                            ),
-                                            child: _buildMain4()),
+                                        child: _buildMain4(),
                                       ),
                                     ],
                                   ),
@@ -1205,8 +1479,28 @@ Confirm editing your user info?
                                     padding: const EdgeInsets.only(left: 20.0),
                                     child: GestureDetector(
                                       onTap: () {
-                                        auth.signOut();
-                                        Get.offAll(LogSign());
+                                        // auth.signOut();
+                                        // Get.offAll(LogSign());
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text("Logout Confirmation"),
+                                                content: const Text("Are you sure you want to log out?"),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                      onPressed: () => {
+                                                            signOut(),
+                                                          },
+                                                      child: const Text("Yes")),
+                                                  FlatButton(
+                                                    onPressed: () => Navigator.of(context).pop(false),
+                                                    child: const Text("Cancel"),
+                                                  ),
+                                                ],
+                                              );
+                                            });
+                                        print('clik');
                                       },
                                       child: Row(
                                         children: [

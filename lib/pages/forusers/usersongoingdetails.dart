@@ -80,7 +80,7 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
                   // up the list of items.
                   leading: BackButton(color: Colors.white),
                   brightness: Brightness.light,
-                  backgroundColor: Color(0xff1D976C),
+                  backgroundColor: Color(0xff085078),
                   floating: true,
                   pinned: true,
                   snap: true,
@@ -106,7 +106,7 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
                               padding: const EdgeInsets.only(top: 1.0),
                               child: AvatarGlow(
                                 startDelay: Duration(milliseconds: 0),
-                                glowColor: Colors.lime,
+                                glowColor: Colors.red,
                                 endRadius: 40.0,
                                 duration: Duration(milliseconds: 2000),
                                 repeat: true,

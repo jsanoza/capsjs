@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +10,8 @@ import 'package:get/get.dart';
 import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:get_rekk/animations/custom_alert_success.dart';
 import 'package:get_rekk/helpers/util.dart';
+import 'package:get_rekk/pages/foradmin/ongoingdetails.dart';
+import 'package:get_rekk/pages/foradmin/ongoingdetailspagetwo.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:uuid/uuid.dart';
@@ -79,7 +82,7 @@ class _FlaggedState extends State<Flagged> {
       ),
       onPressed: () {
         saveFlag();
-        _btnController.reset();
+
         Get.back();
       },
     );
@@ -152,7 +155,8 @@ Are you sure you want to add this vehicle on the flagged vehicle list?
       onPressed: () {
         // savetoDB();
         _btnController.reset();
-        Get.back();
+        // Get.back();
+        Get.offAll(OngoingPage());
       },
     );
 
@@ -291,9 +295,9 @@ Therefore this will not be added on the flag list.
         }).then((value) {
           FirebaseFirestore.instance.collection('schedule').doc(Schedule.collectionid.toString()).collection('flagged').doc(widget.vehicle).set({
             'scannedvehicles': FieldValue.arrayUnion(listplate),
-            'whoscanned': user.uid,
+            'whoscanned': finalRank + ' ' + finalUser,
             'scannedtime': Timestamp.now(),
-            'flaggedby': user.uid,
+            'flaggedby': finalRank + ' ' + finalUser,
             'reason': formatagain,
             'otherreason': notes,
           }).then((value) {
@@ -307,7 +311,7 @@ Therefore this will not be added on the flag list.
               FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('schedscan').doc(collectionid2).set({
                 'userid': user.uid,
                 'this_collectionid': collectionid2,
-                'activity': 'Flagged a vehicle with plate number: $widget.vehicle',
+                'activity': 'Flagged a vehicle with plate number: ${widget.vehicle}',
                 'editcreate_datetime': Timestamp.now(),
                 'editcreate_collectionid': Schedule.collectionid,
                 'vehicle': widget.vehicle,
@@ -322,6 +326,18 @@ Therefore this will not be added on the flag list.
           content: "Added into the flagged list!", //show error firebase
           onPressed: _changeBlackVisible,
           context: context);
+      Timer(Duration(seconds: 3), () {
+        setState(() {
+          Get.offAll(OngoingPage());
+          _btnController.reset();
+          // _btnController.reset();
+          // Get.snackbar(
+          //   "Success!",
+          //   "New Schedule Added.",
+          //   duration: Duration(seconds: 3),
+          // );
+        });
+      });
       // _vehicleplateTextController.text = '';
     }
   }
@@ -340,7 +356,7 @@ Therefore this will not be added on the flag list.
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xff1D976C),
+          backgroundColor: Color(0xff085078),
           leading: IconButton(icon: Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.of(context).popUntil((_) => count++ >= 2)),
           title: Text(
             "Flag",
@@ -479,7 +495,7 @@ Therefore this will not be added on the flag list.
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 RoundedLoadingButton(
-                                  color: Color(0xff1D976C),
+                                  color: Color(0xff085078),
                                   child: Text('Submit', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
                                   controller: _btnController,
                                   onPressed: () async {

@@ -52,11 +52,11 @@ class _BoardingState extends State<Boarding> {
                   children: <Widget>[
                     makePage(image: 'assets/images/pol8.png', title: Strings.stepOneTitle, content: Strings.stepOneContent),
                     makePage(reverse: true, image: 'assets/images/pol9.png', title: Strings.stepTwoTitle, content: Strings.stepTwoContent),
-                    makePage(image: 'assets/images/pol11.png', title: Strings.stepThreeTitle, content: Strings.stepThreeContent),
+                    makePage(image: 'assets/images/pol6.png', title: Strings.stepThreeTitle, content: Strings.stepThreeContent),
                   ],
                 ),
                 Container(
-                  margin: EdgeInsets.only(bottom: 60),
+                  margin: EdgeInsets.only(bottom: 40),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: _buildIndicator(),
@@ -94,9 +94,12 @@ class _BoardingState extends State<Boarding> {
           !reverse
               ? Column(
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Image.asset(image),
+                    Container(
+                      height: 300,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Image.asset(image),
+                      ),
                     ),
                     SizedBox(
                       height: 30,
@@ -107,25 +110,22 @@ class _BoardingState extends State<Boarding> {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 25, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w500),
-          ),
-          SizedBox(
-            height: 5,
+            style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w500),
           ),
           Text(
             content,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w500),
+            style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w500),
           ),
           reverse
               ? Column(
                   children: <Widget>[
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Image.asset(image),
+                    Container(
+                      height: 300,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Image.asset(image),
+                      ),
                     ),
                   ],
                 )

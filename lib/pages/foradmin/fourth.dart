@@ -11,6 +11,7 @@ import 'package:get_rekk/pages/foradmin/ongoingsched.dart';
 import 'package:get_rekk/pages/foradmin/passsched.dart';
 import 'package:get_rekk/pages/foradmin/upcomsched.dart';
 import 'package:get_rekk/pages/loginsignup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class Fourth extends StatefulWidget {
@@ -28,15 +29,18 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
   bool isMenuOpen = false;
   FirebaseAuth auth = FirebaseAuth.instance;
   var uuid = Uuid();
+
   @override
   void initState() {
     limits = [0, 0, 0, 0, 0, 0];
+
     WidgetsBinding.instance.addPostFrameCallback(getPosition);
     _tabController = TabController(
       initialIndex: 0,
       length: 3,
       vsync: this,
     );
+
     super.initState();
   }
 
@@ -239,7 +243,7 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
                                   padding: const EdgeInsets.only(top: 28.0),
                                   child: Text(
                                     // '',
-                                    UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                    UserLog.rank + '. ' + UserLog.fullName.toString().toUpperCase(),
                                     style: TextStyle(color: Colors.black45),
                                   ),
                                 ),

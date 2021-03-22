@@ -77,7 +77,7 @@ class _ResetState extends State<ResetState> {
       title: Text("Confirm"),
       content: Text(
         '''
-Are you sure to reset password of account: $email
+Are you sure you want to reset password of account: $email
 ''',
         maxLines: 20,
         style: TextStyle(fontSize: 16.0, color: Colors.black),
@@ -137,7 +137,7 @@ Are you sure to reset password of account: $email
     var usercheck;
     var activity = 'Reset password of name: $email';
     try {
-      var url = 'http://172.19.128.1/capstonejs/change.php';
+      var url = 'http://172.25.96.1/capstonejs/change.php';
       var data = {
         'emailSignup': email,
       };
@@ -226,17 +226,21 @@ Are you sure to reset password of account: $email
       children: <Widget>[
         Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 160, bottom: 10),
-              child: Text(
-                "Reset Password",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
-                  fontFamily: 'Nunito-Bold',
-                  fontWeight: FontWeight.bold,
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, left: 20, bottom: 10),
+                  child: Text(
+                    "Reset Password",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontFamily: 'Nunito-Bold',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -254,7 +258,7 @@ Are you sure to reset password of account: $email
                       controller: _emailTextController,
                       decoration: InputDecoration(
                           prefixIcon: IconButton(
-                            color: Colors.green,
+                            color: Color(0xff085078),
                             icon: Icon(Icons.mail_outline_sharp),
                             iconSize: 20.0,
                             onPressed: () {},
@@ -277,13 +281,13 @@ Are you sure to reset password of account: $email
                                       return Center(
                                           child: CircularProgressIndicator(
                                         backgroundColor: Colors.white,
-                                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
+                                        valueColor: new AlwaysStoppedAnimation<Color>(Color(0xff085078)),
                                       ));
                                     case ConnectionState.none:
                                       return Center(
                                           child: CircularProgressIndicator(
                                         backgroundColor: Colors.white,
-                                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
+                                        valueColor: new AlwaysStoppedAnimation<Color>(Color(0xff085078)),
                                       ));
                                     case ConnectionState.done:
                                       return Text("done");
@@ -314,58 +318,18 @@ Are you sure to reset password of account: $email
                               // height: 200,
                               child: Column(
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      RoundedLoadingButton(
-                                        color: Color(0xff1D976C),
-                                        child: Text('Reset', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
-                                        controller: _btnController,
-                                        onPressed: () {
-                                          //  sendData();
-                                          setState(() {
-                                            FocusScope.of(context).requestFocus(new FocusNode());
-                                            SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                            showAlertDialog(context);
-                                          });
-                                        },
-                                      ),
-                                      // RaisedButton(
-                                      //   onPressed: () {
-                                      //     sendReqChange();
-                                      //   },
-                                      //   shape: RoundedRectangleBorder(
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(80.0)),
-                                      //   padding: const EdgeInsets.all(0.0),
-                                      //   child: Ink(
-                                      //     decoration: const BoxDecoration(
-                                      //       gradient: LinearGradient(
-                                      //           colors: [
-                                      //             Color(0xff93F9B9),
-                                      //             Color(0xff1D976C)
-                                      //           ],
-                                      //           begin: const FractionalOffset(
-                                      //               0.0, 0.0),
-                                      //           end: const FractionalOffset(
-                                      //               1.0, 1.0),
-                                      //           stops: [0.0, 1.0],
-                                      //           tileMode: TileMode.clamp),
-                                      //       borderRadius: BorderRadius.all(
-                                      //           Radius.circular(80.0)),
-                                      //     ),
-                                      //     child: Container(
-                                      //       constraints: const BoxConstraints(
-                                      //           minWidth: 88.0,
-                                      //           minHeight:
-                                      //               36.0), // min sizes for Material buttons
-                                      //       alignment: Alignment.center,
-                                      //       child: Icon(Icons.check,
-                                      //           size: 20, color: Colors.white),
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                    ],
+                                  RoundedLoadingButton(
+                                    color: Color(0xff085078),
+                                    child: Text('Reset', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
+                                    controller: _btnController,
+                                    onPressed: () {
+                                      //  sendData();
+                                      setState(() {
+                                        FocusScope.of(context).requestFocus(new FocusNode());
+                                        SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                        showAlertDialog(context);
+                                      });
+                                    },
                                   ),
                                 ],
                               ),
@@ -411,7 +375,7 @@ Are you sure to reset password of account: $email
           height: 400,
           decoration: BoxDecoration(
             borderRadius: new BorderRadius.only(bottomRight: new Radius.circular(30.0), bottomLeft: new Radius.circular(0.0)),
-            gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+            gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
           ),
         ),
         GestureDetector(
@@ -435,11 +399,11 @@ Are you sure to reset password of account: $email
                     slivers: <Widget>[
                       SliverAppBar(
                         brightness: Brightness.light,
-                        backgroundColor: Color(0xff1D976C),
+                        backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
                         snap: true,
-                        shadowColor: Colors.green,
+                        shadowColor: Color(0xff085078),
                         flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,
                             title: Padding(
@@ -458,7 +422,7 @@ Are you sure to reset password of account: $email
                                     padding: const EdgeInsets.only(top: 1.0),
                                     child: AvatarGlow(
                                       startDelay: Duration(milliseconds: 0),
-                                      glowColor: Colors.lime,
+                                      glowColor: Colors.red,
                                       endRadius: 40.0,
                                       duration: Duration(milliseconds: 2000),
                                       repeat: true,
@@ -490,26 +454,18 @@ Are you sure to reset password of account: $email
                           (BuildContext context, int pdIndex) {
                             return SingleChildScrollView(
                               child: Column(children: [
-                                Row(
-                                  children: [
-                                    Column(
-                                      children: <Widget>[
-                                        Stack(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 30, bottom: 80),
-                                              child: Container(
-                                                  width: 350,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: new BorderRadius.circular(10.0),
-                                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                                                  ),
-                                                  child: _buildMain2()),
-                                            ),
-                                          ],
-                                        )
-                                      ],
+                                Stack(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 30, bottom: 80),
+                                      child: Container(
+                                          width: Get.width,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: new BorderRadius.circular(10.0),
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                                          ),
+                                          child: _buildMain2()),
                                     ),
                                   ],
                                 )
@@ -634,8 +590,8 @@ Are you sure to reset password of account: $email
                                         children: [
                                           Icon(
                                             Icons.logout,
-                                            color: Colors.lightGreen,
-                                            size: 20.0,
+                                            color: Color(0xff085078),
+                                            size: 25.0,
                                           ),
                                           Text(
                                             '  Logout',

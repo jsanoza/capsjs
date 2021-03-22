@@ -39,6 +39,11 @@ class Schedule {
   static List<String> searchteamname = [];
   static List<String> secuteamname = [];
   static List<String> vehicle = [];
+  static List<String> memberuid = [];
+  static String flaggedvehicles = '';
+  static String lastflag = '';
+  static String scannedvehicles = '';
+  static String lastscan = '';
   // static List<double> latloc = [];
   // static List<double> lngloc = [];
   static double latloc = 0;
@@ -74,10 +79,24 @@ class UserSched {
   static List<String> investteamname = [];
   static List<String> searchteamname = [];
   static List<String> secuteamname = [];
+
+  static List<String> vehicle = [];
 }
 
 class UserLog {
   static String ppUrl;
   static String rank;
   static String fullName;
+}
+
+class PastSchedule {
+  static String missionname = '';
+  static String purpose = '';
+  static String starttime = '';
+  static String endtime = '';
+  static String date = '';
+  static List<String> flaggedvehicles = [];
+  static List<String> scannedvehicles = [];
+  static List<String> vehicles = [];
+  static String missionid = '';
 }

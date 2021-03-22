@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
 import 'package:get_rekk/helpers/util.dart';
+import 'package:get_rekk/pages/foradmin/fourth.dart';
 import 'package:get_rekk/pages/foradmin/ongoingdetailspageone.dart';
 import 'package:get_rekk/pages/foradmin/ongoingdetailspagetwo.dart';
 import 'package:uuid/uuid.dart';
@@ -101,9 +102,15 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                   // title:
                   // Allows the user to reveal the app bar if they begin scrolling back
                   // up the list of items.
-                  leading: BackButton(color: Colors.white),
+                  leading: BackButton(
+                    color: Colors.white,
+                    onPressed: () {
+                      Get.offAll(Fourth());
+                    },
+                  ),
                   brightness: Brightness.light,
-                  backgroundColor: Color(0xff1D976C),
+                  backgroundColor: Color(0xff085078),
+
                   floating: true,
                   pinned: true,
                   snap: true,
@@ -129,7 +136,7 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                               padding: const EdgeInsets.only(top: 1.0),
                               child: AvatarGlow(
                                 startDelay: Duration(milliseconds: 0),
-                                glowColor: Colors.lime,
+                                glowColor: Colors.red,
                                 endRadius: 40.0,
                                 duration: Duration(milliseconds: 2000),
                                 repeat: true,

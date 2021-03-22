@@ -33,9 +33,13 @@ class _FirstState extends State<First> {
   TextEditingController _mnameRegTextController;
   TextEditingController _posRegTextController;
   TextEditingController _rankRegTextController;
-  TextEditingController _contactRegTextController;
+  // TextEditingController _contactRegTextController;
   TextEditingController _badgeRegTextController;
+  TextEditingController _newemailTextController;
+
   RoundedLoadingButtonController _btnController;
+  RoundedLoadingButtonController _btnControllerCheck;
+  RoundedLoadingButtonController _btnControllerConfirm;
   List<double> limits = [];
   List<String> indexList2 = [];
   List<String> choices = ['Team Leader', 'Spotter', 'Spokesperson', 'Patrolman'];
@@ -53,6 +57,8 @@ class _FirstState extends State<First> {
   String fullName;
   String initials;
   String initials2;
+  String initials3;
+  String ifdouble;
   var uuid = Uuid();
 
   bool _blackVisible = false;
@@ -61,6 +67,7 @@ class _FirstState extends State<First> {
   @override
   void initState() {
     limits = [0, 0, 0, 0, 0, 0];
+
     WidgetsBinding.instance.addPostFrameCallback(getPosition);
     _emailRegTextController = TextEditingController();
     _fnameRegTextController = TextEditingController();
@@ -69,8 +76,11 @@ class _FirstState extends State<First> {
     _badgeRegTextController = TextEditingController();
     _posRegTextController = TextEditingController();
     _rankRegTextController = TextEditingController();
-    _contactRegTextController = TextEditingController();
+    _newemailTextController = TextEditingController();
+    // _contactRegTextController = TextEditingController();
     _btnController = RoundedLoadingButtonController();
+    _btnControllerCheck = RoundedLoadingButtonController();
+    _btnControllerConfirm = RoundedLoadingButtonController();
     isShown = false;
     SystemChannels.textInput.invokeMethod('TextInput.hide');
     super.initState();
@@ -124,7 +134,19 @@ class _FirstState extends State<First> {
   // }
 
   Future getBadge(String badge) async {
-    var a = await FirebaseFirestore.instance.collection('users').where("email", isEqualTo: badge).get();
+    var a = await FirebaseFirestore.instance.collection('users').where("badgeNum", isEqualTo: badge).get();
+    if (a.docs.isNotEmpty) {
+      // print('Exists');
+      return true;
+    }
+    if (a.docs.isEmpty) {
+      // print('nope');
+      return false;
+    }
+  }
+
+  Future getEmail(String email) async {
+    var a = await FirebaseFirestore.instance.collection('users').where("email", isEqualTo: email).get();
     if (a.docs.isNotEmpty) {
       // print('Exists');
       return true;
@@ -163,19 +185,24 @@ class _FirstState extends State<First> {
     String fname = _fnameRegTextController.text;
     String mname = _mnameRegTextController.text;
     String lname = _lnameRegTextController.text;
+    String last3digits;
+    String badgeNum = _badgeRegTextController.text;
+
+    //check this tomorrow i want to show the email while user is still typing
+    _emailRegTextController.text = '';
+
     initials = getInitials(fname);
     initials2 = getInitials(mname);
-    String badgeNum = _badgeRegTextController.text;
-    String last3digits = badgeNum.toString().substring(badgeNum.length - 3);
-    //check this tomorrow i want to show the email while user is still typing
+    last3digits = badgeNum.toString().substring(badgeNum.length - 3);
 
     setState(() {
-      finalEmail = initials.toLowerCase().toString() + initials2.toLowerCase().toString() + lname.toLowerCase().toString() + last3digits.toString() + "@acpstwo.com";
+      finalEmail = initials.toLowerCase().toString() + initials2.toLowerCase().toString() + lname.toLowerCase().toString() + last3digits.toString() + "@acpsone.com";
       finalfinalEmail = finalEmail.split(" ").join("");
+
       tryEmail = initials.toLowerCase().toString() + initials2.toLowerCase().toString() + lname.toLowerCase().toString() + last3digits.toString();
       finaltryEmail = tryEmail.split(" ").join("");
-      fullName = fname.toString() + " " + lname.toString();
       _emailRegTextController.text = finaltryEmail;
+      ifdouble = initials.toLowerCase().toString() + initials2.toLowerCase().toString() + lname.toLowerCase().toString();
       print(finalfinalEmail.toString());
     });
   }
@@ -205,7 +232,7 @@ class _FirstState extends State<First> {
       title: Text("Confirm"),
       content: Text(
         '''
-Are you sure to create an account for: $comp
+Are you sure you want to create an account for: $comp
 
 With badge number: $bNum?
 
@@ -243,36 +270,46 @@ Auto-generated email is: $finaltryEmail@acpsone.com
 
     try {
       var badgeCheck = await getBadge(badgeNum);
-      print(badgeCheck);
+      var emailCheck = await getEmail(email + '@acpsone.com');
 
       if (badgeCheck == true) {
         print("andito");
+        _showErrorAlert(
+            title: "Registration failed.",
+            content: 'There is an existing user associated with this badge number.', //show error firebase
+            onPressed: _changeBlackVisible,
+            context: context);
       } else {
-        print("wala");
-        try {
-          var url = 'http://172.19.128.1/capstonejs/simple.php';
-          var data = {
-            'emailSignup': finalfinalEmail,
-            'name': name,
-          };
-          var response = await http.post(url, body: jsonEncode(data));
-          uid = response.body;
-          print(response.body);
-          if (response.body.length == 28) {
-            saveToData();
-          } else {
+        if (emailCheck == true) {
+          print("andito");
+          _showModalSheet();
+        } else {
+          try {
+            var url = 'http://172.26.32.1/capstonejs/simple.php';
+            var data = {
+              'emailSignup': finalfinalEmail,
+              'name': name,
+            };
+            var response = await http.post(url, body: data);
+            uid = response.body;
+            print(response.body);
+            if (response.body.length == 28) {
+              print('imhere');
+              saveToData();
+            } else {
+              _showErrorAlert(
+                  title: "Registration failed.",
+                  content: "Check your credentials", //show error firebase
+                  onPressed: _changeBlackVisible,
+                  context: context);
+            }
+          } catch (e) {
             _showErrorAlert(
                 title: "Registration failed.",
-                content: "Check your credentials", //show error firebase
+                content: e.printError(), //show error firebase
                 onPressed: _changeBlackVisible,
                 context: context);
           }
-        } catch (e) {
-          _showErrorAlert(
-              title: "Registration failed.",
-              content: e.printError(), //show error firebase
-              onPressed: _changeBlackVisible,
-              context: context);
         }
       }
     } catch (e) {
@@ -284,16 +321,265 @@ Auto-generated email is: $finaltryEmail@acpsone.com
     }
   }
 
+  void _showModalSheet() {
+    _btnController.reset();
+    FocusScope.of(context).requestFocus(new FocusNode());
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+    var letssee = ifdouble + '@acpsone.com';
+    bool isDisable = true;
+    bool isDisableCheck = false;
+    bool isReadOnly = false;
+    _newemailTextController.text = '';
+    // _btnControllerConfirm.stop();
+    // var letssee = '';
+    // _vehicleplateTextController.text = '';
+    showModalBottomSheet(
+      isScrollControlled: true,
+      isDismissible: false,
+      context: context,
+      builder: (builder) {
+        return WillPopScope(
+          onWillPop: () {
+            return null;
+          },
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter mystate) {
+              return Container(
+                height: 600,
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: new BorderRadius.only(topRight: new Radius.circular(10.0), topLeft: new Radius.circular(10.0)),
+                        color: Colors.white,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 30.0,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                "Registration Failed",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 30.0,
+                                  fontFamily: 'Nunito-Bold',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 30.0, top: 20),
+                                child: Text(
+                                  "There is an existing user associated with this \n email address.",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16.0,
+                                    fontFamily: 'Nunito-Bold',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 30.0, top: 20),
+                                child: Text(
+                                  "To avoid conflicts, please input a new address:",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16.0,
+                                    fontFamily: 'Nunito-Bold',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 30.0, top: 20),
+                                child: Text(
+                                  letssee,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16.0,
+                                    fontFamily: 'Nunito-Bold',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 20, left: 40, right: 40, top: 10),
+                            child: TextField(
+                              textCapitalization: TextCapitalization.characters,
+                              controller: _newemailTextController,
+                              readOnly: isReadOnly,
+                              maxLength: 5,
+                              maxLengthEnforced: true,
+                              inputFormatters: [
+                                new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+                              ],
+                              onChanged: (String value) async {
+                                if (value != '') {
+                                  setState(() {});
+                                  mystate(() {
+                                    letssee = '';
+                                    letssee = ifdouble + _newemailTextController.text + '@acpsone.com';
+                                  });
+                                }
+                              },
+                              decoration: InputDecoration(
+                                  counterText: '',
+                                  isDense: true,
+                                  prefixIcon: IconButton(
+                                    color: Color(0xff085078),
+                                    icon: Icon(Icons.contact_mail),
+                                    iconSize: 20.0,
+                                    onPressed: () {},
+                                  ),
+                                  contentPadding: EdgeInsets.only(left: 25.0),
+                                  hintText: 'Input numbers',
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 30.0, top: 10),
+                                child: Text(
+                                  'Minimum length of 3 digit numbers.',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16.0,
+                                    fontFamily: 'Nunito-Bold',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 30.0, top: 10),
+                                child: Text(
+                                  'Maximum length of 5 digit numbers.',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16.0,
+                                    fontFamily: 'Nunito-Bold',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0, right: 0, left: 5, bottom: 30),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    RoundedLoadingButton(
+                                      width: 100,
+                                      color: Color(0xff1D976C),
+                                      child: Text('Check', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
+                                      controller: _btnControllerCheck,
+                                      onPressed: isDisableCheck
+                                          ? null
+                                          : () async {
+                                              FocusScope.of(context).requestFocus(new FocusNode());
+                                              SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                              print("hindi");
+                                              var emailCheck = await getEmail(letssee);
+                                              if (emailCheck == true) {
+                                                _showErrorAlert(
+                                                    title: "Registration failed.",
+                                                    content: 'There is an existing user associated with this email address.', //show error firebase
+                                                    onPressed: _changeBlackVisible,
+                                                    context: context);
+                                                mystate(() {
+                                                  _btnControllerCheck.reset();
+                                                });
+                                              } else {
+                                                mystate(() {
+                                                  letssee = ifdouble + _newemailTextController.text + '@acpsone.com' + '  is good to go!';
+                                                  isReadOnly = true;
+                                                  isDisable = false;
+                                                  isDisableCheck = true;
+                                                  _btnControllerCheck.reset();
+                                                  setState(() {
+                                                    _emailRegTextController.text = ifdouble + _newemailTextController.text;
+                                                    finalfinalEmail = ifdouble + _newemailTextController.text + '@acpsone.com';
+                                                  });
+                                                });
+                                              }
+                                            },
+                                    ),
+                                    RoundedLoadingButton(
+                                      color: Color(0xff085078),
+                                      width: 100,
+                                      child: Text('Confirm', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
+                                      controller: _btnControllerConfirm,
+                                      onPressed: isDisable
+                                          ? null
+                                          : () async {
+                                              FocusScope.of(context).requestFocus(new FocusNode());
+                                              SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                              print("hindi");
+                                              Get.back();
+                                              setState(() {
+                                                _emailRegTextController.text = ifdouble + _newemailTextController.text;
+                                                finalfinalEmail = ifdouble + _newemailTextController.text + '@acpsone.com';
+                                                showAlertDialog(context);
+                                              });
+                                            },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   Future saveToData() async {
     String fname = _fnameRegTextController.text;
     String mname = _mnameRegTextController.text;
     String lname = _lnameRegTextController.text;
-    String contact = _contactRegTextController.text;
+    // String contact = _contactRegTextController.text;
     String badgeNum = _badgeRegTextController.text;
     var collectionid2 = uuid.v1();
     User user = auth.currentUser;
-    var currentUser = user.uid;
+    // var currentUser = user.uid;
     var usercheck;
+    fullName = fname + ' ' + lname;
     var activity = 'Created a new user with the name: $fullName';
 
     var outputFormat2 = DateFormat('dd-MM-yyyy');
@@ -330,10 +616,11 @@ Auto-generated email is: $finaltryEmail@acpsone.com
         'badgeNum': badgeNum,
         'position': newValue,
         'rank': dropdownValue,
-        'contact': contact,
+        'contact': '(0000) 000-0000',
         'datecreated': finalCreate,
-        'createdby': 'toadd',
-        'picUrl': picUrl
+        'createdby': usercheck,
+        'picUrl': picUrl,
+        "isphoneverified": false
       }).then((value) {
         FirebaseFirestore.instance.collection("userlevel").doc(uid.toString()).set({
           'fullName': fullName,
@@ -342,6 +629,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
           'badgeNum': badgeNum,
           'createdby': 'toadd',
           'datecreated': finalCreate,
+          "isphoneverified": false,
         });
 
         FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
@@ -369,7 +657,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
           _badgeRegTextController.clear();
           _posRegTextController.clear();
           _rankRegTextController.clear();
-          _contactRegTextController.clear();
+          // _contactRegTextController.clear();
           _lnameRegTextController.clear();
           _mnameRegTextController.clear();
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -426,54 +714,50 @@ Auto-generated email is: $finaltryEmail@acpsone.com
       children: <Widget>[
         Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 80, bottom: 10),
-              child: Text(
-                "Register New Credentials",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
-                  fontFamily: 'Nunito-Bold',
-                  fontWeight: FontWeight.bold,
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, left: 20, bottom: 10),
+                  child: Text(
+                    "Register New Credentials",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontFamily: 'Nunito-Bold',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 12.0, top: 12, bottom: 12, right: 0),
+              padding: const EdgeInsets.only(right: 12.0, left: 12, top: 0, bottom: 12),
               child: Container(
                 width: 480,
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 230,
-                          child: TextField(
-                            enabled: false,
-                            controller: _emailRegTextController,
-                            maxLength: 32,
-                            inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                            ],
-                            decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                prefixIcon: IconButton(
-                                  color: Colors.green,
-                                  icon: Icon(Icons.mail_outline_sharp),
-                                  iconSize: 20.0,
-                                  onPressed: () {},
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: 'Email',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text("@acpsone.com"),
-                        )
+                    TextField(
+                      // enabled: false,
+                      readOnly: true,
+                      controller: _emailRegTextController,
+                      maxLength: 32,
+                      onChanged: (String value) async {},
+                      inputFormatters: [
+                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
                       ],
+                      decoration: InputDecoration(
+                          counterText: '',
+                          suffixText: new TextSpan(text: '@acpsone.com  ').text,
+                          isDense: true,
+                          prefixIcon: IconButton(
+                            color: Color(0xff085078),
+                            icon: Icon(Icons.mail_outline_sharp),
+                            iconSize: 20.0,
+                            onPressed: () {},
+                          ),
+                          contentPadding: EdgeInsets.only(left: 25.0),
+                          // hintText: 'Email',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
                     ),
                   ],
                 ),
@@ -487,7 +771,13 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                   children: [
                     TextField(
                       maxLength: 50,
+                      onChanged: (String value) async {
+                        if (value != '') {
+                          inputEmail();
+                        }
+                      },
                       controller: _fnameRegTextController,
+                      textCapitalization: TextCapitalization.words,
                       inputFormatters: [
                         new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z ]")),
                       ],
@@ -495,7 +785,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                           counterText: '',
                           isDense: true,
                           prefixIcon: IconButton(
-                            color: Colors.green,
+                            color: Color(0xff085078),
                             icon: Icon(Icons.perm_identity),
                             iconSize: 20.0,
                             onPressed: () {},
@@ -516,7 +806,13 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                   children: [
                     TextField(
                       maxLength: 50,
+                      onChanged: (String value) async {
+                        if (value != '') {
+                          inputEmail();
+                        }
+                      },
                       controller: _mnameRegTextController,
+                      textCapitalization: TextCapitalization.words,
                       inputFormatters: [
                         new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z ]")),
                       ],
@@ -524,7 +820,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                           counterText: '',
                           isDense: true,
                           prefixIcon: IconButton(
-                            color: Colors.green,
+                            color: Color(0xff085078),
                             icon: Icon(Icons.perm_identity),
                             iconSize: 20.0,
                             onPressed: () {},
@@ -544,9 +840,12 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                 child: Column(
                   children: [
                     TextField(
-                      onChanged: (String value) {},
+                      onChanged: (String value) async {
+                        inputEmail();
+                      },
                       maxLength: 50,
                       controller: _lnameRegTextController,
+                      textCapitalization: TextCapitalization.words,
                       inputFormatters: [
                         new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z ]")),
                       ],
@@ -554,7 +853,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                           counterText: '',
                           isDense: true,
                           prefixIcon: IconButton(
-                            color: Colors.green,
+                            color: Color(0xff085078),
                             icon: Icon(Icons.perm_identity),
                             iconSize: 20.0,
                             onPressed: () {},
@@ -576,12 +875,15 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                     TextField(
                       keyboardType: TextInputType.number,
                       controller: _badgeRegTextController,
+                      onChanged: (String value) async {
+                        inputEmail();
+                      },
                       maxLength: 10,
                       decoration: InputDecoration(
                           counterText: '',
                           isDense: true,
                           prefixIcon: IconButton(
-                            color: Colors.green,
+                            color: Color(0xff085078),
                             icon: Icon(Icons.payment),
                             iconSize: 20.0,
                             onPressed: () {},
@@ -605,7 +907,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0, top: 5),
-                        child: Icon(Icons.how_to_reg, size: 20, color: Colors.green),
+                        child: Icon(Icons.how_to_reg, size: 20, color: Color(0xff085078)),
                       ),
                     ],
                   ),
@@ -657,7 +959,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0, top: 5),
-                        child: Icon(Icons.military_tech, size: 20, color: Colors.green),
+                        child: Icon(Icons.military_tech, size: 20, color: Color(0xff085078)),
                       ),
                     ],
                   ),
@@ -698,33 +1000,33 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                 ),
               ]),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0, left: 12, top: 0, bottom: 12),
-              child: Container(
-                width: 480,
-                child: Column(
-                  children: [
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      maxLength: 11,
-                      controller: _contactRegTextController,
-                      decoration: InputDecoration(
-                          counterText: '',
-                          isDense: true,
-                          prefixIcon: IconButton(
-                            color: Colors.green,
-                            icon: Icon(Icons.contact_page),
-                            iconSize: 20.0,
-                            onPressed: () {},
-                          ),
-                          contentPadding: EdgeInsets.only(left: 25.0),
-                          hintText: 'Contact Number',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(right: 12.0, left: 12, top: 0, bottom: 12),
+            //   child: Container(
+            //     width: 480,
+            //     child: Column(
+            //       children: [
+            //         TextField(
+            //           keyboardType: TextInputType.number,
+            //           maxLength: 11,
+            //           controller: _contactRegTextController,
+            //           decoration: InputDecoration(
+            //               counterText: '',
+            //               isDense: true,
+            //               prefixIcon: IconButton(
+            //                 color: Colors.green,
+            //                 icon: Icon(Icons.contact_page),
+            //                 iconSize: 20.0,
+            //                 onPressed: () {},
+            //               ),
+            //               contentPadding: EdgeInsets.only(left: 25.0),
+            //               hintText: 'Contact Number',
+            //               border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.only(top: 0.0, right: 0, left: 0, bottom: 10),
               child: Container(
@@ -734,36 +1036,45 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // RaisedButton(
-                        //   onPressed: () {
-                        //     sendData();
-                        //     // sendData2();
-                        //   },
-                        //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
-                        //   padding: const EdgeInsets.all(0.0),
-                        //   child: Ink(
-                        //     decoration: const BoxDecoration(
-                        //       gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
-                        //       borderRadius: BorderRadius.all(Radius.circular(80.0)),
-                        //     ),
-                        //     child: Container(
-                        //       constraints: const BoxConstraints(minWidth: 88.0, minHeight: 36.0), // min sizes for Material buttons
-                        //       alignment: Alignment.center,
-                        //       child: Icon(Icons.check, size: 20, color: Colors.white),
-                        //     ),
-                        //   ),
-                        // ),
                         RoundedLoadingButton(
-                          color: Color(0xff1D976C),
+                          color: Color(0xff085078),
                           child: Text('Register', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
                           controller: _btnController,
                           onPressed: () {
-                            //  sendData();
-                            setState(() {
+                            // _showModalSheet();
+                            if (_emailRegTextController.text.isEmpty || _fnameRegTextController.text.isEmpty || _badgeRegTextController.text.isEmpty || dropdownValue == null || newValue == null || _lnameRegTextController.text.isEmpty || _mnameRegTextController.text.isEmpty) {
+                              print(dropdownValue);
+                              print(newValue);
+                              _btnController.reset();
                               FocusScope.of(context).requestFocus(new FocusNode());
                               SystemChannels.textInput.invokeMethod('TextInput.hide');
+                              _showErrorAlert(
+                                  title: "Registration failed.",
+                                  content: 'All fields required!', //show error firebase
+                                  onPressed: _changeBlackVisible,
+                                  context: context);
+                            } else if (newValue == 'Team Leader' && dropdownValue == 'PO1' ||
+                                newValue == 'Team Leader' && dropdownValue == 'PO2' ||
+                                newValue == 'Team Leader' && dropdownValue == 'PO3' ||
+                                newValue == 'Team Leader' && dropdownValue == 'SPO1' ||
+                                newValue == 'Team Leader' && dropdownValue == 'SPO2' ||
+                                newValue == 'Team Leader' && dropdownValue == 'SPO3' ||
+                                newValue == 'Team Leader' && dropdownValue == 'SPO4') {
+                              print('the chosen rank is not allowed to be a team leader');
+                              _showErrorAlert(
+                                  title: "Registration failed.",
+                                  content: 'The chosen rank is not allowed to be a team leader', //show error firebase
+                                  onPressed: _changeBlackVisible,
+                                  context: context);
+                              _btnController.reset();
+                              FocusScope.of(context).requestFocus(new FocusNode());
+                              SystemChannels.textInput.invokeMethod('TextInput.hide');
+                            } else {
                               showAlertDialog(context);
-                            });
+                              _btnController.reset();
+                              FocusScope.of(context).requestFocus(new FocusNode());
+                              SystemChannels.textInput.invokeMethod('TextInput.hide');
+                            }
                           },
                         ),
                       ],
@@ -808,7 +1119,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
           height: 450,
           decoration: BoxDecoration(
             borderRadius: new BorderRadius.only(bottomRight: new Radius.circular(30.0), bottomLeft: new Radius.circular(0.0)),
-            gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+            gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
           ),
         ),
         GestureDetector(
@@ -836,11 +1147,11 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                         // up the list of items.
 
                         brightness: Brightness.light,
-                        backgroundColor: Color(0xff1D976C),
+                        backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
                         snap: true,
-                        shadowColor: Colors.green,
+                        shadowColor: Colors.blueAccent,
                         // Display a placeholder widget to visualize the shrinking size.
                         flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,
@@ -860,7 +1171,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                                     padding: const EdgeInsets.only(top: 1.0),
                                     child: AvatarGlow(
                                       startDelay: Duration(milliseconds: 0),
-                                      glowColor: Colors.lime,
+                                      glowColor: Colors.red,
                                       endRadius: 40.0,
                                       duration: Duration(milliseconds: 2000),
                                       repeat: true,
@@ -896,26 +1207,18 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                           (BuildContext context, int pdIndex) {
                             return SingleChildScrollView(
                               child: Column(children: [
-                                Row(
-                                  children: [
-                                    Column(
-                                      children: <Widget>[
-                                        new Stack(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 25, bottom: 40),
-                                              child: Container(
-                                                  width: 350,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: new BorderRadius.circular(10.0),
-                                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                                                  ),
-                                                  child: _buildMain()),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                new Stack(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 30, bottom: 40),
+                                      child: Container(
+                                          width: Get.width,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: new BorderRadius.circular(10.0),
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                                          ),
+                                          child: _buildMain()),
                                     ),
                                   ],
                                 )
@@ -1047,7 +1350,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                                         children: [
                                           Icon(
                                             Icons.logout,
-                                            color: Colors.lightGreen,
+                                            color: Color(0xff085078),
                                             size: 20.0,
                                           ),
                                           Text(

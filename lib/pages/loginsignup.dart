@@ -8,17 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:get_rekk/helpers/util.dart';
+import 'package:get_rekk/pages/phoneverification.dart';
+import 'package:get_rekk/pages/resetpassword.dart';
 import 'package:rect_getter/rect_getter.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-import 'foradmin/dashboard.dart';
+
 import 'foradmin/fourth.dart';
-import 'foradmin/newSched..dart';
-import 'forusers/editinfo.dart';
-import 'forusers/loading.dart';
+
 import 'forusers/userssched.dart';
-import 'third.dart';
 
 class LogSign extends StatefulWidget {
   LogSign({Key key}) : super(key: key);
@@ -31,7 +30,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController _emailTextController;
   TextEditingController _passwordTextController;
-  final RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
+
   FirebaseAuth auth = FirebaseAuth.instance;
   bool _blackVisible = false;
   PageController _pageController;
@@ -40,8 +39,9 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   bool isRequ = true;
   bool isRequ2 = false;
   bool _obscureText3 = true;
-  bool _obscureText2 = true;
-  bool _obscureText = true;
+  bool isPhoneVerified = false;
+  String isPhoneVer;
+
   var data;
   var ppUrlx;
   var fullnamex;
@@ -62,9 +62,17 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   }
 
   void _goToNextPage() {
-    if (data == 'user') {
+    if (data == 'user' && isPhoneVer.toString() == 'true') {
       Get.offAll(UsersSched(), transition: Transition.fadeIn);
-    } else {
+    } else if (data == 'user' && isPhoneVer.toString() == 'false') {
+      // Get.offAll(Fourth(), transition: Transition.fadeIn);
+      Get.offAll(
+          Phone(
+            isVerified: false,
+            fromWhere: 'editUser',
+          ),
+          transition: Transition.fadeIn);
+    } else if (data == 'admin') {
       Get.offAll(Fourth(), transition: Transition.fadeIn);
     }
   }
@@ -87,85 +95,41 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        new Scaffold(
-          key: _scaffoldKey,
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(right: 56, bottom: 228),
-            child: RectGetter(
-                key: rectGetterKey,
-                child: Padding(
-                  padding: const EdgeInsets.all(0),
-                )),
-          ),
-          body: NotificationListener<OverscrollIndicatorNotification>(
-            // ignore: missing_return
-            onNotification: (overscroll) {
-              overscroll.disallowGlow();
-            },
-            child: SingleChildScrollView(
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
+        child: Stack(
+          children: <Widget>[
+            Container(
+              height: Get.height,
+              decoration: BoxDecoration(
+                gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+              ),
+            ),
+            NotificationListener<OverscrollIndicatorNotification>(
+              // ignore: missing_return
+              onNotification: (overscroll) {
+                overscroll.disallowGlow();
+              },
               child: Container(
-                width: Get.width,
                 height: Get.height,
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Stack(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(top: 80.0, bottom: 30, left: 18, right: 18),
-                          child: new Image(width: Get.width, height: 150.0, fit: BoxFit.contain, image: new AssetImage('assets/images/logo1.png')),
-                        ),
-                      ],
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 80.0, bottom: 30, left: 18, right: 18),
+                      child: new Image(width: Get.width, height: 150.0, fit: BoxFit.contain, image: new AssetImage('assets/images/logo1.png')),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 10.0),
-                      child: _buildMenuBar(context),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10.0),
+                      padding: const EdgeInsets.only(top: 230.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: new LinearGradient(
-                                  colors: [
-                                    Colors.white10,
-                                    Colors.white,
-                                  ],
-                                  begin: const FractionalOffset(0.0, 0.0),
-                                  end: const FractionalOffset(1.0, 1.0),
-                                  stops: [0.0, 1.0],
-                                  tileMode: TileMode.clamp),
-                            ),
-                            width: 100.0,
-                            height: 1.0,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: new LinearGradient(
-                                  colors: [
-                                    Colors.white,
-                                    Colors.white10,
-                                  ],
-                                  begin: const FractionalOffset(0.0, 0.0),
-                                  end: const FractionalOffset(1.0, 1.0),
-                                  stops: [0.0, 1.0],
-                                  tileMode: TileMode.clamp),
-                            ),
-                            width: 100.0,
-                            height: 1.0,
-                          ),
+                        children: [
+                          _buildMenuBar(context),
                         ],
                       ),
                     ),
-                    Expanded(
-                      flex: 2,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 270.0),
                       child: PageView(
                         controller: _pageController,
                         onPageChanged: (i) {
@@ -192,47 +156,49 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                           ),
                           new ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
-                            child: Container(),
+                            child: _buildSignUp(context),
                           ),
                         ],
                       ),
-                    ),
-                    Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        Container(
-                          child: AnimatedWave(
-                            color: Color(0xff85D8CE),
-                            height: 80,
-                            speed: 0.7,
-                          ),
-                        ),
-                        Container(
-                          child: AnimatedWave(
-                            color: Color(0xff3f4c6b),
-                            height: 60,
-                            speed: 1.0,
-                            offset: pi,
-                          ),
-                        ),
-                        Container(
-                          child: AnimatedWave(
-                            color: Color(0xff085078),
-                            height: 60,
-                            speed: 1.4,
-                            offset: pi / 2,
-                          ),
-                        ),
-                      ],
                     ),
                   ],
                 ),
               ),
             ),
-          ),
+            Container(
+              height: Get.height,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Container(
+                    child: AnimatedWave(
+                      color: Color(0xff85D8CE),
+                      height: 80,
+                      speed: 0.7,
+                    ),
+                  ),
+                  Container(
+                    child: AnimatedWave(
+                      color: Color(0xff3f4c6b),
+                      height: 60,
+                      speed: 1.0,
+                      offset: pi,
+                    ),
+                  ),
+                  Container(
+                    child: AnimatedWave(
+                      color: Color(0xff085078),
+                      height: 60,
+                      speed: 1.4,
+                      offset: pi / 2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        _ripple(),
-      ],
+      ),
     );
   }
 
@@ -261,18 +227,6 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
     });
   }
 
-  void _toggle() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
-  }
-
-  void _toggleRe() {
-    setState(() {
-      _obscureText2 = !_obscureText2;
-    });
-  }
-
   void _changeBlackVisible() {
     _blackVisible = !_blackVisible;
   }
@@ -292,7 +246,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   }
 
   void handleSignIn() async {
-    var email = _emailTextController.text.trim();
+    var email = _emailTextController.text.trim() + '@acpsone.com';
     var password = _passwordTextController.text.trim();
     SharedPreferences level = await SharedPreferences.getInstance();
     SharedPreferences ppUrlSP = await SharedPreferences.getInstance();
@@ -313,18 +267,20 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
           ppUrlx = hello2.data()['picUrl'];
           fullnamex = hello2.data()['fullName'];
           rankx = hello2.data()['rank'];
-
+          isPhoneVer = hello.data()['isphoneverified'].toString();
           await level.setString('level', data);
-          await ppUrlSP.setString('ppUrlSP', data);
-          await fullNameSP.setString('fullNameSP', data);
-          await rankSP.setString('rankSP', data);
+          await ppUrlSP.setString('ppUrlSP', ppUrlx);
+          await fullNameSP.setString('fullNameSP', fullnamex);
+          await rankSP.setString('rankSP', rankx);
 
-          print(level.getString("level"));
-          User user = auth.currentUser;
-          var collectionid2 = uuid.v1();
           UserLog.ppUrl = hello2.data()['picUrl'];
           UserLog.fullName = hello2.data()['fullName'];
           UserLog.rank = hello2.data()['rank'];
+          User user = auth.currentUser;
+
+          print(level.getString("level"));
+          var collectionid2 = uuid.v1();
+
           FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
             'lastactivity_datetime': Timestamp.now(),
           }).then((value) {
@@ -336,11 +292,12 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
           }).then((value) {
             // auth.signOut();
             // Get.offAll(LogSign());
+
             _onTap();
           });
         }
       }
-    } catch (error) {
+    } on FirebaseAuthException catch (error) {
       switch (error.code) {
         case "ERROR_EMAIL_ALREADY_IN_USE":
         case "account-exists-with-different-credential":
@@ -442,34 +399,9 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildSignupbtn() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 0.0),
-      child: Stack(
-        children: <Widget>[
-          Center(
-              child: Container(
-            child: RoundedLoadingButton(
-              color: Color(0xff1D976C),
-              child: Text('Register', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
-              controller: _btnController,
-              onPressed: () {
-                //   _signUp(
-                //       email: _emailSup.text,
-                //       password: _passwordSup.text,
-                //       context: context);
-                // }, //_doSomething next
-              },
-            ),
-          )),
-        ],
-      ),
-    );
-  }
-
   Widget _buildLoginBtn() {
     return Padding(
-      padding: const EdgeInsets.only(top: 40.0),
+      padding: const EdgeInsets.only(top: 50.0),
       child: Container(
         // color: Colors.transparent,
         decoration: new BoxDecoration(
@@ -518,7 +450,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
 
   Widget _buildSignIn(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 10.0),
+      padding: EdgeInsets.only(top: 10.0, left: 30, right: 30),
       child: Column(
         children: <Widget>[
           Stack(
@@ -532,8 +464,8 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Container(
-                  width: 330.0,
-                  height: 190.0,
+                  width: Get.width,
+                  height: 200.0,
                   child: Column(
                     children: <Widget>[
                       Padding(
@@ -546,12 +478,17 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                                 keyboardType: TextInputType.emailAddress,
                                 //controller here
                                 controller: _emailTextController,
-                                maxLength: 60,
+                                maxLength: 32,
+                                inputFormatters: [
+                                  new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                                ],
+
                                 decoration: InputDecoration(
+                                  suffixText: new TextSpan(text: '@acps...').text,
                                   counterText: '',
                                   isDense: true,
                                   labelText: 'Email',
-                                  icon: Icon(Icons.mail_outline_sharp),
+                                  prefixIcon: Icon(Icons.mail_outline_sharp),
                                   contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                   hintText: "Email",
                                   enabledBorder: OutlineInputBorder(
@@ -585,7 +522,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                                   counterText: '',
                                   isDense: true,
                                   labelText: 'Password',
-                                  icon: Icon(Icons.lock_outline_sharp),
+                                  prefixIcon: Icon(Icons.lock_outline_sharp),
                                   contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                   hintText: "Password",
                                   suffixIcon: GestureDetector(
@@ -622,15 +559,56 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
               ),
             ],
           ),
-          // Padding(
-          //   padding: EdgeInsets.only(top: 10.0),
-          //   child: FlatButton(
-          //       onPressed: () {},
-          //       child: Text(
-          //         "Forgot Password?",
-          //         style: TextStyle(decoration: TextDecoration.underline, color: Colors.white, fontSize: 15, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w400),
-          //       )),
-          // ),
+          Padding(
+            padding: EdgeInsets.only(top: 30.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: new LinearGradient(
+                        colors: [
+                          Colors.white10,
+                          Colors.white,
+                        ],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(1.0, 1.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp),
+                  ),
+                  width: 100.0,
+                  height: 1.0,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: new LinearGradient(
+                        colors: [
+                          Colors.white,
+                          Colors.white10,
+                        ],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(1.0, 1.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp),
+                  ),
+                  width: 100.0,
+                  height: 1.0,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: FlatButton(
+              onPressed: () {
+                Get.to(ResetPassword());
+              },
+              child: Text(
+                "Forgot Password?",
+                style: TextStyle(decoration: TextDecoration.underline, color: Colors.white, fontSize: 15, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w400),
+              ),
+            ),
+          ),
           // Padding(
           //   padding: EdgeInsets.only(top: 0.0),
           //   child: Row(
@@ -788,156 +766,60 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 17),
-                        child: Row(
-                          children: <Widget>[
-                            // new Expanded(child: _emailFieldSup),
-                            new Expanded(
-                              child: TextField(
-                                obscureText: false,
-                                //controller here
-                                maxLength: 60,
-                                decoration: InputDecoration(
-                                  counterText: '',
-                                  isDense: true,
-                                  labelText: 'Name',
-                                  prefixIcon: Icon(Icons.account_box),
-                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                  hintText: "Name",
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey, width: 2),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        padding: const EdgeInsets.only(top: 18.0),
+                        child: Text('Welcome Officer!', style: TextStyle(fontSize: 20)),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 20),
-                        child: Row(
-                          children: <Widget>[
-                            // new Expanded(child: _emailFieldSup),
-                            new Expanded(
-                              child: TextField(
-                                obscureText: false,
-                                keyboardType: TextInputType.emailAddress,
-                                maxLength: 60,
-                                //controller here
-                                decoration: InputDecoration(
-                                  counterText: '',
-                                  isDense: true,
-                                  labelText: 'Email',
-                                  prefixIcon: Icon(Icons.mail_outline_sharp),
-                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                  hintText: "Email",
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey, width: 2),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        padding: const EdgeInsets.only(top: 28.0, left: 10, right: 10),
+                        child: Text('To use this app, you should: ', style: TextStyle(fontSize: 12)),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 30.0, left: 30, top: 20),
-                        child: Row(
-                          children: <Widget>[
-                            // new Expanded(
-                            //   child: _passwordfieldSup,
-                            // ),
-                            new Expanded(
-                              child: TextField(
-                                obscureText: _obscureText,
-                                maxLength: 30,
-                                //controller here
-                                decoration: InputDecoration(
-                                  counterText: '',
-                                  isDense: true,
-                                  labelText: 'Password',
-                                  prefixIcon: Icon(Icons.lock_outline_sharp),
-                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                  hintText: "Password",
-                                  suffixIcon: GestureDetector(
-                                    onTap: () {
-                                      _toggle();
-                                    },
-                                    child: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey, width: 2),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        padding: const EdgeInsets.only(top: 5.0, left: 10, right: 10),
+                        child: Text('Get your login credentials from your administrator. ', style: TextStyle(fontSize: 12)),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 30.0, left: 30, top: 20),
-                        child: Row(
-                          children: <Widget>[
-                            // new Expanded(
-                            //   child: _repasswordfieldSup,
-                            // ),
-                            new Expanded(
-                              child: TextField(
-                                obscureText: _obscureText2,
-                                maxLength: 30,
-                                //controller here
-                                decoration: InputDecoration(
-                                  counterText: '',
-                                  isDense: true,
-                                  labelText: 'Re-Enter Password',
-                                  prefixIcon: Icon(Icons.lock_outline_sharp),
-                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                  hintText: "Re-Enter Password",
-                                  suffixIcon: GestureDetector(
-                                    onTap: () {
-                                      _toggleRe();
-                                    },
-                                    child: Icon(_obscureText2 ? Icons.visibility_off : Icons.visibility),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey, width: 2),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color(0xff93F9B9), width: 2),
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        padding: const EdgeInsets.only(top: 5.0, left: 10, right: 10),
+                        child: Text('Once you logged in, verify your phone number. ', style: TextStyle(fontSize: 12)),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 25.0, left: 10, right: 10),
+                        child: Text('In case you forgot your password, you should: ', style: TextStyle(fontSize: 12)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5.0, left: 10, right: 10),
+                        child: Text('Request for a password change link, then the system  ', style: TextStyle(fontSize: 12)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5.0, left: 10, right: 10),
+                        child: Text('will send you a link to your verified phone number in ', style: TextStyle(fontSize: 12)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5.0, left: 10, right: 10),
+                        child: Text('order to change your password.', style: TextStyle(fontSize: 12)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 25.0, left: 10, right: 10),
+                        child: Text('In case you did not verify your phone number, you should: ', style: TextStyle(fontSize: 12)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5.0, left: 10, right: 10),
+                        child: Text('Contact your administrator.', style: TextStyle(fontSize: 12)),
+                      ),
+                      // Image.asset('assets/images/info.png'),
                     ],
                   ),
                 ),
               ),
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 290.0),
-                  child: Container(
-                    decoration: new BoxDecoration(borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(blurRadius: 12, offset: Offset(0, 1), color: Colors.white.withOpacity(.3), spreadRadius: 8)]),
-                    width: 250,
-                    child: _buildSignupbtn(),
-                  ),
-                ),
-              ),
+              // Container(
+              //   child: Padding(
+              //     padding: const EdgeInsets.only(top: 290.0),
+              //     child: Container(
+              //       decoration: new BoxDecoration(borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(blurRadius: 12, offset: Offset(0, 1), color: Colors.white.withOpacity(.3), spreadRadius: 8)]),
+              //       width: 250,
+              //       child: _buildSignupbtn(),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],

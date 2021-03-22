@@ -82,10 +82,12 @@ class _NewEditSchedState extends State<NewEditSched> {
   DateTime finalDatex;
   bool listSelec = false;
   String finalDate = Schedule.date;
-  String startTime = Schedule.starttime;
-  String endTime = Schedule.endtime;
+  String startTime;
+  String endTime; // = Schedule.endtime
   String docTitle;
   String oldcollectionid;
+  bool checknull1 = false;
+  bool checknull2 = false;
   // String dropdownValue = Schedule.teamlead;
   // String dropdownValuex = Schedule.spotter;
   // String dropdownValuey = Schedule.spokesperson;
@@ -156,7 +158,7 @@ class _NewEditSchedState extends State<NewEditSched> {
     _mapTextConroller.text = Schedule.location;
     _missionnameTextController.text = Schedule.missionname;
     userAll = Schedule.blockteam + Schedule.secuteam + Schedule.searchteam + Schedule.investteam;
-
+    vehiclelist.addAll(Schedule.vehicle);
     oldcollectionid = Schedule.collectionid;
     print(Schedule.blockteam.toString());
     print(Schedule.searchteam.length);
@@ -202,7 +204,7 @@ class _NewEditSchedState extends State<NewEditSched> {
       title: Text("Schedule"),
       content: Text(
         '''
-Are you sure to create a schedule for: $fffDate?
+Are you sure to edit this schedule for: $fffDate?
 Starting time: $sssTime
 Ends at: $eeeTime
 
@@ -247,6 +249,11 @@ Ends at: $eeeTime
     var c = DateFormat('MM-dd-yyyy HH:mm').parse(endTime.toString());
     Timestamp d = Timestamp.fromDate(c);
 
+    if (lattapnew == 0 || lngtapnew == 0) {
+      lattapnew = Schedule.latloc;
+      lngtapnew = Schedule.lngloc;
+    }
+
     try {
       for (var i = 0; i < vehiclelist.length; i++) {
         QuerySnapshot snap = await FirebaseFirestore.instance.collection('trialvehicles').where("plate", isEqualTo: vehiclelist[i]).get();
@@ -274,6 +281,55 @@ Ends at: $eeeTime
         });
       }
 
+      if (Schedule.teamlead.toString() != dropdownValue.toString()) {
+        QuerySnapshot delete = await FirebaseFirestore.instance.collection('users').where('fullName', isEqualTo: Schedule.teamlead.toString()).get();
+        delete.docs.forEach((doc) {
+          FirebaseFirestore.instance.collection('users').doc(doc.data()['collectionId']).collection('schedule').doc(oldcollectionid.toString()).delete();
+        });
+      }
+
+      if (Schedule.spotter.toString() != dropdownValue.toString()) {
+        QuerySnapshot delete = await FirebaseFirestore.instance.collection('users').where('fullName', isEqualTo: Schedule.spotter.toString()).get();
+        delete.docs.forEach((doc) {
+          FirebaseFirestore.instance.collection('users').doc(doc.data()['collectionId']).collection('schedule').doc(oldcollectionid.toString()).delete();
+        });
+      }
+
+      if (Schedule.spokesperson.toString() != dropdownValue.toString()) {
+        QuerySnapshot delete = await FirebaseFirestore.instance.collection('users').where('fullName', isEqualTo: Schedule.spokesperson.toString()).get();
+        delete.docs.forEach((doc) {
+          FirebaseFirestore.instance.collection('users').doc(doc.data()['collectionId']).collection('schedule').doc(oldcollectionid.toString()).delete();
+        });
+      }
+
+      for (var i = 0; i < deluserSearchItemsx.length; i++) {
+        QuerySnapshot delete = await FirebaseFirestore.instance.collection('users').where('badgeNum', isEqualTo: deluserSearchItemsx[i]).get();
+        delete.docs.forEach((doc) {
+          FirebaseFirestore.instance.collection('users').doc(doc.data()['collectionId']).collection('schedule').doc(oldcollectionid.toString()).delete();
+        });
+      }
+
+      for (var i = 0; i < deluserSearchArrestx.length; i++) {
+        QuerySnapshot delete = await FirebaseFirestore.instance.collection('users').where('badgeNum', isEqualTo: deluserSearchArrestx[i]).get();
+        delete.docs.forEach((doc) {
+          FirebaseFirestore.instance.collection('users').doc(doc.data()['collectionId']).collection('schedule').doc(oldcollectionid.toString()).delete();
+        });
+      }
+
+      for (var i = 0; i < deluserSearchSecurityx.length; i++) {
+        QuerySnapshot delete = await FirebaseFirestore.instance.collection('users').where('badgeNum', isEqualTo: deluserSearchSecurityx[i]).get();
+        delete.docs.forEach((doc) {
+          FirebaseFirestore.instance.collection('users').doc(doc.data()['collectionId']).collection('schedule').doc(oldcollectionid.toString()).delete();
+        });
+      }
+
+      for (var i = 0; i < deluserSearchBlockx.length; i++) {
+        QuerySnapshot delete = await FirebaseFirestore.instance.collection('users').where('badgeNum', isEqualTo: deluserSearchBlockx[i]).get();
+        delete.docs.forEach((doc) {
+          FirebaseFirestore.instance.collection('users').doc(doc.data()['collectionId']).collection('schedule').doc(oldcollectionid.toString()).delete();
+        });
+      }
+
       for (var i = 0; i < userSearchBlockx.length; i++) {
         QuerySnapshot search = await FirebaseFirestore.instance.collection('users').where('badgeNum', isEqualTo: userSearchBlockx[i]).get();
         search.docs.forEach((document) {
@@ -283,7 +339,7 @@ Ends at: $eeeTime
               .doc(document.data()['collectionId'])
               .collection('schedule')
               .doc(oldcollectionid.toString())
-              .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId']});
+              .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId'], "position": 'blockteam'});
         });
       }
 
@@ -296,7 +352,7 @@ Ends at: $eeeTime
               .doc(document.data()['collectionId'])
               .collection('schedule')
               .doc(oldcollectionid.toString())
-              .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId']});
+              .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId'], "position": 'investteam'});
         });
       }
 
@@ -309,7 +365,7 @@ Ends at: $eeeTime
               .doc(document.data()['collectionId'])
               .collection('schedule')
               .doc(oldcollectionid.toString())
-              .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId']});
+              .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId'], "position": 'searchteam'});
         });
       }
 
@@ -322,7 +378,7 @@ Ends at: $eeeTime
               .doc(document.data()['collectionId'])
               .collection('schedule')
               .doc(oldcollectionid.toString())
-              .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId']});
+              .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId'], "position": 'secuteam'});
         });
       }
 
@@ -334,7 +390,7 @@ Ends at: $eeeTime
             .doc(document.data()['collectionId'])
             .collection('schedule')
             .doc(oldcollectionid.toString())
-            .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId']});
+            .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId'], "position": 'teamlead'});
       });
 
       QuerySnapshot searchx = await FirebaseFirestore.instance.collection('users').where('fullName', isEqualTo: dropdownValuex.toString()).get();
@@ -345,7 +401,7 @@ Ends at: $eeeTime
             .doc(document.data()['collectionId'])
             .collection('schedule')
             .doc(oldcollectionid.toString())
-            .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId']});
+            .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId'], "position": 'spotter'});
       });
 
       QuerySnapshot searchy = await FirebaseFirestore.instance.collection('users').where('fullName', isEqualTo: dropdownValuey.toString()).get();
@@ -356,7 +412,7 @@ Ends at: $eeeTime
             .doc(document.data()['collectionId'])
             .collection('schedule')
             .doc(oldcollectionid.toString())
-            .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId']});
+            .set({'scheduleuid': oldcollectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), "querystarttime": a, "queryendtime": d, "uid": document.data()['collectionId'], "position": 'spokesperson'});
       });
 
       QuerySnapshot snapx = await FirebaseFirestore.instance.collection('trialvehicles').get();
@@ -394,7 +450,7 @@ Ends at: $eeeTime
         "investteam": FieldValue.arrayRemove(deluserSearchItemsx),
         "searchteam": FieldValue.arrayRemove(deluserSearchArrestx),
         "secuteam": FieldValue.arrayRemove(deluserSearchSecurityx),
-        "memuid": FieldValue.arrayRemove(memuid),
+        "memberuid": FieldValue.arrayRemove(Schedule.memberuid),
         "vehicle": vehiclelist,
         'flaggedvehicles': '',
         'lastflag': '',
@@ -472,6 +528,7 @@ Ends at: $eeeTime
                 duration: Duration(seconds: 3),
               );
             });
+            Get.offAll(Fourth());
           });
         } catch (e) {
           _showErrorAlert(
@@ -547,14 +604,40 @@ Ends at: $eeeTime
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').doc(document.data()['collectionId']).collection('schedule').get();
       username.docs.forEach((documentx) {
         var g = DateFormat('MM-dd-yyyy HH:mm').parse(startTime);
-        if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
-          print('yes');
-        } else {
-          setState(() {});
-          print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        var y = DateFormat('MM-dd-yyyy HH:mm').parse(endTime);
+
+        if (g == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) || y == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+          print('same date same time');
           allowedLeader.add(document.data()['fullName']);
-          // allowedLeader.add(Schedule.teamlead);
+        } else {
+          if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+            print('nasa gitna ang starttime');
+            allowedLeader.add(document.data()['fullName']);
+          } else {
+            if (y.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && y.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+              print('nasa gitna ang endtime');
+              allowedLeader.add(document.data()['fullName']);
+            } else {
+              if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isBefore(y)) {
+                allowedLeader.add(document.data()['fullName']);
+              } else {
+                if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isBefore(y)) {
+                  allowedLeader.add(document.data()['fullName']);
+                } else {
+                  print('do nothing');
+                }
+              }
+            }
+          }
         }
+        // if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //   print('yes');
+        // } else {
+        //   setState(() {});
+        //   print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        //   allowedLeader.add(document.data()['fullName']);
+        //   // allowedLeader.add(Schedule.teamlead);
+        // }
       });
     });
 
@@ -563,14 +646,40 @@ Ends at: $eeeTime
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').doc(document.data()['collectionId']).collection('schedule').get();
       username.docs.forEach((documentx) {
         var g = DateFormat('MM-dd-yyyy HH:mm').parse(startTime);
-        if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
-          print('yes');
-        } else {
-          setState(() {});
-          print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        var y = DateFormat('MM-dd-yyyy HH:mm').parse(endTime);
+
+        if (g == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) || y == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+          print('same date same time');
           allowedSpotter.add(document.data()['fullName']);
-          // allowedSpotter.add(Schedule.spotter);
+        } else {
+          if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+            print('nasa gitna ang starttime');
+            allowedSpotter.add(document.data()['fullName']);
+          } else {
+            if (y.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && y.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+              print('nasa gitna ang endtime');
+              allowedSpotter.add(document.data()['fullName']);
+            } else {
+              if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isBefore(y)) {
+                allowedSpotter.add(document.data()['fullName']);
+              } else {
+                if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isBefore(y)) {
+                  allowedSpotter.add(document.data()['fullName']);
+                } else {
+                  print('do nothing');
+                }
+              }
+            }
+          }
         }
+        // if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //   print('yes');
+        // } else {
+        //   setState(() {});
+        //   print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        //   allowedSpotter.add(document.data()['fullName']);
+        //   // allowedSpotter.add(Schedule.spotter);
+        // }
       });
     });
 
@@ -579,14 +688,40 @@ Ends at: $eeeTime
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').doc(document.data()['collectionId']).collection('schedule').get();
       username.docs.forEach((documentx) {
         var g = DateFormat('MM-dd-yyyy HH:mm').parse(startTime);
-        if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
-          print('yes');
-        } else {
-          setState(() {});
-          print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        var y = DateFormat('MM-dd-yyyy HH:mm').parse(endTime);
+
+        if (g == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) || y == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+          print('same date same time');
           allowedSpokesperson.add(document.data()['fullName']);
-          // allowedSpokesperson.add(Schedule.spokesperson);
+        } else {
+          if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+            print('nasa gitna ang starttime');
+            allowedSpokesperson.add(document.data()['fullName']);
+          } else {
+            if (y.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && y.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+              print('nasa gitna ang endtime');
+              allowedSpokesperson.add(document.data()['fullName']);
+            } else {
+              if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isBefore(y)) {
+                allowedSpokesperson.add(document.data()['fullName']);
+              } else {
+                if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isBefore(y)) {
+                  allowedSpokesperson.add(document.data()['fullName']);
+                } else {
+                  print('do nothing');
+                }
+              }
+            }
+          }
         }
+        // if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //   print('yes');
+        // } else {
+        //   setState(() {});
+        //   print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        //   allowedSpokesperson.add(document.data()['fullName']);
+        //   // allowedSpokesperson.add(Schedule.spokesperson);
+        // }
       });
     });
 
@@ -595,13 +730,39 @@ Ends at: $eeeTime
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').doc(document.data()['collectionId']).collection('schedule').get();
       username.docs.forEach((documentx) {
         var g = DateFormat('MM-dd-yyyy HH:mm').parse(startTime);
-        if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
-          print('yes');
-        } else {
-          setState(() {});
-          print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        var y = DateFormat('MM-dd-yyyy HH:mm').parse(endTime);
+
+        if (g.isAtSameMomentAs(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) || y.isAtSameMomentAs(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+          print('same date same time');
           allowedPatrol.add(document.data()['fullName']);
+        } else {
+          if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+            print('nasa gitna ang starttime');
+            allowedPatrol.add(document.data()['fullName']);
+          } else {
+            if (y.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && y.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+              print('nasa gitna ang endtime');
+              allowedPatrol.add(document.data()['fullName']);
+            } else {
+              if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isBefore(y)) {
+                allowedPatrol.add(document.data()['fullName']);
+              } else {
+                if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isBefore(y)) {
+                  allowedPatrol.add(document.data()['fullName']);
+                } else {
+                  print('do nothing');
+                }
+              }
+            }
+          }
         }
+        // if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //   print('yes');
+        // } else {
+        //   setState(() {});
+        //   print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        //   allowedPatrol.add(document.data()['fullName']);
+        // }
       });
     });
   }
@@ -649,16 +810,14 @@ Ends at: $eeeTime
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30.0,
-                    ),
+                    padding: const EdgeInsets.all(18.0),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              "Add Membersz",
+                              "Add Members",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 30.0,
@@ -688,35 +847,45 @@ Ends at: $eeeTime
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 285.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Checked : ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              Text(
-                                userSearchBlockName.length.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 50,
+                    top: 65,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Checked : ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
+                        Text(
+                          userSearchBlockName.length.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 75.0,
+                    ),
+                    child: ListView(
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
                           child: Container(
-                            height: 300,
+                            height: Get.height,
                             width: 480,
                             color: Colors.white,
                             child: StreamBuilder<QuerySnapshot>(
@@ -869,16 +1038,14 @@ Ends at: $eeeTime
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30.0,
-                    ),
+                    padding: const EdgeInsets.all(18.0),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              "Add Membersy",
+                              "Add Members",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 30.0,
@@ -908,35 +1075,45 @@ Ends at: $eeeTime
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 285.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Checked : ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              Text(
-                                userSearchSecurityName.length.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 50,
+                    top: 65,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Checked : ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
+                        Text(
+                          userSearchSecurityName.length.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 75.0,
+                    ),
+                    child: ListView(
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
                           child: Container(
-                            height: 300,
+                            height: Get.height,
                             width: 480,
                             color: Colors.white,
                             child: StreamBuilder<QuerySnapshot>(
@@ -1089,16 +1266,14 @@ Ends at: $eeeTime
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30.0,
-                    ),
+                    padding: const EdgeInsets.all(18.0),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              "Add Membersx",
+                              "Add Members",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 30.0,
@@ -1128,35 +1303,45 @@ Ends at: $eeeTime
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 285.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Checked : ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              Text(
-                                userSearchArrestName.length.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 50,
+                    top: 65,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Checked : ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
+                        Text(
+                          userSearchArrestName.length.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 75.0,
+                    ),
+                    child: ListView(
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
                           child: Container(
-                            height: 300,
+                            height: Get.height,
                             width: 480,
                             color: Colors.white,
                             child: StreamBuilder<QuerySnapshot>(
@@ -1308,9 +1493,7 @@ Ends at: $eeeTime
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30.0,
-                    ),
+                    padding: const EdgeInsets.all(18.0),
                     child: Column(
                       children: [
                         Row(
@@ -1347,35 +1530,45 @@ Ends at: $eeeTime
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 285.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Checked : ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              Text(
-                                userSearchItemsName.length.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 50,
+                    top: 65,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Checked : ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
+                        Text(
+                          userSearchItemsName.length.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 75.0,
+                    ),
+                    child: ListView(
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
                           child: Container(
-                            height: 300,
+                            height: Get.height,
                             width: 480,
                             color: Colors.white,
                             child: StreamBuilder<QuerySnapshot>(
@@ -1517,9 +1710,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -1569,40 +1762,40 @@ Ends at: $eeeTime
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
+                                  Row(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 50, bottom: 10.0, left: 20),
+                                        child: Text(
+                                          "Main Team",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 30.0, right: 0.0, top: 0),
+                                    padding: const EdgeInsets.only(left: 20.0, right: 20),
                                     child: Row(
-                                      children: <Widget>[
+                                      children: [
                                         Container(
                                           width: 300,
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.stretch,
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(top: 50, bottom: 30.0, right: 200),
-                                                child: Text(
-                                                  "Main Team",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 20.0,
-                                                    fontFamily: 'Nunito-Bold',
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              // Padding(
-                                              //   padding: const EdgeInsets.only(top: 0, bottom: 40.0, right: 0),
-                                              //   child: Text(
-                                              //     "*Start Time and End Time is empty!",
-                                              //     style: TextStyle(
-                                              //       color: Colors.red,
-                                              //       fontSize: 10.0,
-                                              //       fontFamily: 'Nunito-Bold',
-                                              //       fontWeight: FontWeight.bold,
-                                              //     ),
-                                              //   ),
-                                              // ),
                                               Text("Team Leader"),
+                                              Row(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 8.0, top: 8),
+                                                    child: Text("  Old Team Leader:" + '  ' + Schedule.teamlead.toString(), style: TextStyle(color: Colors.red)),
+                                                  ),
+                                                ],
+                                              ),
                                               DropdownButton<String>(
                                                 items: finalLeaderList.map((DocumentSnapshot document) {
                                                   return new DropdownMenuItem<String>(
@@ -1616,7 +1809,7 @@ Ends at: $eeeTime
                                                 isExpanded: true,
                                                 underline: Container(
                                                   height: 2,
-                                                  color: Color(0xff93F9B9),
+                                                  color: Color(0xff085078),
                                                 ),
                                                 onChanged: (String newValue) {
                                                   setState(() {
@@ -1632,7 +1825,7 @@ Ends at: $eeeTime
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 0.0, left: 30, top: 20),
+                                    padding: const EdgeInsets.only(right: 20.0, left: 20, top: 20),
                                     child: Row(
                                       children: [
                                         Container(
@@ -1641,6 +1834,14 @@ Ends at: $eeeTime
                                             crossAxisAlignment: CrossAxisAlignment.stretch,
                                             children: [
                                               Text("Spotter"),
+                                              Row(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 8.0, top: 8),
+                                                    child: Text("  Old Spotter:" + '  ' + Schedule.spotter.toString(), style: TextStyle(color: Colors.red)),
+                                                  ),
+                                                ],
+                                              ),
                                               DropdownButton<String>(
                                                 items: finalSpotterList.map((DocumentSnapshot document) {
                                                   return new DropdownMenuItem<String>(
@@ -1654,7 +1855,7 @@ Ends at: $eeeTime
                                                 isExpanded: true,
                                                 underline: Container(
                                                   height: 2,
-                                                  color: Color(0xff93F9B9),
+                                                  color: Color(0xff085078),
                                                 ),
                                                 onChanged: (String newValue) {
                                                   setState(() {
@@ -1670,7 +1871,7 @@ Ends at: $eeeTime
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 0.0, left: 30, top: 20, bottom: 20),
+                                    padding: const EdgeInsets.only(right: 20.0, left: 20, top: 20, bottom: 20),
                                     child: Row(
                                       children: [
                                         Container(
@@ -1679,6 +1880,14 @@ Ends at: $eeeTime
                                             crossAxisAlignment: CrossAxisAlignment.stretch,
                                             children: [
                                               Text("Spokesperson"),
+                                              Row(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 8.0, top: 8),
+                                                    child: Text("  Old Spokesperson:" + '  ' + Schedule.spokesperson.toString(), style: TextStyle(color: Colors.red)),
+                                                  ),
+                                                ],
+                                              ),
                                               DropdownButton<String>(
                                                 items: finalSpokerspersonList.map((DocumentSnapshot document) {
                                                   return new DropdownMenuItem<String>(
@@ -1692,7 +1901,7 @@ Ends at: $eeeTime
                                                 isExpanded: true,
                                                 underline: Container(
                                                   height: 2,
-                                                  color: Color(0xff93F9B9),
+                                                  color: Color(0xff085078),
                                                 ),
                                                 onChanged: (String newValue) {
                                                   setState(() {
@@ -1738,7 +1947,7 @@ Ends at: $eeeTime
                                               padding: const EdgeInsets.all(0.0),
                                               child: Ink(
                                                 decoration: const BoxDecoration(
-                                                  gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                  gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                   borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                 ),
                                                 child: Container(
@@ -1762,7 +1971,7 @@ Ends at: $eeeTime
                                               padding: const EdgeInsets.all(0.0),
                                               child: Ink(
                                                 decoration: const BoxDecoration(
-                                                  gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                  gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                   borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                 ),
                                                 child: Container(
@@ -1800,9 +2009,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -1838,6 +2047,7 @@ Ends at: $eeeTime
                           ),
                         ),
                         //here ang contents
+
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Row(
@@ -1882,12 +2092,15 @@ Ends at: $eeeTime
                                             var outputFormat2 = DateFormat('MM-dd-yyyy HH:mm a');
                                             var outputDate2 = outputFormat2.format(date);
                                             setState(() {
+                                              checknull1 = true;
+                                            });
+                                            setState(() {
                                               startTime = outputDate2;
                                               allowedSpotter = [];
                                               allowedLeader = [];
                                               allowedSpokesperson = [];
                                               _stempty = true;
-                                              if (endTime.isEmpty) {
+                                              if (endTime.isBlank) {
                                                 print('hello');
                                               } else {
                                                 if (startTime.compareTo(endTime) > 0) {
@@ -1906,7 +2119,7 @@ Ends at: $eeeTime
                                         padding: const EdgeInsets.all(0.0),
                                         child: Ink(
                                           decoration: const BoxDecoration(
-                                            gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                            gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                             borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                           ),
                                           child: Container(
@@ -1932,17 +2145,35 @@ Ends at: $eeeTime
                             width: 480,
                             color: Colors.white,
                             child: Center(
-                              child: Text(
-                                startTime.toString(),
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              child: checknull1
+                                  ? Text(
+                                      startTime.toString(),
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 20.0,
+                                        fontFamily: 'Nunito-Bold',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  : Text(
+                                      '',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 20.0,
+                                        fontFamily: 'Nunito-Bold',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                             ),
                           ),
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 40.0, top: 8),
+                              child: Text("  Old Start Time:" + '  ' + Schedule.starttime.toString(), style: TextStyle(color: Colors.green)),
+                            ),
+                          ],
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0),
@@ -1989,6 +2220,9 @@ Ends at: $eeeTime
                                             }, onConfirm: (date) {
                                               var outputFormat2 = DateFormat('MM-dd-yyyy HH:mm a');
                                               var outputDate2 = outputFormat2.format(date);
+                                              setState(() {
+                                                checknull2 = true;
+                                              });
                                               if (startTime.isEmpty) {
                                                 _showErrorAlert(title: "Time Failed", content: "Start time shoud not be empty!", onPressed: _changeBlackVisible, context: context);
                                               } else {
@@ -2020,7 +2254,7 @@ Ends at: $eeeTime
                                           padding: const EdgeInsets.all(0.0),
                                           child: Ink(
                                             decoration: const BoxDecoration(
-                                              gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                              gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                               borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                             ),
                                             child: Container(
@@ -2048,19 +2282,36 @@ Ends at: $eeeTime
                             width: 480,
                             color: Colors.white,
                             child: Center(
-                              child: Text(
-                                endTime.toString(),
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              child: checknull2
+                                  ? Text(
+                                      endTime.toString(),
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 20.0,
+                                        fontFamily: 'Nunito-Bold',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  : Text(
+                                      '',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 20.0,
+                                        fontFamily: 'Nunito-Bold',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),
-
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 40.0, top: 8),
+                              child: Text("  Old End Time:" + '  ' + Schedule.endtime.toString(), style: TextStyle(color: Colors.red)),
+                            ),
+                          ],
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0, bottom: 40),
                           child: Container(
@@ -2091,7 +2342,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2124,9 +2375,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -2156,7 +2407,7 @@ Ends at: $eeeTime
                                             child: Row(
                                               children: [
                                                 Text(
-                                                  "Notes",
+                                                  "Purpose of Deployment",
                                                   style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 20.0,
@@ -2191,7 +2442,7 @@ Ends at: $eeeTime
                               Padding(
                                 padding: const EdgeInsets.only(left: 40.0),
                                 child: Text(
-                                  "Kind",
+                                  "Type of Mission",
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 20.0,
@@ -2199,6 +2450,14 @@ Ends at: $eeeTime
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 35.0, top: 8),
+                                child: Text("  Old type of mission:" + '  ' + Schedule.kind.toString(), style: TextStyle(color: Colors.red)),
                               ),
                             ],
                           ),
@@ -2252,7 +2511,7 @@ Ends at: $eeeTime
                                   counterText: '',
                                   isDense: true,
                                   prefixIcon: IconButton(
-                                    color: Colors.green,
+                                    color: Color(0xff085078),
                                     icon: Icon(Icons.turned_in),
                                     iconSize: 20.0,
                                     onPressed: () {},
@@ -2279,7 +2538,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2305,7 +2564,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2338,9 +2597,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -2401,7 +2660,7 @@ Ends at: $eeeTime
                                             padding: const EdgeInsets.all(0.0),
                                             child: Ink(
                                               decoration: const BoxDecoration(
-                                                gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                 borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                               ),
                                               child: Container(
@@ -2552,7 +2811,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2578,7 +2837,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2611,9 +2870,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -2686,7 +2945,7 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -2847,7 +3106,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2873,7 +3132,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -2906,9 +3165,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -2981,7 +3240,7 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -3143,7 +3402,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -3169,7 +3428,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -3202,9 +3461,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -3277,7 +3536,7 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -3438,7 +3697,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -3464,7 +3723,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -3493,302 +3752,394 @@ Ends at: $eeeTime
 
   _buildVehicle() {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 9.0),
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: new BorderRadius.circular(10.0),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-              ),
-              child: SafeArea(
-                child: Container(
-                  height: Get.height,
-                  child: Stack(children: [
-                    Column(
-                      children: [
-                        Row(
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
+          child: Container(
+            width: Get.width,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: new BorderRadius.circular(10.0),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+            ),
+            child: Stack(children: [
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, left: 20.0),
+                        child: Text(
+                          "Add Vehicle",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0, top: 20),
+                        child: Text(
+                          "Type of Vehicle",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                    child: TextField(
+                      maxLength: 50,
+                      controller: _vehiclekindTextController,
+                      inputFormatters: [
+                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                      ],
+                      decoration: InputDecoration(
+                          counterText: '',
+                          isDense: true,
+                          prefixIcon: IconButton(
+                            color: Color(0xff085078),
+                            icon: Icon(Icons.style),
+                            iconSize: 20.0,
+                            onPressed: () {},
+                          ),
+                          contentPadding: EdgeInsets.only(left: 25.0),
+                          hintText: 'Vehicle Type',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0, top: 20),
+                        child: Text(
+                          "Vehicle Plate Number",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                    child: TextField(
+                      textCapitalization: TextCapitalization.characters,
+                      maxLength: 10,
+                      maxLengthEnforced: true,
+                      controller: _vehicleplateTextController,
+                      inputFormatters: [
+                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                      ],
+                      decoration: InputDecoration(
+                          counterText: '',
+                          isDense: true,
+                          prefixIcon: IconButton(
+                            color: Color(0xff085078),
+                            icon: Icon(Icons.contact_mail),
+                            iconSize: 20.0,
+                            onPressed: () {},
+                          ),
+                          contentPadding: EdgeInsets.only(left: 25.0),
+                          hintText: 'Vehicle Plate Number',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0, top: 20),
+                        child: Text(
+                          "Vehicle Brand",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                    child: TextField(
+                      maxLength: 50,
+                      controller: _vehiclebrandTextController,
+                      inputFormatters: [
+                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                      ],
+                      decoration: InputDecoration(
+                          counterText: '',
+                          isDense: true,
+                          prefixIcon: IconButton(
+                            color: Color(0xff085078),
+                            icon: Icon(Icons.local_car_wash),
+                            iconSize: 20.0,
+                            onPressed: () {},
+                          ),
+                          contentPadding: EdgeInsets.only(left: 25.0),
+                          hintText: 'Vehicle Brand',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0, top: 20),
+                        child: Text(
+                          "Vehicle Model",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                    child: TextField(
+                      maxLength: 50,
+                      controller: _vehiclemodelTextController,
+                      inputFormatters: [
+                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                      ],
+                      decoration: InputDecoration(
+                          counterText: '',
+                          isDense: true,
+                          prefixIcon: IconButton(
+                            color: Color(0xff085078),
+                            icon: Icon(Icons.directions_car),
+                            iconSize: 20.0,
+                            onPressed: () {},
+                          ),
+                          contentPadding: EdgeInsets.only(left: 25.0),
+                          hintText: 'Vehicle Model',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                    ),
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30.0, left: 20, right: 0, bottom: 0),
+                        child: Row(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10, left: 20.0),
-                              child: Text(
-                                "Add Vehicle",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            Text(
+                              "Vehicle Description",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20.0,
+                                fontFamily: 'Nunito-Bold',
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
-                              child: Text(
-                                "Kind of Vehicle",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                      ),
+                      Container(
+                        height: 150,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20),
                           child: TextField(
-                            maxLength: 50,
-                            controller: _vehiclekindTextController,
-                            inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                            ],
-                            decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                prefixIcon: IconButton(
-                                  color: Colors.green,
-                                  icon: Icon(Icons.style),
-                                  iconSize: 20.0,
-                                  onPressed: () {},
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: 'Vehicle Kind',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                            controller: _vehicledescTextController,
+                            maxLines: null,
+                            expands: true,
+                            keyboardType: TextInputType.multiline,
+                            decoration: InputDecoration(hintText: "Tap to write..."),
                           ),
                         ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
-                              child: Text(
-                                "Vehicle Plate Number",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
-                          child: TextField(
-                            textCapitalization: TextCapitalization.characters,
-                            maxLength: 10,
-                            maxLengthEnforced: true,
-                            controller: _vehicleplateTextController,
-                            inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                            ],
-                            decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                prefixIcon: IconButton(
-                                  color: Colors.green,
-                                  icon: Icon(Icons.contact_mail),
-                                  iconSize: 20.0,
-                                  onPressed: () {},
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: 'Vehicle Plate Number',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    // color: Colors.transparent,
+                    decoration: new BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white,
+                          blurRadius: 50.0, // soften the shadow
+                          spreadRadius: 15.0, //extend the shadow
+                          offset: Offset(
+                            0.0, // Move to right 10  horizontally
+                            0.0, // Move to bottom 10 Vertically
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
-                              child: Text(
-                                "Vehicle Brand",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
-                          child: TextField(
-                            maxLength: 50,
-                            controller: _vehiclebrandTextController,
-                            inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                            ],
-                            decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                prefixIcon: IconButton(
-                                  color: Colors.green,
-                                  icon: Icon(Icons.local_car_wash),
-                                  iconSize: 20.0,
-                                  onPressed: () {},
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: 'Vehicle Brand',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
-                              child: Text(
-                                "Vehicle Model",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
-                          child: TextField(
-                            maxLength: 50,
-                            controller: _vehiclemodelTextController,
-                            inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                            ],
-                            decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                prefixIcon: IconButton(
-                                  color: Colors.green,
-                                  icon: Icon(Icons.directions_car),
-                                  iconSize: 20.0,
-                                  onPressed: () {},
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: 'Vehicle Model',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                          ),
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30.0, left: 20, right: 0, bottom: 0),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Vehicle Description",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20.0,
-                                      fontFamily: 'Nunito-Bold',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: 150,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20),
-                                child: TextField(
-                                  controller: _vehicledescTextController,
-                                  maxLines: null,
-                                  expands: true,
-                                  keyboardType: TextInputType.multiline,
-                                  decoration: InputDecoration(hintText: "Tap to write..."),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          // color: Colors.transparent,
-                          decoration: new BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white,
-                                blurRadius: 50.0, // soften the shadow
-                                spreadRadius: 15.0, //extend the shadow
-                                offset: Offset(
-                                  0.0, // Move to right 10  horizontally
-                                  0.0, // Move to bottom 10 Vertically
-                                ),
-                              )
-                            ],
-                          ),
-                          height: 30,
-                          width: 30,
-                          child: Stack(
-                            children: <Widget>[
-                              Center(
-                                child: RaisedButton(
-                                  onPressed: () {
-                                    String vkind = _vehiclekindTextController.text;
-                                    String vplate = _vehicleplateTextController.text;
-                                    String vbrand = _vehiclebrandTextController.text;
-                                    String vmodel = _vehiclemodelTextController.text;
-                                    String vdesc = _vehicledescTextController.text;
-
-                                    // print(vkind);
-                                    FirebaseFirestore.instance.collection("trialvehicles").doc(vplate).set({
-                                      'kind': vkind,
-                                      'plate': vplate,
-                                      'brand': vbrand,
-                                      'model': vmodel,
-                                      'desc': vdesc,
-                                    }).then((value) {
-                                      vehiclelist.add(vplate.toUpperCase());
-                                      print(vehiclelist);
-                                      _vehiclekindTextController.text = "";
-                                      _vehicleplateTextController.text = "";
-                                      _vehiclebrandTextController.text = "";
-                                      _vehiclemodelTextController.text = "";
-                                      _vehicledescTextController.text = "";
-                                      FocusScope.of(context).requestFocus(new FocusNode());
-                                      SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                      print('im here');
-                                    });
-                                    // _showModalSheet();
-                                    // _onTap();
-                                    // handleSignIn();
-                                  }, //only after checking
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
-                                  padding: const EdgeInsets.all(0.0),
-                                  child: Ink(
-                                    decoration: const BoxDecoration(
-                                      gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
-                                      borderRadius: BorderRadius.all(Radius.circular(80.0)),
-                                    ),
-                                    child: Container(
-                                      constraints: const BoxConstraints(minWidth: 88.0, minHeight: 36.0), // min sizes for Material buttons
-                                      alignment: Alignment.center,
-                                      child: Icon(Icons.add, size: 20, color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        //here ang contents
+                        )
                       ],
                     ),
-                  ]),
-                ),
+                    height: 30,
+                    width: 30,
+                    child: Stack(
+                      children: <Widget>[
+                        Center(
+                          child: RaisedButton(
+                            onPressed: () {
+                              String vkind = _vehiclekindTextController.text;
+                              String vplate = _vehicleplateTextController.text;
+                              String vbrand = _vehiclebrandTextController.text;
+                              String vmodel = _vehiclemodelTextController.text;
+                              String vdesc = _vehicledescTextController.text;
+                              String result = _vehicleplateTextController.text.toUpperCase().substring(0, _vehicleplateTextController.text.toUpperCase().indexOf(' '));
+                              print(result);
+                              String s1 = _vehicleplateTextController.text.substring(_vehicleplateTextController.text.indexOf(" ") + 1);
+                              print(s1);
+
+                              String characters = "[a-zA-Z]";
+                              RegExp regChar = RegExp(characters);
+                              String digits = "[0-9]";
+                              RegExp regDig = RegExp(digits);
+
+                              if (vkind.isEmpty || vplate.isEmpty || vbrand.isEmpty || vmodel.isEmpty || vdesc.isEmpty) {
+                                _showErrorAlert(
+                                    title: "Vehicle adding failed.",
+                                    content: 'All fields required!', //show error firebase
+                                    onPressed: _changeBlackVisible,
+                                    context: context);
+                                _btnController.reset();
+                              } else if (regChar.hasMatch(result)) {
+                                print('ok');
+                                if (result.length < 3) {
+                                  print('ok but less than 3');
+                                  //pag less than 3 that means mc sya and kailangan dapat ung digit is 5 digits
+                                  //check if ung digits is 5
+                                  if (regDig.hasMatch(s1)) {
+                                    print('ok numbers sya.');
+                                    if (s1.length == 5) {
+                                      print('ok 5 digits sya');
+                                      // setState(() {
+                                      // finalVehResult = result + " " + s1;
+                                      // checktoDB();
+                                      // _toDBfromModal();
+                                      // });
+
+                                      FirebaseFirestore.instance.collection("trialvehicles").doc(vplate).set({
+                                        'kind': vkind,
+                                        'plate': vplate,
+                                        'brand': vbrand,
+                                        'model': vmodel,
+                                        'desc': vdesc,
+                                      }).then((value) {
+                                        vehiclelist.add(vplate.toUpperCase());
+                                        print(vehiclelist);
+                                        _vehiclekindTextController.text = "";
+                                        _vehicleplateTextController.text = "";
+                                        _vehiclebrandTextController.text = "";
+                                        _vehiclemodelTextController.text = "";
+                                        _vehicledescTextController.text = "";
+                                        FocusScope.of(context).requestFocus(new FocusNode());
+                                        SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                        print('im here');
+                                      });
+
+                                      print('this is the final result');
+                                      // print(finalMCResult);
+                                    } else {
+                                      //error kase hindi naman sya 5 digits.
+                                      print('hindi sya 5 digits not valid');
+                                      _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                      _btnController.reset();
+                                    }
+                                  } else {
+                                    //error kase may letters sa dapat na digit lang
+                                    _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                    _btnController.reset();
+                                  }
+                                } else {
+                                  if (result.length == 3) {
+                                    print('ok kotse sya');
+                                    if (regDig.hasMatch(s1)) {
+                                      print('ok number sya');
+                                      if (s1.length == 4) {
+                                        // setState(() {
+                                        // finalVehResult = result + " " + s1;
+                                        // checktoDB();
+                                        // _toDBfromModal();
+                                        // });
+
+                                        FirebaseFirestore.instance.collection("trialvehicles").doc(vplate).set({
+                                          'kind': vkind,
+                                          'plate': vplate,
+                                          'brand': vbrand,
+                                          'model': vmodel,
+                                          'desc': vdesc,
+                                        }).then((value) {
+                                          vehiclelist.add(vplate.toUpperCase());
+                                          print(vehiclelist);
+                                          _vehiclekindTextController.text = "";
+                                          _vehicleplateTextController.text = "";
+                                          _vehiclebrandTextController.text = "";
+                                          _vehiclemodelTextController.text = "";
+                                          _vehicledescTextController.text = "";
+                                          FocusScope.of(context).requestFocus(new FocusNode());
+                                          SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                          print('im here');
+                                        });
+
+                                        print('this is the final result');
+                                        // print(finalVehResult);
+                                      } else {
+                                        print('kulang or sobra ang number');
+                                        _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                        _btnController.reset();
+                                      }
+                                    } else {
+                                      print('hindi sya number');
+                                      _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                      _btnController.reset();
+                                    }
+                                  } else {
+                                    print('lagpas sa 3');
+                                    _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                    _btnController.reset();
+                                  }
+                                }
+                              } else {
+                                _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                print('no');
+                                _btnController.reset();
+                              }
+
+                              FocusScope.of(context).requestFocus(new FocusNode());
+                              SystemChannels.textInput.invokeMethod('TextInput.hide');
+                            }, //only after checking
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
+                            padding: const EdgeInsets.all(0.0),
+                            child: Ink(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                borderRadius: BorderRadius.all(Radius.circular(80.0)),
+                              ),
+                              child: Container(
+                                constraints: const BoxConstraints(minWidth: 88.0, minHeight: 36.0), // min sizes for Material buttons
+                                alignment: Alignment.center,
+                                child: Icon(Icons.add, size: 20, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //here ang contents
+                ],
               ),
-            ),
+            ]),
           ),
         ),
       ),
@@ -3802,9 +4153,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -3905,6 +4256,7 @@ Ends at: $eeeTime
                                                   print('deleted');
 
                                                   vehiclelist.remove(snapshot.data.docs[index]['plate'].toString());
+                                                  discardedvehicle.add(snapshot.data.docs[index]['plate'].toString());
                                                   print(vehiclelist);
                                                 });
                                                 setState(
@@ -3999,7 +4351,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -4025,7 +4377,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -4089,7 +4441,7 @@ Ends at: $eeeTime
                 appBar: AppBar(
                   leading: BackButton(color: Colors.white),
                   title: Text("Details", style: TextStyle(color: Colors.white)),
-                  backgroundColor: Color(0xff1D976C),
+                  backgroundColor: Color(0xff085078),
                 ),
                 body: new FlutterMap(
                   options: new MapOptions(
@@ -4140,9 +4492,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -4253,7 +4605,7 @@ Ends at: $eeeTime
                                                           padding: const EdgeInsets.all(0.0),
                                                           child: Ink(
                                                             decoration: const BoxDecoration(
-                                                              gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                              gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                               borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                             ),
                                                             child: Container(
@@ -4294,7 +4646,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -4319,7 +4671,7 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.all(0.0),
                                     child: Ink(
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                       ),
                                       child: Container(
@@ -4352,9 +4704,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -4387,7 +4739,7 @@ Ends at: $eeeTime
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     RoundedLoadingButton(
-                                      color: Color(0xff1D976C),
+                                      color: Color(0xff085078),
                                       child: Text('Edit Schedule', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
                                       controller: _btnController,
                                       onPressed: () {
@@ -4465,7 +4817,7 @@ Ends at: $eeeTime
           height: 400,
           decoration: BoxDecoration(
             borderRadius: new BorderRadius.only(bottomRight: new Radius.circular(30.0), bottomLeft: new Radius.circular(0.0)),
-            gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+            gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
           ),
         ),
         GestureDetector(
@@ -4492,7 +4844,7 @@ Ends at: $eeeTime
                             color: Colors.white,
                             onPressed: () async {
                               if (_isEdited == false) {
-                                FirebaseFirestore.instance.collection("schedule").doc(Schedule.collectionid.toString()).collection("editedSchedule").doc(Schedule.editedtime).delete();
+                                FirebaseFirestore.instance.collection("editedSchedule").doc(Schedule.collectionid).collection("editedSchedule").doc(Schedule.editedtime).delete();
 
                                 QuerySnapshot snapx = await FirebaseFirestore.instance.collection('trialvehicles').get();
                                 snapx.docs.forEach((documentx) {
@@ -4508,7 +4860,7 @@ Ends at: $eeeTime
                         // Allows the user to reveal the app bar if they begin scrolling back
                         // up the list of items.
                         brightness: Brightness.light,
-                        backgroundColor: Color(0xff1D976C),
+                        backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
                         snap: true,
@@ -4527,28 +4879,28 @@ Ends at: $eeeTime
                                       style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Nunito-Bold'),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 1.0),
-                                    child: AvatarGlow(
-                                      startDelay: Duration(milliseconds: 0),
-                                      glowColor: Colors.lime,
-                                      endRadius: 40.0,
-                                      duration: Duration(milliseconds: 2000),
-                                      repeat: true,
-                                      showTwoGlows: true,
-                                      repeatPauseDuration: Duration(milliseconds: 0),
-                                      child: IconButton(
-                                        iconSize: 25.0,
-                                        icon: Icon(Icons.menu),
-                                        color: Colors.white,
-                                        onPressed: () {
-                                          setState(() {
-                                            isMenuOpen = true;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.only(top: 1.0),
+                                  //   child: AvatarGlow(
+                                  //     startDelay: Duration(milliseconds: 0),
+                                  //     glowColor: Colors.red,
+                                  //     endRadius: 40.0,
+                                  //     duration: Duration(milliseconds: 2000),
+                                  //     repeat: true,
+                                  //     showTwoGlows: true,
+                                  //     repeatPauseDuration: Duration(milliseconds: 0),
+                                  //     child: IconButton(
+                                  //       iconSize: 25.0,
+                                  //       icon: Icon(Icons.menu),
+                                  //       color: Colors.white,
+                                  //       onPressed: () {
+                                  //         setState(() {
+                                  //           isMenuOpen = true;
+                                  //         });
+                                  //       },
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),
@@ -4575,9 +4927,9 @@ Ends at: $eeeTime
                               _buildVehicle(),
                               _buildVehicleList(),
                               _buildSubmit(),
-                              Container(
-                                color: Colors.deepPurple,
-                              ),
+                              // Container(
+                              //   color: Colors.deepPurple,
+                              // ),
                             ],
                           ),
                         ),
@@ -4586,145 +4938,145 @@ Ends at: $eeeTime
                   ),
 
                   //here starts of the animation and navigation bar
-                  AnimatedPositioned(
-                    duration: Duration(milliseconds: 1500),
-                    left: isMenuOpen ? 0 : -sidebarSize + 1,
-                    top: 0,
-                    curve: Curves.elasticOut,
-                    child: SizedBox(
-                      width: sidebarSize,
-                      child: GestureDetector(
-                        onPanUpdate: (details) {
-                          if (details.localPosition.dx <= sidebarSize) {
-                            setState(() {
-                              _offset = details.localPosition;
-                            });
-                          }
+                  // AnimatedPositioned(
+                  //   duration: Duration(milliseconds: 1500),
+                  //   left: isMenuOpen ? 0 : -sidebarSize + 1,
+                  //   top: 0,
+                  //   curve: Curves.elasticOut,
+                  //   child: SizedBox(
+                  //     width: sidebarSize,
+                  //     child: GestureDetector(
+                  //       onPanUpdate: (details) {
+                  //         if (details.localPosition.dx <= sidebarSize) {
+                  //           setState(() {
+                  //             _offset = details.localPosition;
+                  //           });
+                  //         }
 
-                          if (details.localPosition.dx > sidebarSize - 20 && details.delta.distanceSquared > 2) {
-                            setState(() {
-                              isMenuOpen = true;
-                            });
-                          }
-                        },
-                        onPanEnd: (details) {
-                          setState(() {
-                            _offset = Offset(0, 0);
-                          });
-                        },
-                        child: Stack(
-                          children: <Widget>[
-                            CustomPaint(
-                              size: Size(sidebarSize, Get.height),
-                              painter: DrawerPainter(offset: _offset),
-                            ),
-                            Container(
-                              height: Get.height,
-                              width: sidebarSize,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.max,
-                                children: <Widget>[
-                                  Container(
-                                    height: Get.height * 0.30,
-                                    child: Center(
-                                      child: Column(
-                                        children: <Widget>[
-                                          Container(
-                                            height: 120,
-                                            width: 120,
-                                            // padding: EdgeInsets.all(8.0),
-                                            child: CircleAvatar(
-                                              backgroundImage: NetworkImage(UserLog.ppUrl),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 28.0),
-                                            child: Text(
-                                              UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
-                                              style: TextStyle(color: Colors.black45),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Divider(
-                                    thickness: 1,
-                                  ),
-                                  Container(
-                                    key: globalKey,
-                                    width: double.infinity,
-                                    height: menuContainerHeight,
-                                    child: Column(
-                                      children: <Widget>[
-                                        //   MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 0),
-                                        //   MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
-                                        //   MyButton(text: "Add Schedule", iconData: Icons.library_add_check, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 1),
-                                        //   MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                                        //   MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 5),
-                                        // ],
-                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
+                  //         if (details.localPosition.dx > sidebarSize - 20 && details.delta.distanceSquared > 2) {
+                  //           setState(() {
+                  //             isMenuOpen = true;
+                  //           });
+                  //         }
+                  //       },
+                  //       onPanEnd: (details) {
+                  //         setState(() {
+                  //           _offset = Offset(0, 0);
+                  //         });
+                  //       },
+                  //       child: Stack(
+                  //         children: <Widget>[
+                  //           CustomPaint(
+                  //             size: Size(sidebarSize, Get.height),
+                  //             painter: DrawerPainter(offset: _offset),
+                  //           ),
+                  //           Container(
+                  //             height: Get.height,
+                  //             width: sidebarSize,
+                  //             child: Column(
+                  //               mainAxisAlignment: MainAxisAlignment.center,
+                  //               mainAxisSize: MainAxisSize.max,
+                  //               children: <Widget>[
+                  //                 Container(
+                  //                   height: Get.height * 0.30,
+                  //                   child: Center(
+                  //                     child: Column(
+                  //                       children: <Widget>[
+                  //                         Container(
+                  //                           height: 120,
+                  //                           width: 120,
+                  //                           // padding: EdgeInsets.all(8.0),
+                  //                           child: CircleAvatar(
+                  //                             backgroundImage: NetworkImage(UserLog.ppUrl),
+                  //                           ),
+                  //                         ),
+                  //                         Padding(
+                  //                           padding: const EdgeInsets.only(top: 28.0),
+                  //                           child: Text(
+                  //                             UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                  //                             style: TextStyle(color: Colors.black45),
+                  //                           ),
+                  //                         ),
+                  //                       ],
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //                 Divider(
+                  //                   thickness: 1,
+                  //                 ),
+                  //                 Container(
+                  //                   key: globalKey,
+                  //                   width: double.infinity,
+                  //                   height: menuContainerHeight,
+                  //                   child: Column(
+                  //                     children: <Widget>[
+                  //                       //   MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 0),
+                  //                       //   MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
+                  //                       //   MyButton(text: "Add Schedule", iconData: Icons.library_add_check, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 1),
+                  //                       //   MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                  //                       //   MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 5),
+                  //                       // ],
+                  //                       MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
 
-                                        // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 4),
-                                        // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                                        // MyButton(text: "Reset Password of User", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
-                                        MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 5),
-                                        MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
-                                        MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        // auth.signOut();
-                                        // Get.offAll(LogSign());
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text("Logout Confirmation"),
-                                                content: const Text("Are you sure you want to log out?"),
-                                                actions: <Widget>[
-                                                  FlatButton(
-                                                      onPressed: () => {
-                                                            signOut(),
-                                                          },
-                                                      child: const Text("Yes")),
-                                                  FlatButton(
-                                                    onPressed: () => Navigator.of(context).pop(false),
-                                                    child: const Text("Cancel"),
-                                                  ),
-                                                ],
-                                              );
-                                            });
-                                        print('clik');
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.logout,
-                                            color: Colors.lightGreen,
-                                            size: 20.0,
-                                          ),
-                                          Text(
-                                            '  Logout',
-                                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontFamily: 'Nunito-Bold'),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  //                       // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 4),
+                  //                       // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                  //                       // MyButton(text: "Reset Password of User", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
+                  //                       MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 5),
+                  //                       MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
+                  //                       MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //                 Padding(
+                  //                   padding: const EdgeInsets.only(left: 20.0),
+                  //                   child: GestureDetector(
+                  //                     onTap: () {
+                  //                       // auth.signOut();
+                  //                       // Get.offAll(LogSign());
+                  //                       showDialog(
+                  //                           context: context,
+                  //                           builder: (BuildContext context) {
+                  //                             return AlertDialog(
+                  //                               title: const Text("Logout Confirmation"),
+                  //                               content: const Text("Are you sure you want to log out?"),
+                  //                               actions: <Widget>[
+                  //                                 FlatButton(
+                  //                                     onPressed: () => {
+                  //                                           signOut(),
+                  //                                         },
+                  //                                     child: const Text("Yes")),
+                  //                                 FlatButton(
+                  //                                   onPressed: () => Navigator.of(context).pop(false),
+                  //                                   child: const Text("Cancel"),
+                  //                                 ),
+                  //                               ],
+                  //                             );
+                  //                           });
+                  //                       print('clik');
+                  //                     },
+                  //                     child: Row(
+                  //                       children: [
+                  //                         Icon(
+                  //                           Icons.logout,
+                  //                           color: Color(0xff085078),
+                  //                           size: 25.0,
+                  //                         ),
+                  //                         Text(
+                  //                           '  Logout',
+                  //                           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontFamily: 'Nunito-Bold'),
+                  //                         ),
+                  //                       ],
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

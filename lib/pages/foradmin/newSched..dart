@@ -82,6 +82,7 @@ class _NewSched extends State<NewSched> {
   List<String> userCheck = [];
   DateTime finalDatex;
   bool listSelec = false;
+  bool isMapGood = false;
   String finalDate;
   String startTime = '';
   String endTime = '';
@@ -298,7 +299,7 @@ Ends at: $eeeTime
               .doc(document.data()['collectionId'])
               .collection('schedule')
               .doc(collectionid.toString())
-              .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId']});
+              .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId'], "position": 'blockteam'});
         });
       }
 
@@ -311,7 +312,7 @@ Ends at: $eeeTime
               .doc(document.data()['collectionId'])
               .collection('schedule')
               .doc(collectionid.toString())
-              .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId']});
+              .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId'], "position": 'investteam'});
         });
       }
 
@@ -324,7 +325,7 @@ Ends at: $eeeTime
               .doc(document.data()['collectionId'])
               .collection('schedule')
               .doc(collectionid.toString())
-              .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId']});
+              .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId'], "position": 'searchteam'});
         });
       }
 
@@ -337,7 +338,7 @@ Ends at: $eeeTime
               .doc(document.data()['collectionId'])
               .collection('schedule')
               .doc(collectionid.toString())
-              .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId']});
+              .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId'], "position": 'secuteam'});
         });
       }
 
@@ -349,7 +350,7 @@ Ends at: $eeeTime
             .doc(document.data()['collectionId'])
             .collection('schedule')
             .doc(collectionid.toString())
-            .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId']});
+            .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId'], "position": 'teamlead'});
       });
 
       QuerySnapshot searchx = await FirebaseFirestore.instance.collection('users').where('fullName', isEqualTo: dropdownValuex.toString()).get();
@@ -360,7 +361,7 @@ Ends at: $eeeTime
             .doc(document.data()['collectionId'])
             .collection('schedule')
             .doc(collectionid.toString())
-            .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId']});
+            .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId'], "position": 'spotter'});
       });
 
       QuerySnapshot searchy = await FirebaseFirestore.instance.collection('users').where('fullName', isEqualTo: dropdownValuey.toString()).get();
@@ -371,7 +372,7 @@ Ends at: $eeeTime
             .doc(document.data()['collectionId'])
             .collection('schedule')
             .doc(collectionid.toString())
-            .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId']});
+            .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId'], "position": 'spokesperson'});
       });
 
       FirebaseFirestore.instance.collection("schedule").doc(collectionid.toString()).set({
@@ -485,16 +486,44 @@ Ends at: $eeeTime
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').doc(document.data()['collectionId']).collection('schedule').get();
       username.docs.forEach((documentx) {
         var g = DateFormat('MM-dd-yyyy HH:mm').parse(startTime);
-        if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
-          print('yes');
-          print(document.data()['fullName'].toString());
-          // allowedLeader.add(document.data()['fullName']);
-        } else {
-          setState(() {});
-          allowedLeader.add(document.data()['fullName']);
-          print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        var y = DateFormat('MM-dd-yyyy HH:mm').parse(endTime);
 
+        if (g == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) || y == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+          print('same date same time');
+          allowedLeader.add(document.data()['fullName']);
+        } else {
+          if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+            print('nasa gitna ang starttime');
+            allowedLeader.add(document.data()['fullName']);
+          } else {
+            if (y.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && y.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+              print('nasa gitna ang endtime');
+              allowedLeader.add(document.data()['fullName']);
+            } else {
+              if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isBefore(y)) {
+                allowedLeader.add(document.data()['fullName']);
+              } else {
+                if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isBefore(y)) {
+                  allowedLeader.add(document.data()['fullName']);
+                } else {
+                  print('do nothing');
+                }
+              }
+            }
+          }
         }
+        //this is correct
+
+        // if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //   print('yes');
+        //   print(document.data()['fullName'].toString());
+        //   // allowedLeader.add(document.data()['fullName']);
+        // } else {
+        //   setState(() {});
+        //   allowedLeader.add(document.data()['fullName']);
+        //   print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+
+        // }
       });
     });
 
@@ -503,13 +532,56 @@ Ends at: $eeeTime
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').doc(document.data()['collectionId']).collection('schedule').get();
       username.docs.forEach((documentx) {
         var g = DateFormat('MM-dd-yyyy HH:mm').parse(startTime);
-        if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
-          print('yes');
-        } else {
-          setState(() {});
-          print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        var y = DateFormat('MM-dd-yyyy HH:mm').parse(endTime);
+
+        if (g == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) || y == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+          print('same date same time');
           allowedSpotter.add(document.data()['fullName']);
+        } else {
+          if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+            print('nasa gitna ang starttime');
+            allowedSpotter.add(document.data()['fullName']);
+          } else {
+            if (y.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && y.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+              print('nasa gitna ang endtime');
+              allowedSpotter.add(document.data()['fullName']);
+            } else {
+              if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isBefore(y)) {
+                allowedSpotter.add(document.data()['fullName']);
+              } else {
+                if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isBefore(y)) {
+                  allowedSpotter.add(document.data()['fullName']);
+                } else {
+                  print('do nothing');
+                }
+              }
+            }
+          }
         }
+
+        // if (g == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) || y == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //   print('same date same time');
+        //   allowedSpotter.add(document.data()['fullName']);
+        // } else {
+        //   if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //     print('nasa gitna ang starttime');
+        //     allowedSpotter.add(document.data()['fullName']);
+        //   } else {
+        //     if (y.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && y.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //       print('nasa gitna ang endtime');
+        //       allowedSpotter.add(document.data()['fullName']);
+        //     } else {
+        //       print('do nothing');
+        //     }
+        //   }
+        // }
+        // if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //   print('yes');
+        // } else {
+        //   setState(() {});
+        //   print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        //   allowedSpotter.add(document.data()['fullName']);
+        // }
       });
     });
 
@@ -518,12 +590,38 @@ Ends at: $eeeTime
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').doc(document.data()['collectionId']).collection('schedule').get();
       username.docs.forEach((documentx) {
         var g = DateFormat('MM-dd-yyyy HH:mm').parse(startTime);
-        if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
-          print('yes');
-        } else {
-          setState(() {});
-          print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        // if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //   print('yes');
+        // } else {
+        //   setState(() {});
+        //   print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        //   allowedSpokesperson.add(document.data()['fullName']);
+        // }
+        var y = DateFormat('MM-dd-yyyy HH:mm').parse(endTime);
+
+        if (g == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) || y == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+          print('same date same time');
           allowedSpokesperson.add(document.data()['fullName']);
+        } else {
+          if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+            print('nasa gitna ang starttime');
+            allowedSpokesperson.add(document.data()['fullName']);
+          } else {
+            if (y.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && y.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+              print('nasa gitna ang endtime');
+              allowedSpokesperson.add(document.data()['fullName']);
+            } else {
+              if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isBefore(y)) {
+                allowedSpokesperson.add(document.data()['fullName']);
+              } else {
+                if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isBefore(y)) {
+                  allowedSpokesperson.add(document.data()['fullName']);
+                } else {
+                  print('do nothing');
+                }
+              }
+            }
+          }
         }
       });
     });
@@ -533,13 +631,39 @@ Ends at: $eeeTime
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').doc(document.data()['collectionId']).collection('schedule').get();
       username.docs.forEach((documentx) {
         var g = DateFormat('MM-dd-yyyy HH:mm').parse(startTime);
-        if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
-          print('yes');
-        } else {
-          setState(() {});
-          print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        var y = DateFormat('MM-dd-yyyy HH:mm').parse(endTime);
+
+        if (g == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) || y == (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+          print('same date same time');
           allowedPatrol.add(document.data()['fullName']);
+        } else {
+          if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+            print('nasa gitna ang starttime');
+            allowedPatrol.add(document.data()['fullName']);
+          } else {
+            if (y.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && y.isBefore(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+              print('nasa gitna ang endtime');
+              allowedPatrol.add(document.data()['fullName']);
+            } else {
+              if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime']).isBefore(y)) {
+                allowedPatrol.add(document.data()['fullName']);
+              } else {
+                if (DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isAfter(g) && DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']).isBefore(y)) {
+                  allowedPatrol.add(document.data()['fullName']);
+                } else {
+                  print('do nothing');
+                }
+              }
+            }
+          }
         }
+        // if (g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['starttime'])) && g.isAfter(DateFormat('MM-dd-yyyy HH:mm').parse(documentx.data()['endtime']))) {
+        //   print('yes');
+        // } else {
+        //   setState(() {});
+        //   print('no'); //means pwede silang ilagay sa listahan ng hindi pwede i show
+        //   allowedPatrol.add(document.data()['fullName']);
+        // }
       });
     });
   }
@@ -554,6 +678,7 @@ Ends at: $eeeTime
     );
     print('this is displayname');
     print(reverseSearchResult.displayName);
+
     _mapTextConroller.text = reverseSearchResult.displayName;
   }
 
@@ -579,16 +704,14 @@ Ends at: $eeeTime
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30.0,
-                    ),
+                    padding: const EdgeInsets.all(18.0),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              "Add Membersz",
+                              "Add Members",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 30.0,
@@ -618,35 +741,45 @@ Ends at: $eeeTime
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 285.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Checked : ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              Text(
-                                userSearchBlockName.length.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 50,
+                    top: 65,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Checked : ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
+                        Text(
+                          userSearchBlockName.length.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 75.0,
+                    ),
+                    child: ListView(
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
                           child: Container(
-                            height: 300,
+                            height: Get.height,
                             width: 480,
                             color: Colors.white,
                             child: StreamBuilder<QuerySnapshot>(
@@ -808,16 +941,14 @@ Ends at: $eeeTime
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30.0,
-                    ),
+                    padding: const EdgeInsets.all(18.0),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              "Add Membersy",
+                              "Add Members",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 30.0,
@@ -847,35 +978,45 @@ Ends at: $eeeTime
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 285.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Checked : ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              Text(
-                                userSearchSecurityName.length.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 50,
+                    top: 65,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Checked : ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
+                        Text(
+                          userSearchSecurityName.length.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 75.0,
+                    ),
+                    child: ListView(
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
                           child: Container(
-                            height: 300,
+                            height: Get.height,
                             width: 480,
                             color: Colors.white,
                             child: StreamBuilder<QuerySnapshot>(
@@ -1037,16 +1178,14 @@ Ends at: $eeeTime
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30.0,
-                    ),
+                    padding: const EdgeInsets.all(18.0),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              "Add Membersx",
+                              "Add Members",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 30.0,
@@ -1076,35 +1215,45 @@ Ends at: $eeeTime
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 285.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Checked : ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              Text(
-                                userSearchArrestName.length.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 50,
+                    top: 65,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Checked : ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
+                        Text(
+                          userSearchArrestName.length.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 75.0,
+                    ),
+                    child: ListView(
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
                           child: Container(
-                            height: 300,
+                            height: Get.height,
                             width: 480,
                             color: Colors.white,
                             child: StreamBuilder<QuerySnapshot>(
@@ -1262,9 +1411,7 @@ Ends at: $eeeTime
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30.0,
-                    ),
+                    padding: const EdgeInsets.all(18.0),
                     child: Column(
                       children: [
                         Row(
@@ -1302,35 +1449,45 @@ Ends at: $eeeTime
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 285.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Checked : ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              Text(
-                                userSearchItemsName.length.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 50,
+                    top: 65,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Checked : ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
+                        Text(
+                          userSearchItemsName.length.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 75.0,
+                    ),
+                    child: ListView(
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
                           child: Container(
-                            height: 300,
+                            height: Get.height,
                             width: 480,
                             color: Colors.white,
                             child: StreamBuilder<QuerySnapshot>(
@@ -1475,6 +1632,7 @@ Ends at: $eeeTime
   }
 
   _showMaps(BuildContext context) {
+    isMapGood = false;
     showModalBottomSheet(
       isScrollControlled: true,
       isDismissible: true,
@@ -1494,6 +1652,15 @@ Ends at: $eeeTime
                   leading: BackButton(color: Colors.white),
                   title: Text("Details", style: TextStyle(color: Colors.white)),
                   backgroundColor: Color(0xff085078),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: const Icon(Icons.add_alert),
+                      color: Colors.white,
+                      onPressed: () {
+                        Get.back();
+                      },
+                    ),
+                  ],
                 ),
                 body: new FlutterMap(
                   options: new MapOptions(
@@ -1544,9 +1711,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -1764,9 +1931,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -1816,8 +1983,24 @@ Ends at: $eeeTime
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 50, bottom: 10.0, left: 20),
+                                        child: Text(
+                                          "Main Team",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 30.0, right: 0.0, top: 0),
+                                    padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0),
                                     child: Row(
                                       children: <Widget>[
                                         Container(
@@ -1825,18 +2008,6 @@ Ends at: $eeeTime
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.stretch,
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(top: 50, bottom: 10.0, right: 200),
-                                                child: Text(
-                                                  "Main Team",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 20.0,
-                                                    fontFamily: 'Nunito-Bold',
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
                                               Padding(
                                                 padding: const EdgeInsets.only(top: 0, bottom: 40.0, right: 0),
                                                 child: _stempty
@@ -1887,7 +2058,7 @@ Ends at: $eeeTime
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 0.0, left: 30, top: 20),
+                                    padding: const EdgeInsets.only(right: 20.0, left: 20, top: 20),
                                     child: Row(
                                       children: [
                                         Container(
@@ -1929,7 +2100,7 @@ Ends at: $eeeTime
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 0.0, left: 30, top: 20, bottom: 20),
+                                    padding: const EdgeInsets.only(right: 20.0, left: 20, top: 20, bottom: 20),
                                     child: Row(
                                       children: [
                                         Container(
@@ -2063,9 +2234,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -2388,9 +2559,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -2420,7 +2591,7 @@ Ends at: $eeeTime
                                             child: Row(
                                               children: [
                                                 Text(
-                                                  "Notes",
+                                                  "Purpose of Deployment",
                                                   style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 20.0,
@@ -2455,7 +2626,7 @@ Ends at: $eeeTime
                               Padding(
                                 padding: const EdgeInsets.only(left: 40.0),
                                 child: Text(
-                                  "Kind",
+                                  "Type of Mission",
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 20.0,
@@ -2602,9 +2773,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -2880,9 +3051,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -3176,9 +3347,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -3475,9 +3646,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -3767,302 +3938,388 @@ Ends at: $eeeTime
 
   _buildVehicle() {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 9.0),
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: new BorderRadius.circular(10.0),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-              ),
-              child: SafeArea(
-                child: Container(
-                  height: Get.height,
-                  child: Stack(children: [
-                    Column(
-                      children: [
-                        Row(
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
+          child: Container(
+            height: Get.height,
+            width: Get.width,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: new BorderRadius.circular(10.0),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+            ),
+            child: Stack(children: [
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, left: 20.0),
+                        child: Text(
+                          "Add Vehicle",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0, top: 20),
+                        child: Text(
+                          "Type of Vehicle",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                    child: TextField(
+                      maxLength: 50,
+                      controller: _vehiclekindTextController,
+                      inputFormatters: [
+                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                      ],
+                      decoration: InputDecoration(
+                          counterText: '',
+                          isDense: true,
+                          prefixIcon: IconButton(
+                            color: Color(0xff085078),
+                            icon: Icon(Icons.style),
+                            iconSize: 20.0,
+                            onPressed: () {},
+                          ),
+                          contentPadding: EdgeInsets.only(left: 25.0),
+                          hintText: 'Vehicle Type',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0, top: 20),
+                        child: Text(
+                          "Vehicle Plate Number",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                    child: TextField(
+                      textCapitalization: TextCapitalization.characters,
+                      maxLength: 10,
+                      maxLengthEnforced: true,
+                      controller: _vehicleplateTextController,
+                      inputFormatters: [
+                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                      ],
+                      decoration: InputDecoration(
+                          counterText: '',
+                          isDense: true,
+                          prefixIcon: IconButton(
+                            color: Color(0xff085078),
+                            icon: Icon(Icons.contact_mail),
+                            iconSize: 20.0,
+                            onPressed: () {},
+                          ),
+                          contentPadding: EdgeInsets.only(left: 25.0),
+                          hintText: 'Vehicle Plate Number',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0, top: 20),
+                        child: Text(
+                          "Vehicle Brand",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                    child: TextField(
+                      maxLength: 50,
+                      controller: _vehiclebrandTextController,
+                      inputFormatters: [
+                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                      ],
+                      decoration: InputDecoration(
+                          counterText: '',
+                          isDense: true,
+                          prefixIcon: IconButton(
+                            color: Color(0xff085078),
+                            icon: Icon(Icons.local_car_wash),
+                            iconSize: 20.0,
+                            onPressed: () {},
+                          ),
+                          contentPadding: EdgeInsets.only(left: 25.0),
+                          hintText: 'Vehicle Brand',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0, top: 20),
+                        child: Text(
+                          "Vehicle Model",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontFamily: 'Nunito-Bold',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                    child: TextField(
+                      maxLength: 50,
+                      controller: _vehiclemodelTextController,
+                      inputFormatters: [
+                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                      ],
+                      decoration: InputDecoration(
+                          counterText: '',
+                          isDense: true,
+                          prefixIcon: IconButton(
+                            color: Color(0xff085078),
+                            icon: Icon(Icons.directions_car),
+                            iconSize: 20.0,
+                            onPressed: () {},
+                          ),
+                          contentPadding: EdgeInsets.only(left: 25.0),
+                          hintText: 'Vehicle Model',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                    ),
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30.0, left: 20, right: 0, bottom: 0),
+                        child: Row(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10, left: 20.0),
-                              child: Text(
-                                "Add Vehicle",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            Text(
+                              "Vehicle Description",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20.0,
+                                fontFamily: 'Nunito-Bold',
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
-                              child: Text(
-                                "Kind of Vehicle",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                      ),
+                      Container(
+                        height: 150,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20),
                           child: TextField(
-                            maxLength: 50,
-                            controller: _vehiclekindTextController,
-                            inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                            ],
-                            decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                prefixIcon: IconButton(
-                                  color: Color(0xff085078),
-                                  icon: Icon(Icons.style),
-                                  iconSize: 20.0,
-                                  onPressed: () {},
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: 'Vehicle Kind',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                            controller: _vehicledescTextController,
+                            maxLines: null,
+                            expands: true,
+                            keyboardType: TextInputType.multiline,
+                            decoration: InputDecoration(hintText: "Tap to write..."),
                           ),
                         ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
-                              child: Text(
-                                "Vehicle Plate Number",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
-                          child: TextField(
-                            textCapitalization: TextCapitalization.characters,
-                            maxLength: 10,
-                            maxLengthEnforced: true,
-                            controller: _vehicleplateTextController,
-                            inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                            ],
-                            decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                prefixIcon: IconButton(
-                                  color: Color(0xff085078),
-                                  icon: Icon(Icons.contact_mail),
-                                  iconSize: 20.0,
-                                  onPressed: () {},
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: 'Vehicle Plate Number',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    // color: Colors.transparent,
+                    decoration: new BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white,
+                          blurRadius: 50.0, // soften the shadow
+                          spreadRadius: 15.0, //extend the shadow
+                          offset: Offset(
+                            0.0, // Move to right 10  horizontally
+                            0.0, // Move to bottom 10 Vertically
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
-                              child: Text(
-                                "Vehicle Brand",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
-                          child: TextField(
-                            maxLength: 50,
-                            controller: _vehiclebrandTextController,
-                            inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                            ],
-                            decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                prefixIcon: IconButton(
-                                  color: Color(0xff085078),
-                                  icon: Icon(Icons.local_car_wash),
-                                  iconSize: 20.0,
-                                  onPressed: () {},
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: 'Vehicle Brand',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
-                              child: Text(
-                                "Vehicle Model",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
-                          child: TextField(
-                            maxLength: 50,
-                            controller: _vehiclemodelTextController,
-                            inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                            ],
-                            decoration: InputDecoration(
-                                counterText: '',
-                                isDense: true,
-                                prefixIcon: IconButton(
-                                  color: Color(0xff085078),
-                                  icon: Icon(Icons.directions_car),
-                                  iconSize: 20.0,
-                                  onPressed: () {},
-                                ),
-                                contentPadding: EdgeInsets.only(left: 25.0),
-                                hintText: 'Vehicle Model',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                          ),
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30.0, left: 20, right: 0, bottom: 0),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Vehicle Description",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20.0,
-                                      fontFamily: 'Nunito-Bold',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: 150,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20),
-                                child: TextField(
-                                  controller: _vehicledescTextController,
-                                  maxLines: null,
-                                  expands: true,
-                                  keyboardType: TextInputType.multiline,
-                                  decoration: InputDecoration(hintText: "Tap to write..."),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          // color: Colors.transparent,
-                          decoration: new BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white,
-                                blurRadius: 50.0, // soften the shadow
-                                spreadRadius: 15.0, //extend the shadow
-                                offset: Offset(
-                                  0.0, // Move to right 10  horizontally
-                                  0.0, // Move to bottom 10 Vertically
-                                ),
-                              )
-                            ],
-                          ),
-                          height: 30,
-                          width: 30,
-                          child: Stack(
-                            children: <Widget>[
-                              Center(
-                                child: RaisedButton(
-                                  onPressed: () {
-                                    String vkind = _vehiclekindTextController.text;
-                                    String vplate = _vehicleplateTextController.text;
-                                    String vbrand = _vehiclebrandTextController.text;
-                                    String vmodel = _vehiclemodelTextController.text;
-                                    String vdesc = _vehicledescTextController.text;
-
-                                    // print(vkind);
-                                    FirebaseFirestore.instance.collection("trialvehicles").doc(vplate).set({
-                                      'kind': vkind,
-                                      'plate': vplate,
-                                      'brand': vbrand,
-                                      'model': vmodel,
-                                      'desc': vdesc,
-                                    }).then((value) {
-                                      vehiclelist.add(vplate.toUpperCase());
-                                      print(vehiclelist);
-                                      _vehiclekindTextController.text = "";
-                                      _vehicleplateTextController.text = "";
-                                      _vehiclebrandTextController.text = "";
-                                      _vehiclemodelTextController.text = "";
-                                      _vehicledescTextController.text = "";
-                                      FocusScope.of(context).requestFocus(new FocusNode());
-                                      SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                      print('im here');
-                                    });
-                                    // _showModalSheet();
-                                    // _onTap();
-                                    // handleSignIn();
-                                  }, //only after checking
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
-                                  padding: const EdgeInsets.all(0.0),
-                                  child: Ink(
-                                    decoration: const BoxDecoration(
-                                      gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
-                                      borderRadius: BorderRadius.all(Radius.circular(80.0)),
-                                    ),
-                                    child: Container(
-                                      constraints: const BoxConstraints(minWidth: 88.0, minHeight: 36.0), // min sizes for Material buttons
-                                      alignment: Alignment.center,
-                                      child: Icon(Icons.add, size: 20, color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        //here ang contents
+                        )
                       ],
                     ),
-                  ]),
-                ),
+                    height: 30,
+                    width: 30,
+                    child: Stack(
+                      children: <Widget>[
+                        Center(
+                          child: RaisedButton(
+                            onPressed: () {
+                              String vkind = _vehiclekindTextController.text;
+                              String vplate = _vehicleplateTextController.text;
+                              String vbrand = _vehiclebrandTextController.text;
+                              String vmodel = _vehiclemodelTextController.text;
+                              String vdesc = _vehicledescTextController.text;
+                              String result = _vehicleplateTextController.text.toUpperCase().substring(0, _vehicleplateTextController.text.toUpperCase().indexOf(' '));
+                              print(result);
+                              String s1 = _vehicleplateTextController.text.substring(_vehicleplateTextController.text.indexOf(" ") + 1);
+                              print(s1);
+
+                              String characters = "[a-zA-Z]";
+                              RegExp regChar = RegExp(characters);
+                              String digits = "[0-9]";
+                              RegExp regDig = RegExp(digits);
+
+                              if (vkind.isEmpty || vplate.isEmpty || vbrand.isEmpty || vmodel.isEmpty || vdesc.isEmpty) {
+                                _showErrorAlert(
+                                    title: "Vehicle adding failed.",
+                                    content: 'All fields required!', //show error firebase
+                                    onPressed: _changeBlackVisible,
+                                    context: context);
+                                _btnController.reset();
+                              } else if (regChar.hasMatch(result)) {
+                                print('ok');
+                                if (result.length < 3) {
+                                  print('ok but less than 3');
+                                  //pag less than 3 that means mc sya and kailangan dapat ung digit is 5 digits
+                                  //check if ung digits is 5
+                                  if (regDig.hasMatch(s1)) {
+                                    print('ok numbers sya.');
+                                    if (s1.length == 5) {
+                                      print('ok 5 digits sya');
+
+                                      // finalVehResult = result + " " + s1;
+                                      // checktoDB();
+                                      // _toDBfromModal();
+                                      FirebaseFirestore.instance.collection("trialvehicles").doc(vplate).set({
+                                        'kind': vkind,
+                                        'plate': vplate,
+                                        'brand': vbrand,
+                                        'model': vmodel,
+                                        'desc': vdesc,
+                                      }).then((value) {
+                                        vehiclelist.add(vplate.toUpperCase());
+                                        print(vehiclelist);
+                                        _vehiclekindTextController.text = "";
+                                        _vehicleplateTextController.text = "";
+                                        _vehiclebrandTextController.text = "";
+                                        _vehiclemodelTextController.text = "";
+                                        _vehicledescTextController.text = "";
+                                        FocusScope.of(context).requestFocus(new FocusNode());
+                                        SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                        print('im here');
+                                      });
+
+                                      print('this is the final result');
+                                      // print(finalMCResult);
+                                    } else {
+                                      //error kase hindi naman sya 5 digits.
+                                      print('hindi sya 5 digits not valid');
+                                      _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                      _btnController.reset();
+                                    }
+                                  } else {
+                                    //error kase may letters sa dapat na digit lang
+                                    _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                    _btnController.reset();
+                                  }
+                                } else {
+                                  if (result.length == 3) {
+                                    print('ok kotse sya');
+                                    if (regDig.hasMatch(s1)) {
+                                      print('ok number sya');
+                                      if (s1.length == 4) {
+                                        // finalVehResult = result + " " + s1;
+                                        // checktoDB();
+                                        // _toDBfromModal();
+
+                                        FirebaseFirestore.instance.collection("trialvehicles").doc(vplate).set({
+                                          'kind': vkind,
+                                          'plate': vplate,
+                                          'brand': vbrand,
+                                          'model': vmodel,
+                                          'desc': vdesc,
+                                        }).then((value) {
+                                          vehiclelist.add(vplate.toUpperCase());
+                                          print(vehiclelist);
+                                          _vehiclekindTextController.text = "";
+                                          _vehicleplateTextController.text = "";
+                                          _vehiclebrandTextController.text = "";
+                                          _vehiclemodelTextController.text = "";
+                                          _vehicledescTextController.text = "";
+                                          FocusScope.of(context).requestFocus(new FocusNode());
+                                          SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                          print('im here');
+                                        });
+
+                                        print('this is the final result');
+                                        // print(finalVehResult);
+                                      } else {
+                                        print('kulang or sobra ang number');
+                                        _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                        _btnController.reset();
+                                      }
+                                    } else {
+                                      print('hindi sya number');
+                                      _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                      _btnController.reset();
+                                    }
+                                  } else {
+                                    print('lagpas sa 3');
+                                    _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                    _btnController.reset();
+                                  }
+                                }
+                              } else {
+                                _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                print('no');
+                                _btnController.reset();
+                              }
+                            }, //only after checking
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
+                            padding: const EdgeInsets.all(0.0),
+                            child: Ink(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                borderRadius: BorderRadius.all(Radius.circular(80.0)),
+                              ),
+                              child: Container(
+                                constraints: const BoxConstraints(minWidth: 88.0, minHeight: 36.0), // min sizes for Material buttons
+                                alignment: Alignment.center,
+                                child: Icon(Icons.add, size: 20, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //here ang contents
+                ],
               ),
-            ),
+            ]),
           ),
         ),
       ),
@@ -4076,9 +4333,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -4332,9 +4589,9 @@ Ends at: $eeeTime
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 20),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20),
               child: Container(
-                width: 365,
+                width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
@@ -4536,9 +4793,9 @@ Ends at: $eeeTime
                               _buildVehicle(),
                               _buildVehicleList(),
                               _buildSubmit(),
-                              Container(
-                                color: Colors.deepPurple,
-                              ),
+                              // Container(
+                              //   color: Colors.deepPurple,
+                              // ),
                             ],
                           ),
                         ),

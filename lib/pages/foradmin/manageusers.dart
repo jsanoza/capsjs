@@ -316,11 +316,11 @@ class _ManageUsersState extends State<ManageUsers> {
                     slivers: <Widget>[
                       SliverAppBar(
                         brightness: Brightness.light,
-                        backgroundColor: Color(0xff1D976C),
+                        backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
                         snap: true,
-                        shadowColor: Colors.green,
+                        shadowColor: Color(0xff085078),
                         flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,
                             title: Padding(
@@ -371,26 +371,18 @@ class _ManageUsersState extends State<ManageUsers> {
                           (BuildContext context, int pdIndex) {
                             return SingleChildScrollView(
                               child: Column(children: [
-                                Row(
-                                  children: [
-                                    Column(
-                                      children: <Widget>[
-                                        Stack(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 30, bottom: 80),
-                                              child: Container(
-                                                  width: 350,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: new BorderRadius.circular(10.0),
-                                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                                                  ),
-                                                  child: _buildMain2()),
-                                            ),
-                                          ],
-                                        )
-                                      ],
+                                Stack(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 30, bottom: 80),
+                                      child: Container(
+                                          width: Get.width,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: new BorderRadius.circular(10.0),
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                                          ),
+                                          child: _buildMain2()),
                                     ),
                                   ],
                                 )
@@ -478,7 +470,7 @@ class _ManageUsersState extends State<ManageUsers> {
                                     height: menuContainerHeight,
                                     child: Column(
                                       children: <Widget>[
-                                        MyButton(text: "Schedule Details", iconData: Icons.person, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 0),
+                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 0),
                                         MyButton(text: "Add Schedule", iconData: Icons.payment, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 1),
                                         // MyButton(text: "Register New User", iconData: Icons.notifications, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
                                         // MyButton(text: "Reset User Password", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
@@ -521,8 +513,8 @@ class _ManageUsersState extends State<ManageUsers> {
                                         children: [
                                           Icon(
                                             Icons.logout,
-                                            color: Colors.lightGreen,
-                                            size: 20.0,
+                                            color: Color(0xff085078),
+                                            size: 25.0,
                                           ),
                                           Text(
                                             '  Logout',

@@ -49,7 +49,8 @@ class _VehicleList extends State<VehicleList> {
   String query;
   String todeleteveh;
   var uuid = Uuid();
-
+  String finalVehResult;
+  String finalMCResult;
   @override
   void initState() {
     limits = [0, 0, 0, 0, 0, 0];
@@ -432,6 +433,178 @@ class _VehicleList extends State<VehicleList> {
     );
   }
 
+  _toDBfromModal() async {
+    String vkind = _vehiclekindTextController.text;
+    // String vplate = _vehicleplateTextController.text;
+    String vplate = finalVehResult;
+    String vbrand = _vehiclebrandTextController.text;
+    String vmodel = _vehiclemodelTextController.text;
+    String vdesc = _vehicledescTextController.text;
+    String vreas = _vehiclereasTextController.text;
+    try {
+      if (isEdited == true) {
+        var activity = 'Edited a hot-car with plate number: $vplate';
+
+        User user = auth.currentUser;
+        var currentUser = user.uid;
+        var usercheck;
+        var collectionid2 = uuid.v1();
+
+        QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
+        username.docs.forEach((document) {
+          usercheck = document.data()['fullName'];
+        });
+
+        FirebaseFirestore.instance.collection("vehicles").doc(query).set({
+          'query': query,
+          'vehicle': vplate,
+          'vehiclebrand': vbrand,
+          'vehicledesc': vdesc,
+          'vehiclekind': vkind,
+          'vehiclemodel': vmodel,
+          // 'addedby': 'toadd',
+          // 'addedtime': Timestamp.now(),
+          'editedby': 'toadd',
+          'editedtime': Timestamp.now(),
+          'reason': vreas,
+        }).then((value) {
+          FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
+            // 'collectionid2': collectionid2,
+            'lastactivity_datetime': Timestamp.now(),
+          }).then((value) {
+            FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+              // 'collectionid2': collectionid2,
+              'userid': user.uid,
+              'userfullname': usercheck,
+              'this_collectionid': collectionid2,
+              'activity': activity,
+              'editcreate_datetime': Timestamp.now(),
+              'editcreate_collectionid': vplate,
+            });
+          });
+
+          print("done");
+          Get.offAll(VehicleList());
+          Get.snackbar(
+            "Success!",
+            "Vehicle Edited!.",
+            duration: Duration(seconds: 3),
+          );
+          _showSuccessAlert(
+              title: "Congrats!",
+              content: "Successfully Edited!", //show error firebase
+              onPressed: _changeBlackVisible,
+              context: context);
+
+          setState(() {
+            _btnController.reset();
+            _vehiclekindTextController.text = "";
+            _vehicleplateTextController.text = "";
+            _vehiclebrandTextController.text = "";
+            _vehiclemodelTextController.text = "";
+            _vehicledescTextController.text = "";
+            _vehiclereasTextController.text = "";
+            finalVehResult = "";
+            _btnController.reset();
+            // Get.snackbar(
+            //   "Success!",
+            //   "New Schedule Added.",
+            //   duration: Duration(seconds: 3),
+            // );
+            // Get.offAll(Dashboard());
+          });
+        });
+      } else {
+        var activity = 'Created a new hot-car with plate number: $vplate';
+
+        User user = auth.currentUser;
+        var currentUser = user.uid;
+        var usercheck;
+        var collectionid2 = uuid.v1();
+
+        QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
+        username.docs.forEach((document) {
+          usercheck = document.data()['fullName'];
+        });
+
+        FirebaseFirestore.instance.collection("vehicles").doc(vplate).set({
+          'query': vplate,
+          'vehicle': vplate,
+          'vehiclebrand': vbrand,
+          'vehicledesc': vdesc,
+          'vehiclekind': vkind,
+          'vehiclemodel': vmodel,
+          'addedby': 'toadd',
+          'addedtime': Timestamp.now(),
+          'reason': vreas,
+        }).then((value) {
+          FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
+            // 'collectionid2': collectionid2,
+            'lastactivity_datetime': Timestamp.now(),
+          }).then((value) {
+            FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+              // 'collectionid2': collectionid2,
+              'userid': user.uid,
+              'userfullname': usercheck,
+              'this_collectionid': collectionid2,
+              'activity': activity,
+              'editcreate_datetime': Timestamp.now(),
+              'editcreate_collectionid': vplate,
+            });
+          });
+
+          print("done");
+          Get.offAll(VehicleList());
+          Get.snackbar(
+            "Success!",
+            "New Vehicle Added.",
+            duration: Duration(seconds: 3),
+          );
+          _showSuccessAlert(
+              title: "Congrats!",
+              content: "Successfully Created!", //show error firebase
+              onPressed: _changeBlackVisible,
+              context: context);
+
+          setState(() {
+            _btnController.reset();
+            _vehiclekindTextController.text = "";
+            _vehicleplateTextController.text = "";
+            _vehiclebrandTextController.text = "";
+            _vehiclemodelTextController.text = "";
+            _vehicledescTextController.text = "";
+            _vehiclereasTextController.text = "";
+            finalVehResult = "";
+            _btnController.reset();
+            // Get.snackbar(
+            //   "Success!",
+            //   "New Schedule Added.",
+            //   duration: Duration(seconds: 3),
+            // );
+            // Get.offAll(Dashboard());
+          });
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _btnController.reset();
+        _btnController.reset();
+        _vehiclekindTextController.text = "";
+        _vehicleplateTextController.text = "";
+        _vehiclebrandTextController.text = "";
+        _vehiclemodelTextController.text = "";
+        _vehicledescTextController.text = "";
+        finalVehResult = "";
+        _vehiclereasTextController.text = "";
+      });
+      _showErrorAlert(
+          title: "ADDING FAILED",
+          content: e.printError(), //show error firebase
+          onPressed: _changeBlackVisible,
+          context: context);
+    }
+  }
+
   _showAdd(BuildContext context) {
     showModalBottomSheet(
       isScrollControlled: true,
@@ -456,7 +629,7 @@ class _VehicleList extends State<VehicleList> {
                         Get.offAll(VehicleList());
                       }),
                   title: Text("Add Vehicle", style: TextStyle(color: Colors.white)),
-                  backgroundColor: Color(0xff1D976C),
+                  backgroundColor: Color(0xff085078),
                 ),
                 body: SingleChildScrollView(
                   child: Container(
@@ -507,7 +680,7 @@ class _VehicleList extends State<VehicleList> {
                                 counterText: '',
                                 isDense: true,
                                 prefixIcon: IconButton(
-                                  color: Colors.green,
+                                  color: Color(0xff085078),
                                   icon: Icon(Icons.style),
                                   iconSize: 20.0,
                                   onPressed: () {},
@@ -547,7 +720,7 @@ class _VehicleList extends State<VehicleList> {
                                 counterText: '',
                                 isDense: true,
                                 prefixIcon: IconButton(
-                                  color: Colors.green,
+                                  color: Color(0xff085078),
                                   icon: Icon(Icons.contact_mail),
                                   iconSize: 20.0,
                                   onPressed: () {},
@@ -585,7 +758,7 @@ class _VehicleList extends State<VehicleList> {
                                 counterText: '',
                                 isDense: true,
                                 prefixIcon: IconButton(
-                                  color: Colors.green,
+                                  color: Color(0xff085078),
                                   icon: Icon(Icons.local_car_wash),
                                   iconSize: 20.0,
                                   onPressed: () {},
@@ -623,7 +796,7 @@ class _VehicleList extends State<VehicleList> {
                                 counterText: '',
                                 isDense: true,
                                 prefixIcon: IconButton(
-                                  color: Colors.green,
+                                  color: Color(0xff085078),
                                   icon: Icon(Icons.directions_car),
                                   iconSize: 20.0,
                                   onPressed: () {},
@@ -705,7 +878,7 @@ class _VehicleList extends State<VehicleList> {
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       RoundedLoadingButton(
-                                        color: Color(0xff1D976C),
+                                        color: Color(0xff085078),
                                         child: Text('Add', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
                                         controller: _btnController,
                                         onPressed: () async {
@@ -715,170 +888,88 @@ class _VehicleList extends State<VehicleList> {
                                           String vmodel = _vehiclemodelTextController.text;
                                           String vdesc = _vehicledescTextController.text;
                                           String vreas = _vehiclereasTextController.text;
+                                          String result = _vehicleplateTextController.text.toUpperCase().substring(0, _vehicleplateTextController.text.toUpperCase().indexOf(' '));
+                                          print(result);
+                                          String s1 = _vehicleplateTextController.text.substring(_vehicleplateTextController.text.indexOf(" ") + 1);
+                                          print(s1);
 
-                                          try {
-                                            if (isEdited == true) {
-                                              var activity = 'Edited a hot-car with plate number: $vplate';
-
-                                              User user = auth.currentUser;
-                                              var currentUser = user.uid;
-                                              var usercheck;
-                                              var collectionid2 = uuid.v1();
-
-                                              QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
-                                              username.docs.forEach((document) {
-                                                usercheck = document.data()['fullName'];
-                                              });
-
-                                              FirebaseFirestore.instance.collection("vehicles").doc(query).set({
-                                                'query': query,
-                                                'vehicle': vplate,
-                                                'vehiclebrand': vbrand,
-                                                'vehicledesc': vdesc,
-                                                'vehiclekind': vkind,
-                                                'vehiclemodel': vmodel,
-                                                // 'addedby': 'toadd',
-                                                // 'addedtime': Timestamp.now(),
-                                                'editedby': 'toadd',
-                                                'editedtime': Timestamp.now(),
-                                                'reason': vreas,
-                                              }).then((value) {
-                                                FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-                                                  // 'collectionid2': collectionid2,
-                                                  'lastactivity_datetime': Timestamp.now(),
-                                                }).then((value) {
-                                                  FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
-                                                    // 'collectionid2': collectionid2,
-                                                    'userid': user.uid,
-                                                    'userfullname': usercheck,
-                                                    'this_collectionid': collectionid2,
-                                                    'activity': activity,
-                                                    'editcreate_datetime': Timestamp.now(),
-                                                    'editcreate_collectionid': vplate,
-                                                  });
-                                                });
-
-                                                print("done");
-                                                Get.offAll(VehicleList());
-                                                Get.snackbar(
-                                                  "Success!",
-                                                  "Vehicle Edited!.",
-                                                  duration: Duration(seconds: 3),
-                                                );
-                                                _showSuccessAlert(
-                                                    title: "Congrats!",
-                                                    content: "Successfully Edited!", //show error firebase
-                                                    onPressed: _changeBlackVisible,
-                                                    context: context);
-
-                                                setState(() {
-                                                  _btnController.reset();
-                                                  _vehiclekindTextController.text = "";
-                                                  _vehicleplateTextController.text = "";
-                                                  _vehiclebrandTextController.text = "";
-                                                  _vehiclemodelTextController.text = "";
-                                                  _vehicledescTextController.text = "";
-                                                  _vehiclereasTextController.text = "";
-                                                  _btnController.reset();
-                                                  // Get.snackbar(
-                                                  //   "Success!",
-                                                  //   "New Schedule Added.",
-                                                  //   duration: Duration(seconds: 3),
-                                                  // );
-                                                  // Get.offAll(Dashboard());
-                                                });
-                                              });
-                                            } else {
-                                              var activity = 'Created a new hot-car with plate number: $vplate';
-
-                                              User user = auth.currentUser;
-                                              var currentUser = user.uid;
-                                              var usercheck;
-                                              var collectionid2 = uuid.v1();
-
-                                              QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
-                                              username.docs.forEach((document) {
-                                                usercheck = document.data()['fullName'];
-                                              });
-
-                                              FirebaseFirestore.instance.collection("vehicles").doc(vplate).set({
-                                                'query': vplate,
-                                                'vehicle': vplate,
-                                                'vehiclebrand': vbrand,
-                                                'vehicledesc': vdesc,
-                                                'vehiclekind': vkind,
-                                                'vehiclemodel': vmodel,
-                                                'addedby': 'toadd',
-                                                'addedtime': Timestamp.now(),
-                                                'reason': vreas,
-                                              }).then((value) {
-                                                FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-                                                  // 'collectionid2': collectionid2,
-                                                  'lastactivity_datetime': Timestamp.now(),
-                                                }).then((value) {
-                                                  FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
-                                                    // 'collectionid2': collectionid2,
-                                                    'userid': user.uid,
-                                                    'userfullname': usercheck,
-                                                    'this_collectionid': collectionid2,
-                                                    'activity': activity,
-                                                    'editcreate_datetime': Timestamp.now(),
-                                                    'editcreate_collectionid': vplate,
-                                                  });
-                                                });
-
-                                                print("done");
-                                                Get.offAll(VehicleList());
-                                                Get.snackbar(
-                                                  "Success!",
-                                                  "New Vehicle Added.",
-                                                  duration: Duration(seconds: 3),
-                                                );
-                                                _showSuccessAlert(
-                                                    title: "Congrats!",
-                                                    content: "Successfully Created!", //show error firebase
-                                                    onPressed: _changeBlackVisible,
-                                                    context: context);
-
-                                                setState(() {
-                                                  _btnController.reset();
-                                                  _vehiclekindTextController.text = "";
-                                                  _vehicleplateTextController.text = "";
-                                                  _vehiclebrandTextController.text = "";
-                                                  _vehiclemodelTextController.text = "";
-                                                  _vehicledescTextController.text = "";
-                                                  _vehiclereasTextController.text = "";
-                                                  _btnController.reset();
-                                                  // Get.snackbar(
-                                                  //   "Success!",
-                                                  //   "New Schedule Added.",
-                                                  //   duration: Duration(seconds: 3),
-                                                  // );
-                                                  // Get.offAll(Dashboard());
-                                                });
-                                              });
-                                            }
-                                          } catch (e) {
-                                            setState(() {
-                                              _btnController.reset();
-                                              _btnController.reset();
-                                              _vehiclekindTextController.text = "";
-                                              _vehicleplateTextController.text = "";
-                                              _vehiclebrandTextController.text = "";
-                                              _vehiclemodelTextController.text = "";
-                                              _vehicledescTextController.text = "";
-                                              _vehiclereasTextController.text = "";
-                                            });
+                                          String characters = "[a-zA-Z]";
+                                          RegExp regChar = RegExp(characters);
+                                          String digits = "[0-9]";
+                                          RegExp regDig = RegExp(digits);
+                                          if (vkind.isEmpty || vplate.isEmpty || vbrand.isEmpty || vmodel.isEmpty || vdesc.isEmpty || vreas.isEmpty) {
                                             _showErrorAlert(
-                                                title: "ADDING FAILED",
-                                                content: e.printError(), //show error firebase
+                                                title: "Vehicle adding failed.",
+                                                content: 'All fields required!', //show error firebase
                                                 onPressed: _changeBlackVisible,
                                                 context: context);
+                                            _btnController.reset();
+                                          } else if (regChar.hasMatch(result)) {
+                                            print('ok');
+                                            if (result.length < 3) {
+                                              print('ok but less than 3');
+                                              //pag less than 3 that means mc sya and kailangan dapat ung digit is 5 digits
+                                              //check if ung digits is 5
+                                              if (regDig.hasMatch(s1)) {
+                                                print('ok numbers sya.');
+                                                if (s1.length == 5) {
+                                                  print('ok 5 digits sya');
+                                                  setState(() {
+                                                    finalVehResult = result + " " + s1;
+                                                    // checktoDB();
+                                                    _toDBfromModal();
+                                                  });
+
+                                                  print('this is the final result');
+                                                  print(finalMCResult);
+                                                } else {
+                                                  //error kase hindi naman sya 5 digits.
+                                                  print('hindi sya 5 digits not valid');
+                                                  _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                  _btnController.reset();
+                                                }
+                                              } else {
+                                                //error kase may letters sa dapat na digit lang
+                                                _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                _btnController.reset();
+                                              }
+                                            } else {
+                                              if (result.length == 3) {
+                                                print('ok kotse sya');
+                                                if (regDig.hasMatch(s1)) {
+                                                  print('ok number sya');
+                                                  if (s1.length == 4) {
+                                                    setState(() {
+                                                      finalVehResult = result + " " + s1;
+                                                      // checktoDB();
+                                                      _toDBfromModal();
+                                                    });
+                                                    print('this is the final result');
+                                                    print(finalVehResult);
+                                                  } else {
+                                                    print('kulang or sobra ang number');
+                                                    _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                    _btnController.reset();
+                                                  }
+                                                } else {
+                                                  print('hindi sya number');
+                                                  _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                  _btnController.reset();
+                                                }
+                                              } else {
+                                                print('lagpas sa 3');
+                                                _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                _btnController.reset();
+                                              }
+                                            }
+                                          } else {
+                                            _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                            print('no');
+                                            _btnController.reset();
                                           }
 
                                           FocusScope.of(context).requestFocus(new FocusNode());
                                           SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                          print("hindi");
                                         },
                                       ),
                                     ],
@@ -958,7 +1049,7 @@ class _VehicleList extends State<VehicleList> {
                         floating: true,
                         pinned: true,
                         snap: true,
-                        shadowColor: Colors.green,
+                        shadowColor: Color(0xff085078),
                         flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,
                             title: Padding(
@@ -1008,34 +1099,28 @@ class _VehicleList extends State<VehicleList> {
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int pdIndex) {
                             return SingleChildScrollView(
-                              child: Column(children: [
-                                Row(
-                                  children: [
-                                    Column(
-                                      children: <Widget>[
-                                        Stack(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 30, bottom: 80),
-                                              child: Container(
-                                                  width: 350,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: new BorderRadius.circular(10.0),
-                                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                                                  ),
-                                                  child:
-                                                      // Container()),
-                                                      _buildMain2()),
+                              child: Column(
+                                children: [
+                                  Stack(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 30, bottom: 80),
+                                        child: Container(
+                                            width: Get.width,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: new BorderRadius.circular(10.0),
+                                              boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
                                             ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                )
-                                //... The children inside the column of ListView.builder
-                              ]),
+                                            child:
+                                                // Container()),
+                                                _buildMain2()),
+                                      ),
+                                    ],
+                                  )
+                                  //... The children inside the column of ListView.builder
+                                ],
+                              ),
                             );
                           },
                           // Builds 1000 ListTiles
@@ -1164,8 +1249,8 @@ class _VehicleList extends State<VehicleList> {
                                         children: [
                                           Icon(
                                             Icons.logout,
-                                            color: Colors.lightGreen,
-                                            size: 20.0,
+                                            color: Color(0xff085078),
+                                            size: 25.0,
                                           ),
                                           Text(
                                             '  Logout',

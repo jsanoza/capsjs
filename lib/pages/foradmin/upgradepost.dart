@@ -41,6 +41,7 @@ class _UpgradeposState extends State<UpgradeposState> {
   String newValue;
   String collectionid;
   String name;
+  String chosenRank;
   FirebaseAuth auth = FirebaseAuth.instance;
   var uuid = Uuid();
   @override
@@ -64,6 +65,9 @@ class _UpgradeposState extends State<UpgradeposState> {
       collectionid = hello.data()['collectionId'];
       name = hello.data()['fullName'];
       print(collectionid);
+      setState(() {
+        chosenRank = hello.data()['rank'];
+      });
       return data;
     }
     if (a.docs.isEmpty) {
@@ -90,23 +94,69 @@ class _UpgradeposState extends State<UpgradeposState> {
         print("cannot be the same as old");
         _btnController.reset();
       } else if (badgeCheck != newValue) {
-        print("Ayan pwede yan");
+        print(chosenRank);
+        if (newValue == 'Team Leader' && chosenRank == 'PO1' ||
+            newValue == 'Team Leader' && chosenRank == 'PO2' ||
+            newValue == 'Team Leader' && chosenRank == 'PO3' ||
+            newValue == 'Team Leader' && chosenRank == 'SPO1' ||
+            newValue == 'Team Leader' && chosenRank == 'SPO2' ||
+            newValue == 'Team Leader' && chosenRank == 'SPO3' ||
+            newValue == 'Team Leader' && chosenRank == 'SPO4') {
+          print('the chosen rank is not allowed to be a team leader');
+          _showErrorAlert(
+              title: "Registration failed.",
+              content: 'The chosen rank is not allowed to be a team leader', //show error firebase
+              onPressed: _changeBlackVisible,
+              context: context);
+          _btnController.reset();
+        } else {
+          // print("Ayan pwede yan");
 
-        QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
-        username.docs.forEach((document) {
-          usercheck = document.data()['fullName'];
-        });
-
-        if (badgeCheck == 'Leader') {
-          newValue = 'Team Leader';
-          FirebaseFirestore.instance.collection("users").doc(collectionid.toString()).update({
-            "position": newValue,
-            "timepostedit": finalCreatex,
+          QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
+          username.docs.forEach((document) {
+            usercheck = document.data()['fullName'];
           });
-          FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-            // 'collectionid2': collectionid2,
-            'lastactivity_datetime': Timestamp.now(),
-          }).then((value) {
+
+          if (badgeCheck == 'Leader') {
+            newValue = 'Team Leader';
+            FirebaseFirestore.instance.collection("users").doc(collectionid.toString()).update({
+              "position": newValue,
+              "timepostedit": finalCreatex,
+            });
+            FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
+              // 'collectionid2': collectionid2,
+              'lastactivity_datetime': Timestamp.now(),
+            }).then((value) {
+              FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+                // 'collectionid2': collectionid2,
+                'userid': user.uid,
+                'userfullname': usercheck,
+                'this_collectionid': collectionid2,
+                'activity': activity,
+                'editcreate_datetime': Timestamp.now(),
+                'editcreate_collectionid': collectionid,
+              });
+              _showSuccessAlert(
+                  title: "Congrats!",
+                  content: "Successfully Updated!", //show error firebase
+                  onPressed: _changeBlackVisible,
+                  context: context);
+              Timer(Duration(seconds: 2), () {
+                setState(() {
+                  Get.snackbar(
+                    "Success!",
+                    "Successfully Updated!",
+                    duration: Duration(seconds: 3),
+                  );
+                  _btnController.reset();
+                });
+              });
+            });
+          } else {
+            FirebaseFirestore.instance.collection("users").doc(collectionid.toString()).update({
+              "position": newValue,
+              "timepostedit": finalCreatex,
+            });
             FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
               // 'collectionid2': collectionid2,
               'userid': user.uid,
@@ -116,38 +166,24 @@ class _UpgradeposState extends State<UpgradeposState> {
               'editcreate_datetime': Timestamp.now(),
               'editcreate_collectionid': collectionid,
             });
-          });
-        } else {
-          FirebaseFirestore.instance.collection("users").doc(collectionid.toString()).update({
-            "position": newValue,
-            "timepostedit": finalCreatex,
-          });
-          FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
-            // 'collectionid2': collectionid2,
-            'userid': user.uid,
-            'userfullname': usercheck,
-            'this_collectionid': collectionid2,
-            'activity': activity,
-            'editcreate_datetime': Timestamp.now(),
-            'editcreate_collectionid': collectionid,
-          });
+            _showSuccessAlert(
+                title: "Congrats!",
+                content: "Successfully Updated!", //show error firebase
+                onPressed: _changeBlackVisible,
+                context: context);
+            Timer(Duration(seconds: 2), () {
+              setState(() {
+                Get.snackbar(
+                  "Success!",
+                  "Successfully Updated!",
+                  duration: Duration(seconds: 3),
+                );
+                _btnController.reset();
+              });
+            });
+          }
         }
       }
-      _showSuccessAlert(
-          title: "Congrats!",
-          content: "Successfully Updated!", //show error firebase
-          onPressed: _changeBlackVisible,
-          context: context);
-      Timer(Duration(seconds: 2), () {
-        setState(() {
-          Get.snackbar(
-            "Success!",
-            "Successfully Updated!",
-            duration: Duration(seconds: 3),
-          );
-          _btnController.reset();
-        });
-      });
     } catch (e) {
       _showErrorAlert(
           title: "UPDATING FAILED",
@@ -260,17 +296,21 @@ $newValue
       children: <Widget>[
         Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 190, bottom: 10),
-              child: Text(
-                "Edit Position",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
-                  fontFamily: 'Nunito-Bold',
-                  fontWeight: FontWeight.bold,
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, left: 20, bottom: 10),
+                  child: Text(
+                    "Edit Position",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontFamily: 'Nunito-Bold',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -278,17 +318,21 @@ $newValue
                 width: 480,
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, right: 220),
-                      child: Text(
-                        "Select a user:",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.0,
-                          fontFamily: 'Nunito-Bold',
-                          fontWeight: FontWeight.bold,
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0, left: 20),
+                          child: Text(
+                            "Select a user:",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15.0,
+                              fontFamily: 'Nunito-Bold',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                     Container(
                       height: 100,
@@ -317,7 +361,7 @@ $newValue
                                             children: [
                                               Padding(
                                                 padding: const EdgeInsets.only(left: 5.0, top: 5),
-                                                child: Icon(Icons.how_to_reg, size: 20, color: Colors.green),
+                                                child: Icon(Icons.how_to_reg, size: 20, color: Color(0xff085078)),
                                               ),
                                             ],
                                           ),
@@ -329,7 +373,7 @@ $newValue
                                               padding: EdgeInsets.symmetric(horizontal: 8.0),
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(5.0),
-                                                border: Border.all(color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                                                border: Border.all(color: Color(0xff085078), style: BorderStyle.solid, width: 0.80),
                                               ),
                                               height: 50,
                                               width: 340,
@@ -364,17 +408,21 @@ $newValue
                             }
                           }),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, right: 185),
-                      child: Text(
-                        "Update Position to:",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.0,
-                          fontFamily: 'Nunito-Bold',
-                          fontWeight: FontWeight.bold,
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0, left: 20),
+                          child: Text(
+                            "Update Position to:",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15.0,
+                              fontFamily: 'Nunito-Bold',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 12.0, left: 12, top: 0, bottom: 12),
@@ -387,7 +435,7 @@ $newValue
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(left: 5.0, top: 5),
-                                child: Icon(Icons.how_to_reg, size: 20, color: Colors.green),
+                                child: Icon(Icons.how_to_reg, size: 20, color: Color(0xff085078)),
                               ),
                             ],
                           ),
@@ -396,7 +444,7 @@ $newValue
                           padding: EdgeInsets.symmetric(horizontal: 8.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            border: Border.all(color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                            border: Border.all(color: Color(0xff085078), style: BorderStyle.solid, width: 0.80),
                           ),
                           height: 50,
                           width: 340,
@@ -428,24 +476,20 @@ $newValue
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0, right: 0, left: 0, bottom: 0),
                       child: Container(
+                        width: Get.width,
                         child: Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                RoundedLoadingButton(
-                                  color: Color(0xff1D976C),
-                                  child: Text('Update', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
-                                  controller: _btnController,
-                                  onPressed: () {
-                                    setState(() {
-                                      FocusScope.of(context).requestFocus(new FocusNode());
-                                      SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                      showAlertDialog(context);
-                                    });
-                                  },
-                                ),
-                              ],
+                            RoundedLoadingButton(
+                              color: Color(0xff085078),
+                              child: Text('Update', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
+                              controller: _btnController,
+                              onPressed: () {
+                                setState(() {
+                                  FocusScope.of(context).requestFocus(new FocusNode());
+                                  SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                  showAlertDialog(context);
+                                });
+                              },
                             ),
                           ],
                         ),
@@ -491,7 +535,7 @@ $newValue
           height: 400,
           decoration: BoxDecoration(
             borderRadius: new BorderRadius.only(bottomRight: new Radius.circular(30.0), bottomLeft: new Radius.circular(0.0)),
-            gradient: new LinearGradient(colors: [Color(0xff93F9B9), Color(0xff1D976C)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+            gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
           ),
         ),
         GestureDetector(
@@ -515,7 +559,7 @@ $newValue
                     slivers: <Widget>[
                       SliverAppBar(
                         brightness: Brightness.light,
-                        backgroundColor: Color(0xff1D976C),
+                        backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
                         snap: true,
@@ -538,7 +582,7 @@ $newValue
                                     padding: const EdgeInsets.only(top: 1.0),
                                     child: AvatarGlow(
                                       startDelay: Duration(milliseconds: 0),
-                                      glowColor: Colors.lime,
+                                      glowColor: Colors.red,
                                       endRadius: 40.0,
                                       duration: Duration(milliseconds: 2000),
                                       repeat: true,
@@ -570,26 +614,18 @@ $newValue
                           (BuildContext context, int pdIndex) {
                             return SingleChildScrollView(
                               child: Column(children: [
-                                Row(
-                                  children: [
-                                    Column(
-                                      children: <Widget>[
-                                        Stack(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 30, bottom: 80),
-                                              child: Container(
-                                                  width: 350,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: new BorderRadius.circular(10.0),
-                                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                                                  ),
-                                                  child: _buildMain2()),
-                                            ),
-                                          ],
-                                        )
-                                      ],
+                                Stack(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 30, bottom: 80),
+                                      child: Container(
+                                          width: Get.width,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: new BorderRadius.circular(10.0),
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                                          ),
+                                          child: _buildMain2()),
                                     ),
                                   ],
                                 )
@@ -720,8 +756,8 @@ $newValue
                                         children: [
                                           Icon(
                                             Icons.logout,
-                                            color: Colors.lightGreen,
-                                            size: 20.0,
+                                            color: Color(0xff085078),
+                                            size: 25.0,
                                           ),
                                           Text(
                                             '  Logout',

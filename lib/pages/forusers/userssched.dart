@@ -14,6 +14,7 @@ import 'package:get_rekk/pages/forusers/usersongoing.dart';
 import 'package:get_rekk/pages/forusers/userspasssched.dart';
 import 'package:get_rekk/pages/forusers/usersupcomsched.dart';
 import 'package:get_rekk/pages/loginsignup.dart';
+import 'package:uuid/uuid.dart';
 
 class UsersSched extends StatefulWidget {
   @override
@@ -32,7 +33,7 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
   TabController _tabController;
   bool isMenuOpen = false;
   FirebaseAuth auth = FirebaseAuth.instance;
-
+  var uuid = Uuid();
   String badge;
 
   @override
@@ -184,6 +185,24 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
   //   print(UserSched.collectid);
   // }
 
+  signOut() {
+    User user = auth.currentUser;
+    var collectionid2 = uuid.v1();
+
+    FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
+      'lastactivity_datetime': Timestamp.now(),
+    }).then((value) {
+      FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+        'userid': user.uid,
+        'activity': 'Logged out session.',
+        'editcreate_datetime': Timestamp.now(),
+      });
+    }).then((value) {
+      auth.signOut();
+      Get.offAll(LogSign());
+    });
+  }
+
   getPosition(duration) {
     RenderBox renderBox = globalKey.currentContext.findRenderObject();
     final position = renderBox.localToGlobal(Offset.zero);
@@ -273,7 +292,7 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
                         ),
                       ),
                       background: Image.network(
-                        'https://news-banner.com/wp-content/uploads/2017/03/PoliceBadgebackground.mgn_BG.jpg',
+                        'https://khspress.com/wp-content/uploads/2019/11/6.jpg',
                         fit: BoxFit.cover,
                       )),
                   // Make the initial height of the SliverAppBar larger than normal.
@@ -399,8 +418,28 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
                           padding: const EdgeInsets.only(left: 20.0),
                           child: GestureDetector(
                             onTap: () {
-                              auth.signOut();
-                              Get.offAll(LogSign());
+                              // auth.signOut();
+                              // Get.offAll(LogSign());
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Logout Confirmation"),
+                                      content: const Text("Are you sure you want to log out?"),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                            onPressed: () => {
+                                                  signOut(),
+                                                },
+                                            child: const Text("Yes")),
+                                        FlatButton(
+                                          onPressed: () => Navigator.of(context).pop(false),
+                                          child: const Text("Cancel"),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                              print('clik');
                             },
                             child: Row(
                               children: [

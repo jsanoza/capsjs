@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get_rekk/helpers/util.dart';
 
 class UsersOngoingdetailsPageone extends StatefulWidget {
@@ -39,9 +40,9 @@ class _UsersOngoingdetailsPageoneState extends State<UsersOngoingdetailsPageone>
                         //   ),
                         // ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 27.0, right: 0.0, top: 50.0),
+                          padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 50.0),
                           child: Container(
-                            width: 560,
+                            width: Get.width,
                             child: Stack(
                               children: [
                                 Column(
@@ -486,7 +487,7 @@ class _UsersOngoingdetailsPageoneState extends State<UsersOngoingdetailsPageone>
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
                                                         Text(
-                                                          "Kind: ",
+                                                          "Type of Mission: ",
                                                           style: TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 15.0,
@@ -606,7 +607,7 @@ class _UsersOngoingdetailsPageoneState extends State<UsersOngoingdetailsPageone>
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
                                                         Text(
-                                                          "Notes: ",
+                                                          "Purpose of Deployment: ",
                                                           style: TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 15.0,

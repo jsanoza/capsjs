@@ -32,7 +32,7 @@ getShop2() {
 
 _buildFuture() {
   return Container(
-    height: 300,
+    height: Get.width,
     width: 450,
     color: Colors.white,
     child: StreamBuilder<QuerySnapshot>(
@@ -192,75 +192,67 @@ class _UsersOngoingSchedState extends State<UsersOngoingSched> {
     User user = auth.currentUser;
     return SingleChildScrollView(
       child: Column(children: [
-        Row(
-          children: [
-            Column(
-              children: <Widget>[
-                new Stack(
+        new Stack(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 100.0, left: 25, right: 25),
+              child: Container(
+                width: Get.width,
+                height: 500,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: new BorderRadius.circular(10.0),
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                ),
+                child: _buildFuture(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 14.0, right: 14.0, top: 50, bottom: 40),
+              child: Container(
+                width: Get.width,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: new BorderRadius.circular(10.0),
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                ),
+                child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(top: 100.0, left: 25, right: 14),
-                      child: Container(
-                        width: 340,
-                        height: 500,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: new BorderRadius.circular(10.0),
-                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                      padding: const EdgeInsets.only(
+                        top: 20.0,
+                        right: 0,
+                      ),
+                      child: Text(
+                        "Ongoing Schedules",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 30.0,
+                          fontFamily: 'Nunito-Bold',
+                          fontWeight: FontWeight.bold,
                         ),
-                        child: _buildFuture(),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 23.0, right: 10.0, top: 50, bottom: 40),
-                      child: Container(
-                        width: 345,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: new BorderRadius.circular(10.0),
-                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 20.0,
-                                right: 0,
-                              ),
-                              child: Text(
-                                "Ongoing Schedules",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 30.0,
-                                  fontFamily: 'Nunito-Bold',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                      padding: EdgeInsets.only(top: 10.0, bottom: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10.0, bottom: 20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
-                                    ),
-                                    width: 125.0,
-                                    height: 1.0,
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // _buildTeam(),
-                          ],
-                        ),
+                            width: 125.0,
+                            height: 1.0,
+                          ),
+                        ],
                       ),
                     ),
+
+                    // _buildTeam(),
                   ],
                 ),
-              ],
+              ),
             ),
           ],
         ),

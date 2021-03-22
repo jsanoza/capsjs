@@ -14,6 +14,8 @@ import 'package:get_rekk/pages/forusers/editinfo.dart';
 import 'package:get_rekk/pages/forusers/flagged.dart';
 import 'package:get_rekk/pages/forusers/letstrry.dart';
 import 'package:get_rekk/pages/forusers/loading.dart';
+import 'package:get_rekk/pages/phoneverification.dart';
+import 'package:get_rekk/pages/resetpassword.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_rekk/pages/forusers/userssched.dart';
 import 'package:get_rekk/pages/loginsignup.dart';
@@ -24,6 +26,8 @@ import 'package:workmanager/workmanager.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'helpers/util.dart';
 import 'dart:convert';
+
+import 'pages/foradmin/first.dart';
 
 List<CameraDescription> cameras = [];
 FirebaseAuth auth = FirebaseAuth.instance;
@@ -209,13 +213,14 @@ class SplashState extends State<Splash> {
     SharedPreferences ppUrlSP = await SharedPreferences.getInstance();
     SharedPreferences fullNameSP = await SharedPreferences.getInstance();
     SharedPreferences rankSP = await SharedPreferences.getInstance();
-    bool _seenxzz123554789 = (prefs.getBool('_seenxzz123554789') ?? false);
-    if (_seenxzz123554789) {
+    bool _seenxzz12355478911111 = (prefs.getBool('_seenxzz12355478911111') ?? false);
+    if (_seenxzz12355478911111) {
       userLoggedin = user != null;
       if (userLoggedin) {
         UserLog.ppUrl = ppUrlSP.getString("ppUrlSP");
         UserLog.fullName = fullNameSP.getString("fullNameSP");
         UserLog.rank = rankSP.getString("rankSP");
+
         var a = level.getString("level");
         print(a);
         //edit logsign to check on db userlevel from registration// ill do this tomorrow
@@ -228,7 +233,7 @@ class SplashState extends State<Splash> {
         Get.offAll(LogSign(), transition: Transition.fade);
       }
     } else {
-      await prefs.setBool('_seenxzz123554789', true);
+      await prefs.setBool('_seenxzz12355478911111', true);
       Get.offAll(Boarding(), transition: Transition.fade);
     }
   }

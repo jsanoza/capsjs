@@ -29,13 +29,6 @@
             {
               "client_id": "215798158554-u6jbi53djm2i68vub1k4qln6k5psadvk.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "215798158554-50s972p9ss0tu3ebdoud1ciq1tiocugc.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.getRekk"
-              }
             }
           ]
         }
