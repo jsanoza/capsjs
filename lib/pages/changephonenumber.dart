@@ -58,7 +58,7 @@ class _ChangePhoneState extends State<ChangePhone> {
       showOldVerifiedPhone = showOldVerifiedPhone.substring(0, 4) + '***' + showOldVerifiedPhone.substring(7, 11);
       print(showOldVerifiedPhone);
     } else if (widget.fromWhere == 'editUser') {
-      oldVerifiedPhone = auth.currentUser.phoneNumber;
+      oldVerifiedPhone = auth.currentUser.phoneNumber == null ? '0000000000000' : auth.currentUser.phoneNumber;
       showOldVerifiedPhone = '0' + oldVerifiedPhone.substring(3);
       showOldVerifiedPhone = showOldVerifiedPhone.substring(0, 4) + '***' + showOldVerifiedPhone.substring(7, 11);
       print(showOldVerifiedPhone);
@@ -254,196 +254,198 @@ class _ChangePhoneState extends State<ChangePhone> {
                           ),
                         ],
                       )
-                    : Stack(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top: 160.0, left: 230),
-                            child: Container(
-                              height: 150,
-                              width: 150,
-                              child: Image.asset('assets/images/half.png'),
+                    : SingleChildScrollView(
+                        child: Stack(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 160.0, left: 230),
+                              child: Container(
+                                height: 150,
+                                width: 150,
+                                child: Image.asset('assets/images/half.png'),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 30.0, left: 20),
-                            child: Container(
-                              height: 300,
-                              width: 250,
-                              child: Image.asset('assets/images/bubble.png'),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 30.0, left: 20),
+                              child: Container(
+                                height: 300,
+                                width: 250,
+                                child: Image.asset('assets/images/bubble.png'),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 140.0, left: 40),
-                            child: Text('You already have a verified \nphone number. \nDo you want to replace it?', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 14)),
-                          ),
-                          Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 300),
-                                child: Container(
-                                  width: Get.width,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: new BorderRadius.circular(10.0),
-                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                                  ),
-                                  child: SafeArea(
-                                    child: Container(
-                                      child: Center(
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 28.0, right: 27, bottom: 10),
-                                              child: AutoSizeText('*For you to replace the old verified number. You should enter your old and new phone number here:', style: TextStyle(color: Colors.red, fontFamily: 'Nunito-Regular', fontSize: 15)),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 28.0, right: 27, bottom: 10),
-                                              child: AutoSizeText('Your old verified phone number is: ', style: TextStyle(color: Colors.green, fontFamily: 'Nunito-Regular', fontSize: 15)),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 28.0, right: 27, bottom: 10),
-                                              child: AutoSizeText(showOldVerifiedPhone, style: TextStyle(color: Colors.green, fontFamily: 'Nunito-Regular', fontSize: 15)),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(right: 30.0, left: 30, top: 10, bottom: 10),
-                                              child: Container(
-                                                width: 480,
-                                                child: Column(
-                                                  children: [
-                                                    Focus(
-                                                      child: TextField(
-                                                        keyboardType: TextInputType.phone,
-                                                        maxLength: 11,
-                                                        controller: _oldContactRegTextController,
-                                                        maxLengthEnforced: true,
-                                                        inputFormatters: [
-                                                          new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
-                                                        ],
-                                                        decoration: InputDecoration(
-                                                            labelText: 'Old Phone Number',
-                                                            counterText: '',
-                                                            isDense: true,
-                                                            prefixIcon: IconButton(
-                                                              color: Color(0xff085078),
-                                                              icon: Icon(Icons.contact_page),
-                                                              iconSize: 20.0,
-                                                              onPressed: () {},
-                                                            ),
-                                                            contentPadding: EdgeInsets.only(left: 25.0),
-                                                            hintText: 'Old Phone number',
-                                                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                                                      ),
-                                                      onFocusChange: (hasFocus) {
-                                                        // _oldContactRegTextController.text = '';
-
-                                                        if (!hasFocus) {
-                                                          // do stuff
-                                                          setup1();
-                                                        }
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 140.0, left: 40),
+                              child: Text('You already have a verified \nphone number. \nDo you want to replace it?', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 14)),
+                            ),
+                            Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 300),
+                                  child: Container(
+                                    width: Get.width,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: new BorderRadius.circular(10.0),
+                                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                                    ),
+                                    child: SafeArea(
+                                      child: Container(
+                                        child: Center(
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 28.0, right: 27, bottom: 10),
+                                                child: AutoSizeText('*For you to replace the old verified number. You should enter your old and new phone number here:', style: TextStyle(color: Colors.red, fontFamily: 'Nunito-Regular', fontSize: 15)),
                                               ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(right: 30.0, left: 30, top: 10, bottom: 30),
-                                              child: Container(
-                                                width: 480,
-                                                child: Column(
-                                                  children: [
-                                                    Focus(
-                                                      child: TextField(
-                                                        keyboardType: TextInputType.phone,
-                                                        maxLength: 11,
-                                                        controller: _newContactRegTextController,
-                                                        maxLengthEnforced: true,
-                                                        inputFormatters: [
-                                                          new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
-                                                        ],
-                                                        decoration: InputDecoration(
-                                                            labelText: 'New Phone Number',
-                                                            counterText: '',
-                                                            isDense: true,
-                                                            prefixIcon: IconButton(
-                                                              color: Color(0xff085078),
-                                                              icon: Icon(Icons.contact_page),
-                                                              iconSize: 20.0,
-                                                              onPressed: () {},
-                                                            ),
-                                                            contentPadding: EdgeInsets.only(left: 25.0),
-                                                            hintText: 'New Phone number',
-                                                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                                                      ),
-                                                      onFocusChange: (hasFocus) {
-                                                        // _newContactRegTextController.text = '';
-                                                        if (!hasFocus) {
-                                                          // do stuff
-                                                          setup2();
-                                                        }
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 28.0, right: 27, bottom: 10),
+                                                child: AutoSizeText('Your old verified phone number is: ', style: TextStyle(color: Colors.green, fontFamily: 'Nunito-Regular', fontSize: 15)),
                                               ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 0.0, right: 20, left: 20, bottom: 30),
-                                              child: Container(
-                                                // height: 200,
-                                                // width: 200,
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      children: [
-                                                        RoundedLoadingButton(
-                                                          color: Color(0xff085078),
-                                                          child: Text('Send OTP', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
-                                                          controller: _btnController,
-                                                          onPressed: () {
-                                                            if (_oldContactRegTextController.text.isEmpty || _newContactRegTextController.text.isEmpty) {
-                                                              _showErrorAlert(title: "Verification failed.", content: 'All fields required.', onPressed: _changeBlackVisible, context: context);
-                                                              _btnController.reset();
-                                                            } else if (rawOldVerifiedPhone == oldVerifiedPhone) {
-                                                              print('goodes.');
-                                                              setState(() {
-                                                                _showSuccessAlert(title: "OTP CODE", content: "OTP SENT.", onPressed: _changeBlackVisible, context: context);
-
-                                                                Timer(Duration(seconds: 3), () {
-                                                                  verifyPhone(rawNewVerifiedPhone);
-                                                                  _btnController.reset();
-                                                                });
-                                                                FocusScope.of(context).requestFocus(new FocusNode());
-                                                                SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                                              });
-                                                            } else if (rawOldVerifiedPhone != oldVerifiedPhone) {
-                                                              print('noopes');
-                                                              _showErrorAlert(
-                                                                  title: "Verification failed.",
-                                                                  content: 'Entered old phone number is not the\n same as the on the database.', //show error firebase
-                                                                  onPressed: _changeBlackVisible,
-                                                                  context: context);
-                                                              _btnController.reset();
-                                                            }
-                                                          },
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 28.0, right: 27, bottom: 10),
+                                                child: AutoSizeText(showOldVerifiedPhone, style: TextStyle(color: Colors.green, fontFamily: 'Nunito-Regular', fontSize: 15)),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(right: 30.0, left: 30, top: 10, bottom: 10),
+                                                child: Container(
+                                                  width: 480,
+                                                  child: Column(
+                                                    children: [
+                                                      Focus(
+                                                        child: TextField(
+                                                          keyboardType: TextInputType.phone,
+                                                          maxLength: 11,
+                                                          controller: _oldContactRegTextController,
+                                                          maxLengthEnforced: true,
+                                                          inputFormatters: [
+                                                            new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+                                                          ],
+                                                          decoration: InputDecoration(
+                                                              labelText: 'Old Phone Number',
+                                                              counterText: '',
+                                                              isDense: true,
+                                                              prefixIcon: IconButton(
+                                                                color: Color(0xff085078),
+                                                                icon: Icon(Icons.contact_page),
+                                                                iconSize: 20.0,
+                                                                onPressed: () {},
+                                                              ),
+                                                              contentPadding: EdgeInsets.only(left: 25.0),
+                                                              hintText: 'Old Phone number',
+                                                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ],
+                                                        onFocusChange: (hasFocus) {
+                                                          // _oldContactRegTextController.text = '';
+
+                                                          if (!hasFocus) {
+                                                            // do stuff
+                                                            setup1();
+                                                          }
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                              Padding(
+                                                padding: const EdgeInsets.only(right: 30.0, left: 30, top: 10, bottom: 30),
+                                                child: Container(
+                                                  width: 480,
+                                                  child: Column(
+                                                    children: [
+                                                      Focus(
+                                                        child: TextField(
+                                                          keyboardType: TextInputType.phone,
+                                                          maxLength: 11,
+                                                          controller: _newContactRegTextController,
+                                                          maxLengthEnforced: true,
+                                                          inputFormatters: [
+                                                            new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+                                                          ],
+                                                          decoration: InputDecoration(
+                                                              labelText: 'New Phone Number',
+                                                              counterText: '',
+                                                              isDense: true,
+                                                              prefixIcon: IconButton(
+                                                                color: Color(0xff085078),
+                                                                icon: Icon(Icons.contact_page),
+                                                                iconSize: 20.0,
+                                                                onPressed: () {},
+                                                              ),
+                                                              contentPadding: EdgeInsets.only(left: 25.0),
+                                                              hintText: 'New Phone number',
+                                                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                                                        ),
+                                                        onFocusChange: (hasFocus) {
+                                                          // _newContactRegTextController.text = '';
+                                                          if (!hasFocus) {
+                                                            // do stuff
+                                                            setup2();
+                                                          }
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 0.0, right: 20, left: 20, bottom: 30),
+                                                child: Container(
+                                                  // height: 200,
+                                                  // width: 200,
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        children: [
+                                                          RoundedLoadingButton(
+                                                            color: Color(0xff085078),
+                                                            child: Text('Send OTP', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
+                                                            controller: _btnController,
+                                                            onPressed: () {
+                                                              if (_oldContactRegTextController.text.isEmpty || _newContactRegTextController.text.isEmpty) {
+                                                                _showErrorAlert(title: "Verification failed.", content: 'All fields required.', onPressed: _changeBlackVisible, context: context);
+                                                                _btnController.reset();
+                                                              } else if (rawOldVerifiedPhone == oldVerifiedPhone) {
+                                                                print('goodes.');
+                                                                setState(() {
+                                                                  _showSuccessAlert(title: "OTP CODE", content: "OTP SENT.", onPressed: _changeBlackVisible, context: context);
+
+                                                                  Timer(Duration(seconds: 3), () {
+                                                                    verifyPhone(rawNewVerifiedPhone);
+                                                                    _btnController.reset();
+                                                                  });
+                                                                  FocusScope.of(context).requestFocus(new FocusNode());
+                                                                  SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                                                });
+                                                              } else if (rawOldVerifiedPhone != oldVerifiedPhone) {
+                                                                print('noopes');
+                                                                _showErrorAlert(
+                                                                    title: "Verification failed.",
+                                                                    content: 'Entered old phone number is not the\n same as the on the database.', //show error firebase
+                                                                    onPressed: _changeBlackVisible,
+                                                                    context: context);
+                                                                _btnController.reset();
+                                                              }
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       )),
           ),
         ],

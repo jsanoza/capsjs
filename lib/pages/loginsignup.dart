@@ -97,6 +97,15 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      key: _scaffoldKey,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(right: 56, bottom: 228),
+        child: RectGetter(
+            key: rectGetterKey,
+            child: Padding(
+              padding: const EdgeInsets.all(0),
+            )),
+      ),
       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
@@ -196,6 +205,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
                 ],
               ),
             ),
+            _ripple(),
           ],
         ),
       ),
@@ -253,6 +263,8 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
     SharedPreferences fullNameSP = await SharedPreferences.getInstance();
     SharedPreferences rankSP = await SharedPreferences.getInstance();
     String errorMessage;
+
+    // _onTap();
     try {
       UserCredential result = await auth.signInWithEmailAndPassword(email: email, password: password);
 
