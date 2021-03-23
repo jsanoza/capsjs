@@ -361,7 +361,7 @@ class _ManageUsersState extends State<ManageUsers> {
                               ),
                             ),
                             background: Image.network(
-                              'https://i1.wp.com/rmn.ph/wp-content/uploads/2018/02/9.-PNP-LOGO-CASE-1.jpg?fit=1152%2C648&ssl=1',
+                              'https://i.pinimg.com/originals/e0/44/1b/e0441ba884852c972f7ed1cded2380a4.jpg',
                               fit: BoxFit.cover,
                             )),
                         expandedHeight: 200,
@@ -400,7 +400,9 @@ class _ManageUsersState extends State<ManageUsers> {
                   //here starts of the animation and navigation bar
                   AnimatedPositioned(
                     duration: Duration(milliseconds: 1500),
-                    left: isMenuOpen ? 0 : -sidebarSize + 1,
+                    //gawing + 1 if gusto mo may nakalitaw
+                    //pero much better looking if + 0
+                    left: isMenuOpen ? 0 : -sidebarSize + 0,
                     top: 0,
                     curve: Curves.elasticOut,
                     child: SizedBox(

@@ -128,7 +128,7 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
                         ),
                       ),
                       background: Image.network(
-                        'https://cloudfront-us-east-1.images.arcpublishing.com/cmg/PZQVBPFW2FXTEMMO2EVXFTEXJA.jpg',
+                        'https://media.gettyimages.com/videos/crowds-and-police-background-video-id1141798934?s=640x640',
                         fit: BoxFit.cover,
                       )),
                   // Make the initial height of the SliverAppBar larger than normal.
@@ -165,7 +165,9 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
         ),
         AnimatedPositioned(
           duration: Duration(milliseconds: 1500),
-          left: isMenuOpen ? 0 : -sidebarSize + 1,
+          //gawing + 1 if gusto mo may nakalitaw
+          //pero much better looking if + 0
+          left: isMenuOpen ? 0 : -sidebarSize + 0,
           top: 0,
           curve: Curves.elasticOut,
           child: SizedBox(

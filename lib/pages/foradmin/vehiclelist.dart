@@ -1011,6 +1011,7 @@ class _VehicleList extends State<VehicleList> {
 
   @override
   Widget build(BuildContext context) {
+    //size ng sidebar
     double sidebarSize = Get.width * 0.60;
     double menuContainerHeight = Get.height / 2;
 
@@ -1090,7 +1091,7 @@ class _VehicleList extends State<VehicleList> {
                               ),
                             ),
                             background: Image.network(
-                              'https://cloudfront-us-east-1.images.arcpublishing.com/cmg/PZQVBPFW2FXTEMMO2EVXFTEXJA.jpg',
+                              'https://www.spiritinbusiness.org/wp-content/uploads/2019/08/images1101-5d67f83b74973-737x415.jpg',
                               fit: BoxFit.cover,
                             )),
                         expandedHeight: 200,
@@ -1133,7 +1134,9 @@ class _VehicleList extends State<VehicleList> {
                   //here starts of the animation and navigation bar
                   AnimatedPositioned(
                     duration: Duration(milliseconds: 1500),
-                    left: isMenuOpen ? 0 : -sidebarSize + 1,
+                    //gawing + 1 if gusto mo may nakalitaw
+                    //pero much better looking if + 0
+                    left: isMenuOpen ? 0 : -sidebarSize + 0,
                     top: 0,
                     curve: Curves.elasticOut,
                     child: SizedBox(

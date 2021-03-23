@@ -4771,7 +4771,7 @@ Ends at: $eeeTime
                               ),
                             ),
                             background: Image.network(
-                              'https://api.time.com/wp-content/uploads/2019/11/ap19325148988681.jpg',
+                              'https://s19499.pcdn.co/wp-content/uploads/2020/11/police-lights-1.jpg',
                               fit: BoxFit.cover,
                             )),
                         expandedHeight: 200,

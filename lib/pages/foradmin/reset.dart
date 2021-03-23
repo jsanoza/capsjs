@@ -137,7 +137,7 @@ Are you sure you want to reset password of account: $email
     var usercheck;
     var activity = 'Reset password of name: $email';
     try {
-      var url = 'http://172.25.96.1/capstonejs/change.php';
+      var url = 'https://capstonejs.000webhostapp.com/change.php';
       var data = {
         'emailSignup': email,
       };
@@ -444,7 +444,7 @@ Are you sure you want to reset password of account: $email
                               ),
                             ),
                             background: Image.network(
-                              'https://cloudfront-us-east-1.images.arcpublishing.com/cmg/PZQVBPFW2FXTEMMO2EVXFTEXJA.jpg',
+                              'https://media.socastsrm.com/wordpress/wp-content/blogs.dir/2313/files/2019/06/Police.jpg',
                               fit: BoxFit.cover,
                             )),
                         expandedHeight: 200,
@@ -483,7 +483,9 @@ Are you sure you want to reset password of account: $email
                   //here starts of the animation and navigation bar
                   AnimatedPositioned(
                     duration: Duration(milliseconds: 1500),
-                    left: isMenuOpen ? 0 : -sidebarSize + 1,
+                    //gawing + 1 if gusto mo may nakalitaw
+                    //pero much better looking if + 0
+                    left: isMenuOpen ? 0 : -sidebarSize + 0,
                     top: 0,
                     curve: Curves.elasticOut,
                     child: SizedBox(

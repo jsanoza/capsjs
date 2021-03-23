@@ -300,7 +300,7 @@ Confirm changing your password?
         setState(() {
           Get.snackbar(
             "Success!",
-            "Password Changed Successfully!",
+            "Password verified successfully!",
             duration: Duration(seconds: 3),
           );
           Timer(Duration(seconds: 3), () {

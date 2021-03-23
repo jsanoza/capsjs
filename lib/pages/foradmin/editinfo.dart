@@ -1376,7 +1376,9 @@ Confirm editing your user info?
                   //here starts of the animation and navigation bar
                   AnimatedPositioned(
                     duration: Duration(milliseconds: 1500),
-                    left: isMenuOpen ? 0 : -sidebarSize + 1,
+                    //gawing + 1 if gusto mo may nakalitaw
+                    //pero much better looking if + 0
+                    left: isMenuOpen ? 0 : -sidebarSize + 0,
                     top: 0,
                     curve: Curves.elasticOut,
                     child: SizedBox(

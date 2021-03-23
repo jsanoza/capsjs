@@ -285,7 +285,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
           _showModalSheet();
         } else {
           try {
-            var url = 'http://172.26.32.1/capstonejs/simple.php';
+            var url = 'https://capstonejs.000webhostapp.com/simple.php';
             var data = {
               'emailSignup': finalfinalEmail,
               'name': name,
@@ -1193,7 +1193,7 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                               ),
                             ),
                             background: Image.network(
-                              'https://cloudfront-us-east-1.images.arcpublishing.com/cmg/PZQVBPFW2FXTEMMO2EVXFTEXJA.jpg',
+                              'https://media.istockphoto.com/photos/emergency-warning-red-and-blue-roof-mounted-police-led-blinker-light-picture-id1146976107?k=6&m=1146976107&s=612x612&w=0&h=4OL7YImgt5sNGLeL6BN1jW4rhHzMwwIcjEGxqluvgPw=',
                               fit: BoxFit.cover,
                             )),
                         // Make the initial height of the SliverAppBar larger than normal.
@@ -1236,7 +1236,9 @@ Auto-generated email is: $finaltryEmail@acpsone.com
                   //here starts of the animation and navigation bar
                   AnimatedPositioned(
                     duration: Duration(milliseconds: 1500),
-                    left: isMenuOpen ? 0 : -sidebarSize + 1,
+                    //gawing + 1 if gusto mo may nakalitaw
+                    //pero much better looking if + 0
+                    left: isMenuOpen ? 0 : -sidebarSize + 0,
                     top: 0,
                     curve: Curves.elasticOut,
                     child: SizedBox(

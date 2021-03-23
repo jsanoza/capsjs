@@ -167,7 +167,7 @@ class _PhoneState extends State<Phone> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 130.0, left: 180),
+                          padding: const EdgeInsets.only(top: 130.0, left: 170),
                           child: Text('Please enter the\n 6-digit OTP code.', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 20)),
                         ),
                         Padding(
@@ -194,27 +194,22 @@ class _PhoneState extends State<Phone> {
                                       //here ang contents
                                       Padding(
                                         padding: const EdgeInsets.only(top: 8.0, bottom: 40),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 8.0, right: 8),
-                                              child: OTPTextField(
-                                                length: 6,
-                                                width: 330,
-                                                fieldWidth: 50,
-                                                style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w400),
-                                                textFieldAlignment: MainAxisAlignment.spaceAround,
-                                                fieldStyle: FieldStyle.box,
-                                                onCompleted: (pin) {
-                                                  print("Completed: " + pin);
-                                                  setState(() {
-                                                    this.smsCode = pin;
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ],
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 8.0, right: 8),
+                                          child: OTPTextField(
+                                            length: 6,
+                                            width: 330,
+                                            fieldWidth: 50,
+                                            style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Nunito-Regular', fontWeight: FontWeight.w400),
+                                            textFieldAlignment: MainAxisAlignment.spaceAround,
+                                            fieldStyle: FieldStyle.box,
+                                            onCompleted: (pin) {
+                                              print("Completed: " + pin);
+                                              setState(() {
+                                                this.smsCode = pin;
+                                              });
+                                            },
+                                          ),
                                         ),
                                       ),
 
@@ -454,7 +449,7 @@ class _PhoneState extends State<Phone> {
         }).then((value) {
           Get.snackbar(
             "Success!",
-            "Phone number Changed Successfully!",
+            "Phone number verified successfully!",
             duration: Duration(seconds: 3),
           );
           Timer(Duration(seconds: 3), () {

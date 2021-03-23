@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:get_rekk/animations/custom_alert_success.dart';
 import 'package:get_rekk/helpers/util.dart';
+import 'package:get_rekk/pages/forusers/cameratrial.dart';
 import 'package:get_rekk/pages/forusers/flagged.dart';
 import 'package:get_rekk/pages/forusers/usersongoingdetailspagetwo.dart';
 import 'package:intl/intl.dart';
@@ -1080,6 +1081,7 @@ $whyreason
                                         ),
                                         iconSize: 40,
                                         onPressed: () {
+                                          Get.to(CameraApp());
                                           print("Google clicked");
                                         }),
                                   ),

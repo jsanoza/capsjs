@@ -357,7 +357,7 @@ $whyreason
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 27.0, right: 0.0, top: 30.0),
+                                  padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 30.0),
                                   child: Container(
                                     width: 560,
                                     child: Stack(
