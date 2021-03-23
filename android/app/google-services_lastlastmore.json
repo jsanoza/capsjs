@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "215798158554",
+    "project_id": "capstonejs-3cdcc",
+    "storage_bucket": "capstonejs-3cdcc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:215798158554:android:2a41f290300407e00b41e3",
+        "android_client_info": {
+          "package_name": "com.example.get_rekk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "215798158554-u6jbi53djm2i68vub1k4qln6k5psadvk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcoJVKqip7eUDMokbxs_Yuy1UkXDlFopk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "215798158554-u6jbi53djm2i68vub1k4qln6k5psadvk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "215798158554-50s972p9ss0tu3ebdoud1ciq1tiocugc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.getRekk"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

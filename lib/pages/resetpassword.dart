@@ -323,7 +323,7 @@ Confirm changing your password?
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: true,
+      resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: codeSent && codeReset
             ? Stack(

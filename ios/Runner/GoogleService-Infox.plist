@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>215798158554-50s972p9ss0tu3ebdoud1ciq1tiocugc.apps.googleusercontent.com</string>
+	<string>1070637052068-b9gn1ef1e181gvg4pe3hvgpkl1fh9bui.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.215798158554-50s972p9ss0tu3ebdoud1ciq1tiocugc</string>
+	<string>com.googleusercontent.apps.1070637052068-b9gn1ef1e181gvg4pe3hvgpkl1fh9bui</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDWKQ4WN637vC-jCu4gd9-1qRktLtr5-eA</string>
+	<string>AIzaSyDZ-6g9ilLzNZ5LT--wX1PrmIPEGfvE_FQ</string>
 	<key>GCM_SENDER_ID</key>
-	<string>215798158554</string>
+	<string>1070637052068</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.getRekk</string>
 	<key>PROJECT_ID</key>
-	<string>capstonejs-3cdcc</string>
+	<string>capstonejs-cc692</string>
 	<key>STORAGE_BUCKET</key>
-	<string>capstonejs-3cdcc.appspot.com</string>
+	<string>capstonejs-cc692.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:215798158554:ios:3b6b352eda1858920b41e3</string>
+	<string>1:1070637052068:ios:d890e6c67012bd0677b631</string>
+	<key>DATABASE_URL</key>
+	<string>https://capstonejs-cc692.firebaseio.com</string>
 </dict>
 </plist>
