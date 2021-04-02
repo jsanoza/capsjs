@@ -34,7 +34,7 @@ class _ChatArchivePageState extends State<ChatArchivePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   bool sentByMe = false;
   TextEditingController messageEditingController = new TextEditingController();
-  String email2;
+
   getShop2() {
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
     Stream<QuerySnapshot> qn = _firestore.collection('chat_schedule').doc(widget.collectionid).collection('messages').orderBy('time').snapshots();

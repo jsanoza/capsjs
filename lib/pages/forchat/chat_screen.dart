@@ -23,7 +23,6 @@ class _ChatScreenState extends State<ChatScreen> {
   String whereto;
   String post;
   String email;
-  String email2;
 
   getShop2() {
     User user = auth.currentUser;

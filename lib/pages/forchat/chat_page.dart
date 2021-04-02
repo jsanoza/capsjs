@@ -32,7 +32,7 @@ class _ChatPageState extends State<ChatPage> {
   List<String> membersname = [];
   List<String> members = [];
   List<String> pointlist = [];
-  String email2;
+
   static var _listViewScrollController = new ScrollController();
   // String heightOpen;
   // TextAlignVertical heightOpen = TextAlignVertical.top;
