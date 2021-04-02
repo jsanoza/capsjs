@@ -10,6 +10,7 @@ import 'package:get_rekk/pages/boarding.dart';
 import 'package:get_rekk/pages/foradmin/dashboard.dart';
 import 'package:get_rekk/pages/foradmin/fourth.dart';
 import 'package:get_rekk/pages/foradmin/vehiclelist.dart';
+import 'package:get_rekk/pages/forchat/chat_screen.dart';
 import 'package:get_rekk/pages/forusers/editinfo.dart';
 import 'package:get_rekk/pages/forusers/flagged.dart';
 import 'package:get_rekk/pages/forusers/letstrry.dart';

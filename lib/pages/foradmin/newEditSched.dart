@@ -88,9 +88,6 @@ class _NewEditSchedState extends State<NewEditSched> {
   String oldcollectionid;
   bool checknull1 = false;
   bool checknull2 = false;
-  // String dropdownValue = Schedule.teamlead;
-  // String dropdownValuex = Schedule.spotter;
-  // String dropdownValuey = Schedule.spokesperson;
   bool isMenuOpen = false;
   var uuid = Uuid();
   bool _blackVisible = false;
@@ -109,8 +106,6 @@ class _NewEditSchedState extends State<NewEditSched> {
   double lngtapnew = 0;
   double lattapnew = 0;
 
-  // List<String> vehiclelist = [];
-
   List<String> allowedSpotter = [];
   List<String> allowedLeader = [];
   List<String> allowedSpokesperson = [];
@@ -118,6 +113,7 @@ class _NewEditSchedState extends State<NewEditSched> {
   bool _stempty = false;
   bool _etempty = false;
   List<String> memuid = [];
+  List<String> withadmin = [];
 
   @override
   void initState() {
@@ -128,17 +124,12 @@ class _NewEditSchedState extends State<NewEditSched> {
     _notesTextController.text = Schedule.notes;
     _btnController = RoundedLoadingButtonController();
     _missionnameTextController = TextEditingController();
-
     _vehicledescTextController = TextEditingController();
     _vehiclemodelTextController = TextEditingController();
     _vehiclebrandTextController = TextEditingController();
     _vehicleplateTextController = TextEditingController();
     _vehiclekindTextController = TextEditingController();
     _mapTextConroller = TextEditingController();
-
-    // dropdownValue = Schedule.teamlead;
-    // dropdownValuex = Schedule.spotter;
-    // dropdownValuey = Schedule.spokesperson;
     userSearchItemsx = Schedule.investteam;
     userSearchItemsName = Schedule.investteamname;
     userSearchArrestx = Schedule.searchteam;
@@ -147,12 +138,6 @@ class _NewEditSchedState extends State<NewEditSched> {
     userSearchSecurityName = Schedule.secuteamname;
     userSearchBlockx = Schedule.blockteam;
     userSearchBlockName = Schedule.blockteamname;
-    // checktostring = Schedule.latloc.toString();
-    // checktostring2 = Schedule.lngloc.toString();
-    // latfromdb = int.parse(checktostring);
-    // lngfromdb = int.parse(checktostring2);
-    // finalx = double.parse(latfromdb.toString());
-    // finaly = double.parse(lngfromdb.toString());
     lattap = Schedule.latloc;
     lngtap = Schedule.lngloc;
     _mapTextConroller.text = Schedule.location;
@@ -424,6 +409,20 @@ Ends at: $eeeTime
       username.docs.forEach((document) {
         usercheck = document.data()['fullName'];
         toadd.add(document.data()['fullName']);
+      });
+
+      withadmin = withadmin + memuid;
+      withadmin.add(user.uid.toString());
+
+      FirebaseFirestore.instance.collection("chat_schedule").doc(oldcollectionid.toString()).update({
+        'memberuid': FieldValue.arrayUnion(withadmin),
+        'missionname': missionname,
+        'endtime': endTime.toString(),
+        'starttime': startTime.toString(),
+        // 'collectionid': oldcollectionid.toString(),
+        'recentmessage': 'Edited the schedule information.',
+        'recentmessagesender': 'Admin',
+        'recentmessagetime': Timestamp.now(),
       });
 
       FirebaseFirestore.instance.collection("schedule").doc(oldcollectionid.toString()).update({
@@ -4879,28 +4878,6 @@ Ends at: $eeeTime
                                       style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Nunito-Bold'),
                                     ),
                                   ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.only(top: 1.0),
-                                  //   child: AvatarGlow(
-                                  //     startDelay: Duration(milliseconds: 0),
-                                  //     glowColor: Colors.red,
-                                  //     endRadius: 40.0,
-                                  //     duration: Duration(milliseconds: 2000),
-                                  //     repeat: true,
-                                  //     showTwoGlows: true,
-                                  //     repeatPauseDuration: Duration(milliseconds: 0),
-                                  //     child: IconButton(
-                                  //       iconSize: 25.0,
-                                  //       icon: Icon(Icons.menu),
-                                  //       color: Colors.white,
-                                  //       onPressed: () {
-                                  //         setState(() {
-                                  //           isMenuOpen = true;
-                                  //         });
-                                  //       },
-                                  //     ),
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                             ),

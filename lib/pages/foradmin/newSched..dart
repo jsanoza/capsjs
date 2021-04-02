@@ -13,6 +13,7 @@ import 'package:get_rekk/animations/custom_alert_dialog.dart';
 import 'package:get_rekk/animations/custom_alert_success.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
 import 'package:get_rekk/helpers/util.dart';
+import 'package:get_rekk/pages/forchat/chat_screen.dart';
 import 'package:get_rekk/pages/loginsignup.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:http/http.dart' as http;
@@ -108,6 +109,7 @@ class _NewSched extends State<NewSched> {
   List<String> allowedSpokesperson = [];
   List<String> allowedPatrol = [];
   List<String> memuid = [];
+  List<String> withadmin = [];
   bool _stempty = false;
   bool _etempty = false;
 
@@ -373,6 +375,20 @@ Ends at: $eeeTime
             .collection('schedule')
             .doc(collectionid.toString())
             .set({'scheduleuid': collectionid.toString(), 'endtime': endTime.toString(), 'starttime': startTime.toString(), 'queryendtime': d, 'querystarttime': a, "uid": document.data()['collectionId'], "position": 'spokesperson'});
+      });
+
+      withadmin = withadmin + memuid;
+      withadmin.add(user.uid.toString());
+
+      FirebaseFirestore.instance.collection("chat_schedule").doc(collectionid.toString()).set({
+        'memberuid': FieldValue.arrayUnion(withadmin),
+        'missionname': missionname,
+        'endtime': endTime.toString(),
+        'starttime': startTime.toString(),
+        'collectionid': collectionid.toString(),
+        'recentmessage': 'Start the converstation...',
+        'recentmessagesender': 'Admin',
+        'recentmessagetime': Timestamp.now(),
       });
 
       FirebaseFirestore.instance.collection("schedule").doc(collectionid.toString()).set({
@@ -4877,10 +4893,6 @@ Ends at: $eeeTime
                                     child: Column(
                                       children: <Widget>[
                                         MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
-
-                                        // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 4),
-                                        // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                                        // MyButton(text: "Reset Password of User", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
                                         MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 5),
                                         MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
                                         MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
@@ -4891,8 +4903,6 @@ Ends at: $eeeTime
                                     padding: const EdgeInsets.only(left: 20.0),
                                     child: GestureDetector(
                                       onTap: () {
-                                        // auth.signOut();
-                                        // Get.offAll(LogSign());
                                         showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
