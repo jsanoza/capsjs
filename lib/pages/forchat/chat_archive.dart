@@ -18,6 +18,7 @@ class _ChatArchiveState extends State<ChatArchive> {
   FirebaseAuth auth = FirebaseAuth.instance;
   List<String> memberuid = [];
   String whereto;
+  String email2;
 
   getShop2() {
     User user = auth.currentUser;
