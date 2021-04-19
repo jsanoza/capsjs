@@ -2954,8 +2954,7 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(
-                                                                        colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -3250,8 +3249,7 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(
-                                                                        colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -3547,8 +3545,7 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(
-                                                                        colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -3774,384 +3771,393 @@ Ends at: $eeeTime
               borderRadius: new BorderRadius.circular(10.0),
               boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
             ),
-            child: Stack(children: [
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, left: 20.0),
-                        child: Text(
-                          "Add Vehicle",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20.0,
-                            fontFamily: 'Nunito-Bold',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20.0, top: 20),
-                        child: Text(
-                          "Type of Vehicle",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20.0,
-                            fontFamily: 'Nunito-Bold',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
-                    child: TextField(
-                      maxLength: 50,
-                      controller: _vehiclekindTextController,
-                      inputFormatters: [
-                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                      ],
-                      decoration: InputDecoration(
-                          counterText: '',
-                          isDense: true,
-                          prefixIcon: IconButton(
-                            color: Color(0xff085078),
-                            icon: Icon(Icons.style),
-                            iconSize: 20.0,
-                            onPressed: () {},
-                          ),
-                          contentPadding: EdgeInsets.only(left: 25.0),
-                          hintText: 'Vehicle Type',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20.0, top: 20),
-                        child: Text(
-                          "Vehicle Plate Number",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20.0,
-                            fontFamily: 'Nunito-Bold',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
-                    child: TextField(
-                      textCapitalization: TextCapitalization.characters,
-                      maxLength: 10,
-                      maxLengthEnforced: true,
-                      controller: _vehicleplateTextController,
-                      inputFormatters: [
-                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                      ],
-                      decoration: InputDecoration(
-                          counterText: '',
-                          isDense: true,
-                          prefixIcon: IconButton(
-                            color: Color(0xff085078),
-                            icon: Icon(Icons.contact_mail),
-                            iconSize: 20.0,
-                            onPressed: () {},
-                          ),
-                          contentPadding: EdgeInsets.only(left: 25.0),
-                          hintText: 'Vehicle Plate Number',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20.0, top: 20),
-                        child: Text(
-                          "Vehicle Brand",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20.0,
-                            fontFamily: 'Nunito-Bold',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
-                    child: TextField(
-                      maxLength: 50,
-                      controller: _vehiclebrandTextController,
-                      inputFormatters: [
-                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                      ],
-                      decoration: InputDecoration(
-                          counterText: '',
-                          isDense: true,
-                          prefixIcon: IconButton(
-                            color: Color(0xff085078),
-                            icon: Icon(Icons.local_car_wash),
-                            iconSize: 20.0,
-                            onPressed: () {},
-                          ),
-                          contentPadding: EdgeInsets.only(left: 25.0),
-                          hintText: 'Vehicle Brand',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20.0, top: 20),
-                        child: Text(
-                          "Vehicle Model",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20.0,
-                            fontFamily: 'Nunito-Bold',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
-                    child: TextField(
-                      maxLength: 50,
-                      controller: _vehiclemodelTextController,
-                      inputFormatters: [
-                        new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
-                      ],
-                      decoration: InputDecoration(
-                          counterText: '',
-                          isDense: true,
-                          prefixIcon: IconButton(
-                            color: Color(0xff085078),
-                            icon: Icon(Icons.directions_car),
-                            iconSize: 20.0,
-                            onPressed: () {},
-                          ),
-                          contentPadding: EdgeInsets.only(left: 25.0),
-                          hintText: 'Vehicle Model',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
-                    ),
-                  ),
-                  Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30.0, left: 20, right: 0, bottom: 0),
-                        child: Row(
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Stack(children: [
+                    Column(
+                      children: [
+                        Row(
                           children: [
-                            Text(
-                              "Vehicle Description",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20.0,
-                                fontFamily: 'Nunito-Bold',
-                                fontWeight: FontWeight.bold,
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10, left: 20.0),
+                              child: Text(
+                                "Add Vehicle",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20.0,
+                                  fontFamily: 'Nunito-Bold',
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      Container(
-                        height: 150,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0, top: 20),
+                              child: Text(
+                                "Type of Vehicle",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20.0,
+                                  fontFamily: 'Nunito-Bold',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
                           child: TextField(
-                            controller: _vehicledescTextController,
-                            maxLines: null,
-                            expands: true,
-                            keyboardType: TextInputType.multiline,
-                            decoration: InputDecoration(hintText: "Tap to write..."),
+                            maxLength: 50,
+                            controller: _vehiclekindTextController,
+                            inputFormatters: [
+                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                            ],
+                            decoration: InputDecoration(
+                                counterText: '',
+                                isDense: true,
+                                prefixIcon: IconButton(
+                                  color: Color(0xff085078),
+                                  icon: Icon(Icons.style),
+                                  iconSize: 20.0,
+                                  onPressed: () {},
+                                ),
+                                contentPadding: EdgeInsets.only(left: 25.0),
+                                hintText: 'Vehicle Type',
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    // color: Colors.transparent,
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.white,
-                          blurRadius: 50.0, // soften the shadow
-                          spreadRadius: 15.0, //extend the shadow
-                          offset: Offset(
-                            0.0, // Move to right 10  horizontally
-                            0.0, // Move to bottom 10 Vertically
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0, top: 20),
+                              child: Text(
+                                "Vehicle Plate Number",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20.0,
+                                  fontFamily: 'Nunito-Bold',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                          child: TextField(
+                            textCapitalization: TextCapitalization.characters,
+                            maxLength: 10,
+                            maxLengthEnforced: true,
+                            controller: _vehicleplateTextController,
+                            inputFormatters: [
+                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                            ],
+                            decoration: InputDecoration(
+                                counterText: '',
+                                isDense: true,
+                                prefixIcon: IconButton(
+                                  color: Color(0xff085078),
+                                  icon: Icon(Icons.contact_mail),
+                                  iconSize: 20.0,
+                                  onPressed: () {},
+                                ),
+                                contentPadding: EdgeInsets.only(left: 25.0),
+                                hintText: 'Vehicle Plate Number',
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
                           ),
-                        )
-                      ],
-                    ),
-                    height: 30,
-                    width: 30,
-                    child: Stack(
-                      children: <Widget>[
-                        Center(
-                          child: RaisedButton(
-                            onPressed: () {
-                              String vkind = _vehiclekindTextController.text;
-                              String vplate = _vehicleplateTextController.text;
-                              String vbrand = _vehiclebrandTextController.text;
-                              String vmodel = _vehiclemodelTextController.text;
-                              String vdesc = _vehicledescTextController.text;
-                              String result = _vehicleplateTextController.text.toUpperCase().substring(0, _vehicleplateTextController.text.toUpperCase().indexOf(' '));
-                              print(result);
-                              String s1 = _vehicleplateTextController.text.substring(_vehicleplateTextController.text.indexOf(" ") + 1);
-                              print(s1);
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0, top: 20),
+                              child: Text(
+                                "Vehicle Brand",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20.0,
+                                  fontFamily: 'Nunito-Bold',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                          child: TextField(
+                            maxLength: 50,
+                            controller: _vehiclebrandTextController,
+                            inputFormatters: [
+                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                            ],
+                            decoration: InputDecoration(
+                                counterText: '',
+                                isDense: true,
+                                prefixIcon: IconButton(
+                                  color: Color(0xff085078),
+                                  icon: Icon(Icons.local_car_wash),
+                                  iconSize: 20.0,
+                                  onPressed: () {},
+                                ),
+                                contentPadding: EdgeInsets.only(left: 25.0),
+                                hintText: 'Vehicle Brand',
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0, top: 20),
+                              child: Text(
+                                "Vehicle Model",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20.0,
+                                  fontFamily: 'Nunito-Bold',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                          child: TextField(
+                            maxLength: 50,
+                            controller: _vehiclemodelTextController,
+                            inputFormatters: [
+                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                            ],
+                            decoration: InputDecoration(
+                                counterText: '',
+                                isDense: true,
+                                prefixIcon: IconButton(
+                                  color: Color(0xff085078),
+                                  icon: Icon(Icons.directions_car),
+                                  iconSize: 20.0,
+                                  onPressed: () {},
+                                ),
+                                contentPadding: EdgeInsets.only(left: 25.0),
+                                hintText: 'Vehicle Model',
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                          ),
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 30.0, left: 20, right: 0, bottom: 0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Vehicle Description",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20.0,
+                                      fontFamily: 'Nunito-Bold',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: 150,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20),
+                                child: TextField(
+                                  controller: _vehicledescTextController,
+                                  maxLines: null,
+                                  expands: true,
+                                  keyboardType: TextInputType.multiline,
+                                  decoration: InputDecoration(hintText: "Tap to write..."),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 28.0),
+                          child: Container(
+                            // color: Colors.transparent,
+                            decoration: new BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white,
+                                  blurRadius: 50.0, // soften the shadow
+                                  spreadRadius: 15.0, //extend the shadow
+                                  offset: Offset(
+                                    0.0, // Move to right 10  horizontally
+                                    0.0, // Move to bottom 10 Vertically
+                                  ),
+                                )
+                              ],
+                            ),
+                            height: 30,
+                            width: 30,
+                            child: Stack(
+                              children: <Widget>[
+                                Center(
+                                  child: RaisedButton(
+                                    onPressed: () {
+                                      String vkind = _vehiclekindTextController.text;
+                                      String vplate = _vehicleplateTextController.text;
+                                      String vbrand = _vehiclebrandTextController.text;
+                                      String vmodel = _vehiclemodelTextController.text;
+                                      String vdesc = _vehicledescTextController.text;
+                                      String result = _vehicleplateTextController.text.toUpperCase().substring(0, _vehicleplateTextController.text.toUpperCase().indexOf(' '));
+                                      print(result);
+                                      String s1 = _vehicleplateTextController.text.substring(_vehicleplateTextController.text.indexOf(" ") + 1);
+                                      print(s1);
 
-                              String characters = "[a-zA-Z]";
-                              RegExp regChar = RegExp(characters);
-                              String digits = "[0-9]";
-                              RegExp regDig = RegExp(digits);
+                                      String characters = "[a-zA-Z]";
+                                      RegExp regChar = RegExp(characters);
+                                      String digits = "[0-9]";
+                                      RegExp regDig = RegExp(digits);
 
-                              if (vkind.isEmpty || vplate.isEmpty || vbrand.isEmpty || vmodel.isEmpty || vdesc.isEmpty) {
-                                _showErrorAlert(
-                                    title: "Vehicle adding failed.",
-                                    content: 'All fields required!', //show error firebase
-                                    onPressed: _changeBlackVisible,
-                                    context: context);
-                                _btnController.reset();
-                              } else if (regChar.hasMatch(result)) {
-                                print('ok');
-                                if (result.length < 3) {
-                                  print('ok but less than 3');
-                                  //pag less than 3 that means mc sya and kailangan dapat ung digit is 5 digits
-                                  //check if ung digits is 5
-                                  if (regDig.hasMatch(s1)) {
-                                    print('ok numbers sya.');
-                                    if (s1.length == 5) {
-                                      print('ok 5 digits sya');
-                                      // setState(() {
-                                      // finalVehResult = result + " " + s1;
-                                      // checktoDB();
-                                      // _toDBfromModal();
-                                      // });
+                                      if (vkind.isEmpty || vplate.isEmpty || vbrand.isEmpty || vmodel.isEmpty || vdesc.isEmpty) {
+                                        _showErrorAlert(
+                                            title: "Vehicle adding failed.",
+                                            content: 'All fields required!', //show error firebase
+                                            onPressed: _changeBlackVisible,
+                                            context: context);
+                                        _btnController.reset();
+                                      } else if (regChar.hasMatch(result)) {
+                                        print('ok');
+                                        if (result.length < 3) {
+                                          print('ok but less than 3');
+                                          //pag less than 3 that means mc sya and kailangan dapat ung digit is 5 digits
+                                          //check if ung digits is 5
+                                          if (regDig.hasMatch(s1)) {
+                                            print('ok numbers sya.');
+                                            if (s1.length == 5) {
+                                              print('ok 5 digits sya');
+                                              // setState(() {
+                                              // finalVehResult = result + " " + s1;
+                                              // checktoDB();
+                                              // _toDBfromModal();
+                                              // });
 
-                                      FirebaseFirestore.instance.collection("trialvehicles").doc(vplate).set({
-                                        'kind': vkind,
-                                        'plate': vplate,
-                                        'brand': vbrand,
-                                        'model': vmodel,
-                                        'desc': vdesc,
-                                      }).then((value) {
-                                        vehiclelist.add(vplate.toUpperCase());
-                                        print(vehiclelist);
-                                        _vehiclekindTextController.text = "";
-                                        _vehicleplateTextController.text = "";
-                                        _vehiclebrandTextController.text = "";
-                                        _vehiclemodelTextController.text = "";
-                                        _vehicledescTextController.text = "";
-                                        FocusScope.of(context).requestFocus(new FocusNode());
-                                        SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                        print('im here');
-                                      });
+                                              FirebaseFirestore.instance.collection("trialvehicles").doc(vplate).set({
+                                                'kind': vkind,
+                                                'plate': vplate,
+                                                'brand': vbrand,
+                                                'model': vmodel,
+                                                'desc': vdesc,
+                                              }).then((value) {
+                                                vehiclelist.add(vplate.toUpperCase());
+                                                print(vehiclelist);
+                                                _vehiclekindTextController.text = "";
+                                                _vehicleplateTextController.text = "";
+                                                _vehiclebrandTextController.text = "";
+                                                _vehiclemodelTextController.text = "";
+                                                _vehicledescTextController.text = "";
+                                                FocusScope.of(context).requestFocus(new FocusNode());
+                                                SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                                print('im here');
+                                              });
 
-                                      print('this is the final result');
-                                      // print(finalMCResult);
-                                    } else {
-                                      //error kase hindi naman sya 5 digits.
-                                      print('hindi sya 5 digits not valid');
-                                      _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
-                                      _btnController.reset();
-                                    }
-                                  } else {
-                                    //error kase may letters sa dapat na digit lang
-                                    _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
-                                    _btnController.reset();
-                                  }
-                                } else {
-                                  if (result.length == 3) {
-                                    print('ok kotse sya');
-                                    if (regDig.hasMatch(s1)) {
-                                      print('ok number sya');
-                                      if (s1.length == 4) {
-                                        // setState(() {
-                                        // finalVehResult = result + " " + s1;
-                                        // checktoDB();
-                                        // _toDBfromModal();
-                                        // });
+                                              print('this is the final result');
+                                              // print(finalMCResult);
+                                            } else {
+                                              //error kase hindi naman sya 5 digits.
+                                              print('hindi sya 5 digits not valid');
+                                              _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                              _btnController.reset();
+                                            }
+                                          } else {
+                                            //error kase may letters sa dapat na digit lang
+                                            _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                            _btnController.reset();
+                                          }
+                                        } else {
+                                          if (result.length == 3) {
+                                            print('ok kotse sya');
+                                            if (regDig.hasMatch(s1)) {
+                                              print('ok number sya');
+                                              if (s1.length == 4) {
+                                                // setState(() {
+                                                // finalVehResult = result + " " + s1;
+                                                // checktoDB();
+                                                // _toDBfromModal();
+                                                // });
 
-                                        FirebaseFirestore.instance.collection("trialvehicles").doc(vplate).set({
-                                          'kind': vkind,
-                                          'plate': vplate,
-                                          'brand': vbrand,
-                                          'model': vmodel,
-                                          'desc': vdesc,
-                                        }).then((value) {
-                                          vehiclelist.add(vplate.toUpperCase());
-                                          print(vehiclelist);
-                                          _vehiclekindTextController.text = "";
-                                          _vehicleplateTextController.text = "";
-                                          _vehiclebrandTextController.text = "";
-                                          _vehiclemodelTextController.text = "";
-                                          _vehicledescTextController.text = "";
-                                          FocusScope.of(context).requestFocus(new FocusNode());
-                                          SystemChannels.textInput.invokeMethod('TextInput.hide');
-                                          print('im here');
-                                        });
+                                                FirebaseFirestore.instance.collection("trialvehicles").doc(vplate).set({
+                                                  'kind': vkind,
+                                                  'plate': vplate,
+                                                  'brand': vbrand,
+                                                  'model': vmodel,
+                                                  'desc': vdesc,
+                                                }).then((value) {
+                                                  vehiclelist.add(vplate.toUpperCase());
+                                                  print(vehiclelist);
+                                                  _vehiclekindTextController.text = "";
+                                                  _vehicleplateTextController.text = "";
+                                                  _vehiclebrandTextController.text = "";
+                                                  _vehiclemodelTextController.text = "";
+                                                  _vehicledescTextController.text = "";
+                                                  FocusScope.of(context).requestFocus(new FocusNode());
+                                                  SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                                  print('im here');
+                                                });
 
-                                        print('this is the final result');
-                                        // print(finalVehResult);
+                                                print('this is the final result');
+                                                // print(finalVehResult);
+                                              } else {
+                                                print('kulang or sobra ang number');
+                                                _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                _btnController.reset();
+                                              }
+                                            } else {
+                                              print('hindi sya number');
+                                              _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                              _btnController.reset();
+                                            }
+                                          } else {
+                                            print('lagpas sa 3');
+                                            _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                            _btnController.reset();
+                                          }
+                                        }
                                       } else {
-                                        print('kulang or sobra ang number');
                                         _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                        print('no');
                                         _btnController.reset();
                                       }
-                                    } else {
-                                      print('hindi sya number');
-                                      _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
-                                      _btnController.reset();
-                                    }
-                                  } else {
-                                    print('lagpas sa 3');
-                                    _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
-                                    _btnController.reset();
-                                  }
-                                }
-                              } else {
-                                _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
-                                print('no');
-                                _btnController.reset();
-                              }
 
-                              FocusScope.of(context).requestFocus(new FocusNode());
-                              SystemChannels.textInput.invokeMethod('TextInput.hide');
-                            }, //only after checking
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
-                            padding: const EdgeInsets.all(0.0),
-                            child: Ink(
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
-                                borderRadius: BorderRadius.all(Radius.circular(80.0)),
-                              ),
-                              child: Container(
-                                constraints: const BoxConstraints(minWidth: 88.0, minHeight: 36.0), // min sizes for Material buttons
-                                alignment: Alignment.center,
-                                child: Icon(Icons.add, size: 20, color: Colors.white),
-                              ),
+                                      FocusScope.of(context).requestFocus(new FocusNode());
+                                      SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                    }, //only after checking
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Ink(
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                        borderRadius: BorderRadius.all(Radius.circular(80.0)),
+                                      ),
+                                      child: Container(
+                                        constraints: const BoxConstraints(minWidth: 88.0, minHeight: 36.0), // min sizes for Material buttons
+                                        alignment: Alignment.center,
+                                        child: Icon(Icons.add, size: 20, color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
+                        //here ang contents
                       ],
                     ),
-                  ),
-                  //here ang contents
-                ],
-              ),
-            ]),
+                  ]),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -4617,8 +4623,7 @@ Ends at: $eeeTime
                                                           padding: const EdgeInsets.all(0.0),
                                                           child: Ink(
                                                             decoration: const BoxDecoration(
-                                                              gradient: LinearGradient(
-                                                                  colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                              gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                               borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                             ),
                                                             child: Container(

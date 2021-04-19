@@ -1154,54 +1154,554 @@ $foundtime
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        width: Get.width,
-        child: Stack(children: [
+    return Container(
+      width: Get.width,
+      // height: Get.height,
+      child: Stack(
+        children: [
           StreamBuilder<DocumentSnapshot>(
-              stream: getShop2(),
-              builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return Text('');
-                } else if (snapshot.connectionState == ConnectionState.done) {
+            stream: getShop2(),
+            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return Text('');
+              } else if (snapshot.connectionState == ConnectionState.done) {
+                return Text('');
+              } else {
+                if (snapshot.data == null) {
                   return Text('');
                 } else {
-                  if (snapshot.data == null) {
-                    return Text('');
+                  int len = snapshot.data['scannedvehicles'].length;
+                  int lenflag = snapshot.data['flaggedvehicles'].length;
+                  int lenvoi = snapshot.data['vointerest'].length;
+
+                  if (snapshot.data['scannedvehicles'].length <= 0 || snapshot.data['lastscan'].length <= 0) {
+                    _isScanEmpty = false;
                   } else {
-                    int len = snapshot.data['scannedvehicles'].length;
-                    int lenflag = snapshot.data['flaggedvehicles'].length;
-                    int lenvoi = snapshot.data['vointerest'].length;
+                    _isScanEmpty = true;
+                  }
+                  if (snapshot.data['flaggedvehicles'].length <= 0 || snapshot.data['lastflag'].length <= 0) {
+                    _isFlagEmpty = false;
+                  } else {
+                    _isFlagEmpty = true;
+                  }
 
-                    if (snapshot.data['scannedvehicles'].length <= 0 || snapshot.data['lastscan'].length <= 0) {
-                      _isScanEmpty = false;
-                    } else {
-                      _isScanEmpty = true;
-                    }
-                    if (snapshot.data['flaggedvehicles'].length <= 0 || snapshot.data['lastflag'].length <= 0) {
-                      _isFlagEmpty = false;
-                    } else {
-                      _isFlagEmpty = true;
-                    }
+                  if (snapshot.data['vointerest'].length <= 0 || snapshot.data['voilast'].length <= 0) {
+                    _isFoundEmpty = false;
+                  } else {
+                    _isFoundEmpty = true;
+                  }
 
-                    if (snapshot.data['vointerest'].length <= 0 || snapshot.data['voilast'].length <= 0) {
-                      _isFoundEmpty = false;
-                    } else {
-                      _isFoundEmpty = true;
-                    }
-
-                    // collectid = snapshot.data['collectionid'];
-                    // checkmate(snapshot.data['lastflag'].last.toString());
-                    // count = lenflag;
-                    // shownotif(snapshot.data['lastflag'].last.toString());
-
-                    return new Stack(
-                      children: <Widget>[
+                  return SingleChildScrollView(
+                    child: Stack(
+                      children: [
                         Padding(
-                          padding: isInvolve ? const EdgeInsets.only(left: 10, right: 10, top: 470.0, bottom: 20) : const EdgeInsets.only(left: 10, right: 10, top: 270.0, bottom: 20),
+                          padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20, bottom: 30),
                           child: Container(
                             width: Get.width,
-                            height: 800,
+                            height: isInvolve ? 430 : 200,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: new BorderRadius.circular(10.0),
+                              boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20.0, left: 10, right: 10),
+                                  child: Container(
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Purpose of Deployment",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 24.0,
+                                                fontFamily: 'Nunito-Bold',
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 18.0),
+                                  child: Container(
+                                    width: 300,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                      color: Colors.white,
+                                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                    ),
+                                    child: Container(
+                                      child: ListTile(
+                                        title: AutoSizeText(
+                                          "${Schedule.notes} ",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 15.0,
+                                          ),
+                                          minFontSize: 15,
+                                          maxLines: 5,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                isInvolve
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(top: 20.0),
+                                        child: Container(
+                                          width: 300,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Vehicle Report: ",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15.0,
+                                                      fontFamily: 'Nunito-Bold',
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : Text(''),
+                                isInvolve
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(left: 28.0, top: 8),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "*Tap on the Vehicle Number to see the details.",
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12.0,
+                                                fontFamily: 'Nunito-Bold',
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Text(''),
+                                isInvolve
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
+                                        child: Container(
+                                          height: 200,
+                                          width: 480,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                            color: Colors.white,
+                                          ),
+                                          child: Container(
+                                            child: ListView.builder(
+                                              itemCount: Schedule.vehicle.length,
+                                              itemBuilder: (_, index) {
+                                                // final DocumentSnapshot _card =
+                                                //     userList[index];
+                                                return Column(
+                                                  children: <Widget>[
+                                                    SizedBox(
+                                                      height: 18.0,
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          shape: BoxShape.rectangle,
+                                                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                          color: Colors.white,
+                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                                        ),
+                                                        child: ListTile(
+                                                          title: Text(Schedule.vehicle[index]),
+                                                          onTap: () async {
+                                                            // print(PastSchedule.missionid.toString());
+                                                            // showVehicleInfo(PastSchedule.flaggedvehicles[index]);
+                                                            fetchVehicleInfo(Schedule.vehicle[index]);
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Text(''),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: isInvolve ? const EdgeInsets.only(left: 10, right: 10, top: 500.0, bottom: 20) : const EdgeInsets.only(left: 10, right: 10, top: 270.0, bottom: 20),
+                          child: Container(
+                            width: Get.width,
+                            height: 700,
+                            decoration: BoxDecoration(
+                              // color: Colors.white,
+                              color: Colors.white,
+
+                              borderRadius: new BorderRadius.circular(10.0),
+                              boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                            ),
+                            child: Column(
+                              // mainAxisAlignment: MainAxisAlignment.end,
+                              // crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Status",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 30.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text("Deployment active time:"),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 18.0),
+                                          child: TimerBuilder.periodic(Duration(seconds: 1), builder: (context) {
+                                            var b = DateFormat('MM-dd-yyyy HH:mm').parse(snapshot.data["starttime"].toString());
+                                            final Duration myDuration = DateTime.parse(b.toString()).difference(DateTime.now());
+                                            final withoutEquals = myDuration.toString().replaceAll(RegExp('-'), '');
+                                            final gg = withoutEquals.toString().split('.')[0];
+                                            return Text(
+                                              "$gg ET",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 20.0,
+                                                fontFamily: 'Nunito-Bold',
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            );
+                                          }),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Scanned Vehicles",
+                                          style: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text("Total Scanned Vehicles: ",
+                                            style: TextStyle(
+                                              color: Colors.green,
+                                            )),
+                                        Text(
+                                          _isScanEmpty ? '   ' + len.toString() : '',
+                                          style: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Last Successful Scan:',
+                                          style: TextStyle(
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        Text(
+                                          _isScanEmpty ? '      ' + snapshot.data['scannedvehicles'].last.toString() : '',
+                                          style: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, bottom: 20),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          _isScanEmpty ? snapshot.data['lastscan'].last.toString() : '',
+                                          style: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 14.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Flagged Vehicles",
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.info, size: 20.0, color: Colors.red),
+                                          onPressed: () {
+                                            fetchVehicleListFlag();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Total Flagged Vehicles: ",
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                        Text(
+                                          _isFlagEmpty ? '   ' + lenflag.toString() : '',
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Last Successful Flagged:',
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                        Text(
+                                          _isFlagEmpty ? ' ' + snapshot.data['flaggedvehicles'].last.toString() : '',
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.info, size: 20.0, color: Colors.red),
+                                          onPressed: () {
+                                            fetchVehicleInfoFlag(snapshot.data['flaggedvehicles'].last.toString());
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0, bottom: 20),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          _isFlagEmpty ? snapshot.data['lastflag'].last.toString() : '',
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 14.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Found Vehicles",
+                                          style: TextStyle(
+                                            color: Colors.blue,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.info, size: 20.0, color: Colors.blue),
+                                          onPressed: () {
+                                            fetchVehicleListFound();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Total Found Vehicles: ",
+                                          style: TextStyle(
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                        Text(
+                                          _isFoundEmpty ? '   ' + lenvoi.toString() : '',
+                                          style: TextStyle(
+                                            color: Colors.blue,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Last Found Vehicle:',
+                                          style: TextStyle(
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                        Text(
+                                          _isFoundEmpty ? ' ' + snapshot.data['vointerest'].last.toString() : '',
+                                          style: TextStyle(
+                                            color: Colors.blue,
+                                            fontSize: 20.0,
+                                            fontFamily: 'Nunito-Bold',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.info, size: 20.0, color: Colors.blue),
+                                          onPressed: () {
+                                            fetchVehicleInfoFound(snapshot.data['vointerest'].last.toString());
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0, bottom: 20),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          _isFoundEmpty ? snapshot.data['voilast'].last.toString() : '',
+                                          style: TextStyle(
+                                            color: Colors.blue,
+                                            fontSize: 14.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, top: 0, bottom: 40),
+                                    child: Row(
+                                      children: [
+                                        Text(''),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: isInvolve ? const EdgeInsets.only(left: 10.0, right: 10.0, top: 1250, bottom: 30) : const EdgeInsets.only(left: 10.0, right: 10.0, top: 920, bottom: 30),
+                          child: Container(
+                            width: Get.width,
+                            height: 400,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: new BorderRadius.circular(10.0),
@@ -1214,7 +1714,7 @@ $foundtime
                                     Padding(
                                       padding: const EdgeInsets.only(top: 20.0, left: 20, bottom: 0),
                                       child: Text(
-                                        "Status",
+                                        "Actions",
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 30.0,
@@ -1225,671 +1725,884 @@ $foundtime
                                     ),
                                   ],
                                 ),
+
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 18),
+                                  padding: const EdgeInsets.only(left: 18.0, top: 20),
                                   child: Row(
                                     children: [
-                                      Text("Deployment active time:"),
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 18.0),
-                                        child: TimerBuilder.periodic(Duration(seconds: 1), builder: (context) {
-                                          var b = DateFormat('MM-dd-yyyy HH:mm').parse(snapshot.data["starttime"].toString());
-                                          final Duration myDuration = DateTime.parse(b.toString()).difference(DateTime.now());
-                                          final withoutEquals = myDuration.toString().replaceAll(RegExp('-'), '');
-                                          final gg = withoutEquals.toString().split('.')[0];
-                                          return Text(
-                                            "$gg ET",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 20.0,
-                                              fontFamily: 'Nunito-Bold',
-                                              fontWeight: FontWeight.bold,
+                                      Text("Compare Vehicles:"),
+                                    ],
+                                  ),
+                                ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 30.0, right: 0.0),
+                                      child: Container(
+                                        decoration: new BoxDecoration(
+                                          color: Color(0xff085078),
+                                          borderRadius: BorderRadius.circular(60),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.green,
+                                              blurRadius: 40.0, // soften the shadow
+                                              spreadRadius: 0.0, //extend the shadow
+                                              offset: Offset(
+                                                0.0, // Move to right 10  horizontally
+                                                0.0, // Move to bottom 10 Vertically
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        child: Stack(
+                                          children: <Widget>[
+                                            Center(
+                                              child: new IconButton(
+                                                  icon: Icon(
+                                                    Icons.camera_enhance,
+                                                    color: Colors.white,
+                                                  ),
+                                                  iconSize: 40,
+                                                  onPressed: () {
+                                                    Get.to(CameraApp());
+                                                    print("Google clicked");
+                                                  }),
                                             ),
-                                          );
-                                        }),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 30.0, left: 40, right: 0.0),
+                                      child: Container(
+                                        decoration: new BoxDecoration(
+                                          color: Color(0xff085078),
+                                          borderRadius: BorderRadius.circular(60),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.green,
+                                              blurRadius: 40.0, // soften the shadow
+                                              spreadRadius: 0.0, //extend the shadow
+                                              offset: Offset(
+                                                0.0, // Move to right 10  horizontally
+                                                0.0, // Move to bottom 10 Vertically
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        child: Stack(
+                                          children: <Widget>[
+                                            Center(
+                                              child: new IconButton(
+                                                  icon: Icon(
+                                                    Icons.border_color,
+                                                    color: Colors.white,
+                                                  ),
+                                                  iconSize: 40,
+                                                  onPressed: () {
+                                                    print("Google clicked");
+                                                    _showModalSheet();
+                                                  }),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 18.0, top: 30),
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 8.0, left: 0, bottom: 0),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Vehicle with no identifications?",
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                // fontSize: 20.0,
+                                                fontFamily: 'Nunito-Bold',
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                final dynamic tooltip = _toolTipKey.currentState;
+                                                tooltip.ensureTooltipVisible();
+                                              },
+                                              child: Tooltip(
+                                                key: _toolTipKey,
+                                                // ignore: missing_required_param
+                                                child: IconButton(
+                                                  icon: Icon(Icons.info, size: 20.0, color: Colors.red),
+                                                ),
+                                                message: 'If a Driver failed to show any identifcations or does not have any license plate installed then:\nIt is time for human interaction, and should be personally questioned.',
+                                                padding: EdgeInsets.all(20),
+                                                margin: EdgeInsets.all(20),
+                                                showDuration: Duration(seconds: 10),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue.withOpacity(0.9),
+                                                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                                                ),
+                                                textStyle: TextStyle(color: Colors.white),
+                                                preferBelow: true,
+                                                verticalOffset: 20,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
-
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 50),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Scanned Vehicles",
-                                        style: TextStyle(
+                                  padding: EdgeInsets.only(top: 30.0, left: 0, right: 0.0),
+                                  child: Container(
+                                    height: 60,
+                                    width: 60,
+                                    decoration: new BoxDecoration(
+                                      color: Color(0xff085078),
+                                      borderRadius: BorderRadius.circular(60),
+                                      boxShadow: [
+                                        BoxShadow(
                                           color: Colors.green,
-                                          fontSize: 20.0,
-                                          fontFamily: 'Nunito-Bold',
-                                          fontWeight: FontWeight.bold,
+                                          blurRadius: 40.0, // soften the shadow
+                                          spreadRadius: 0.0, //extend the shadow
+                                          offset: Offset(
+                                            0.0, // Move to right 10  horizontally
+                                            0.0, // Move to bottom 10 Vertically
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    child: Stack(
+                                      children: <Widget>[
+                                        Center(
+                                          child: new IconButton(
+                                              icon: Icon(
+                                                Icons.receipt,
+                                                color: Colors.white,
+                                              ),
+                                              iconSize: 40,
+                                              onPressed: () {
+                                                print("Google clicked");
+                                                Get.to(WithoutIdent());
+                                                // _showModalSheet();
+                                              }),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 20),
-                                  child: Row(
-                                    children: [
-                                      Text("Total Scanned Vehicles: ",
-                                          style: TextStyle(
-                                            color: Colors.green,
-                                          )),
-                                      Text(
-                                        _isScanEmpty ? '   ' + len.toString() : '',
-                                        style: TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 20.0,
-                                          fontFamily: 'Nunito-Bold',
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 20),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'Last Successful Scan:',
-                                        style: TextStyle(
-                                          color: Colors.green,
-                                        ),
-                                      ),
-                                      Text(
-                                        _isScanEmpty ? '      ' + snapshot.data['scannedvehicles'].last.toString() : '',
-                                        style: TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 20.0,
-                                          fontFamily: 'Nunito-Bold',
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 20),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        _isScanEmpty ? snapshot.data['lastscan'].last.toString() : '',
-                                        style: TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 14.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 50),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Flagged Vehicles",
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 20.0,
-                                          fontFamily: 'Nunito-Bold',
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.info, size: 20.0, color: Colors.red),
-                                        onPressed: () {
-                                          fetchVehicleListFlag();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 20),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Total Flagged Vehicles: ",
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                      Text(
-                                        _isFlagEmpty ? '   ' + lenflag.toString() : '',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 20.0,
-                                          fontFamily: 'Nunito-Bold',
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 20),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'Last Successful Flagged:',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                      Text(
-                                        _isFlagEmpty ? ' ' + snapshot.data['flaggedvehicles'].last.toString() : '',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 20.0,
-                                          fontFamily: 'Nunito-Bold',
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.info, size: 20.0, color: Colors.red),
-                                        onPressed: () {
-                                          fetchVehicleInfoFlag(snapshot.data['flaggedvehicles'].last.toString());
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 20),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        _isFlagEmpty ? snapshot.data['lastflag'].last.toString() : '',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 14.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
                                 // _buildTeam(),
-
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 50),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Found Vehicles",
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 20.0,
-                                          fontFamily: 'Nunito-Bold',
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.info, size: 20.0, color: Colors.blue),
-                                        onPressed: () {
-                                           fetchVehicleListFound();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 20),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Total Found Vehicles: ",
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                      Text(
-                                        _isFoundEmpty ? '   ' + lenvoi.toString() : '',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 20.0,
-                                          fontFamily: 'Nunito-Bold',
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 20),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'Last Found Vehicle:',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                      Text(
-                                        _isFoundEmpty ? ' ' + snapshot.data['vointerest'].last.toString() : '',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 20.0,
-                                          fontFamily: 'Nunito-Bold',
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.info, size: 20.0, color: Colors.blue),
-                                        onPressed: () {
-                                          fetchVehicleInfoFound(snapshot.data['vointerest'].last.toString());
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, top: 20),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        _isFoundEmpty ? snapshot.data['voilast'].last.toString() : '',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 14.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                               ],
                             ),
                           ),
                         ),
                       ],
-                    );
-                  }
+                    ),
+                  );
                 }
-              }),
-
-          Stack(
-            children: <Widget>[
-              Padding(
-                padding: isInvolve ? const EdgeInsets.only(left: 10.0, right: 10.0, top: 1300, bottom: 30) : const EdgeInsets.only(left: 10.0, right: 10.0, top: 920, bottom: 30),
-                child: Container(
-                  width: Get.width,
-                  height: 400,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: new BorderRadius.circular(10.0),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0, left: 20, bottom: 0),
-                            child: Text(
-                              "Actions",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 30.0,
-                                fontFamily: 'Nunito-Bold',
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(left: 18.0, top: 20),
-                        child: Row(
-                          children: [
-                            Text("Compare Vehicles:"),
-                          ],
-                        ),
-                      ),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(top: 30.0, right: 0.0),
-                            child: Container(
-                              decoration: new BoxDecoration(
-                                color: Color(0xff085078),
-                                borderRadius: BorderRadius.circular(60),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.green,
-                                    blurRadius: 40.0, // soften the shadow
-                                    spreadRadius: 0.0, //extend the shadow
-                                    offset: Offset(
-                                      0.0, // Move to right 10  horizontally
-                                      0.0, // Move to bottom 10 Vertically
-                                    ),
-                                  )
-                                ],
-                              ),
-                              child: Stack(
-                                children: <Widget>[
-                                  Center(
-                                    child: new IconButton(
-                                        icon: Icon(
-                                          Icons.camera_enhance,
-                                          color: Colors.white,
-                                        ),
-                                        iconSize: 40,
-                                        onPressed: () {
-                                          Get.to(CameraApp());
-                                          print("Google clicked");
-                                        }),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 30.0, left: 40, right: 0.0),
-                            child: Container(
-                              decoration: new BoxDecoration(
-                                color: Color(0xff085078),
-                                borderRadius: BorderRadius.circular(60),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.green,
-                                    blurRadius: 40.0, // soften the shadow
-                                    spreadRadius: 0.0, //extend the shadow
-                                    offset: Offset(
-                                      0.0, // Move to right 10  horizontally
-                                      0.0, // Move to bottom 10 Vertically
-                                    ),
-                                  )
-                                ],
-                              ),
-                              child: Stack(
-                                children: <Widget>[
-                                  Center(
-                                    child: new IconButton(
-                                        icon: Icon(
-                                          Icons.border_color,
-                                          color: Colors.white,
-                                        ),
-                                        iconSize: 40,
-                                        onPressed: () {
-                                          print("Google clicked");
-                                          _showModalSheet();
-                                        }),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 18.0, top: 30),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0, left: 0, bottom: 0),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Vehicle with no identifications?",
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      // fontSize: 20.0,
-                                      fontFamily: 'Nunito-Bold',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      final dynamic tooltip = _toolTipKey.currentState;
-                                      tooltip.ensureTooltipVisible();
-                                    },
-                                    child: Tooltip(
-                                      key: _toolTipKey,
-                                      // ignore: missing_required_param
-                                      child: IconButton(
-                                        icon: Icon(Icons.info, size: 20.0, color: Colors.red),
-                                      ),
-                                      message: 'If a Driver failed to show any identifcations or does not have any license plate installed then:\nIt is time for human interaction, and should be personally questioned.',
-                                      padding: EdgeInsets.all(20),
-                                      margin: EdgeInsets.all(20),
-                                      showDuration: Duration(seconds: 10),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue.withOpacity(0.9),
-                                        borderRadius: const BorderRadius.all(Radius.circular(4)),
-                                      ),
-                                      textStyle: TextStyle(color: Colors.white),
-                                      preferBelow: true,
-                                      verticalOffset: 20,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 30.0, left: 0, right: 0.0),
-                        child: Container(
-                          height: 60,
-                          width: 60,
-                          decoration: new BoxDecoration(
-                            color: Color(0xff085078),
-                            borderRadius: BorderRadius.circular(60),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.green,
-                                blurRadius: 40.0, // soften the shadow
-                                spreadRadius: 0.0, //extend the shadow
-                                offset: Offset(
-                                  0.0, // Move to right 10  horizontally
-                                  0.0, // Move to bottom 10 Vertically
-                                ),
-                              )
-                            ],
-                          ),
-                          child: Stack(
-                            children: <Widget>[
-                              Center(
-                                child: new IconButton(
-                                    icon: Icon(
-                                      Icons.receipt,
-                                      color: Colors.white,
-                                    ),
-                                    iconSize: 40,
-                                    onPressed: () {
-                                      print("Google clicked");
-                                      Get.to(WithoutIdent());
-                                      // _showModalSheet();
-                                    }),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // _buildTeam(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+              }
+            },
           ),
-
-          Stack(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20, bottom: 30),
-                child: Container(
-                  width: Get.width,
-                  height: isInvolve ? 430 : 200,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: new BorderRadius.circular(10.0),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0, left: 10, right: 10),
-                        child: Container(
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Purpose of Deployment",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 24.0,
-                                      fontFamily: 'Nunito-Bold',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 18.0),
-                        child: Container(
-                          width: 300,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.white,
-                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                          ),
-                          child: Container(
-                            child: ListTile(
-                              title: AutoSizeText(
-                                "${Schedule.notes} ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15.0,
-                                ),
-                                minFontSize: 15,
-                                maxLines: 5,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      isInvolve
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 20.0),
-                              child: Container(
-                                width: 300,
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Vehicle Report: ",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                            fontFamily: 'Nunito-Bold',
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Text(''),
-                      isInvolve
-                          ? Padding(
-                              padding: const EdgeInsets.only(left: 28.0, top: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "*Tap on the Vehicle Number to see the details.",
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 12.0,
-                                      fontFamily: 'Nunito-Bold',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Text(''),
-                      isInvolve
-                          ? Padding(
-                              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
-                              child: Container(
-                                height: 200,
-                                width: 480,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                  color: Colors.white,
-                                ),
-                                child: Container(
-                                  child: ListView.builder(
-                                    itemCount: Schedule.vehicle.length,
-                                    itemBuilder: (_, index) {
-                                      // final DocumentSnapshot _card =
-                                      //     userList[index];
-                                      return Column(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            height: 18.0,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.rectangle,
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                color: Colors.white,
-                                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                              ),
-                                              child: ListTile(
-                                                title: Text(Schedule.vehicle[index]),
-                                                onTap: () async {
-                                                  // print(PastSchedule.missionid.toString());
-                                                  // showVehicleInfo(PastSchedule.flaggedvehicles[index]);
-                                                  fetchVehicleInfo(Schedule.vehicle[index]);
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Text(''),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          //... The children inside the column of ListView.builder
-        ]),
+        ],
       ),
     );
+
+    // return new Stack(
+    //   children: <Widget>[
+    //     Padding(
+    //       padding: isInvolve ? const EdgeInsets.only(left: 10, right: 10, top: 470.0, bottom: 20) : const EdgeInsets.only(left: 10, right: 10, top: 270.0, bottom: 20),
+    //       child: Container(
+    //         width: Get.width,
+    //         height: 800,
+    //         decoration: BoxDecoration(
+    //           color: Colors.white,
+    //           borderRadius: new BorderRadius.circular(10.0),
+    //           boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+    //         ),
+    //         child: Column(
+    //           children: <Widget>[
+    //             Row(
+    //               children: [
+    //                 Padding(
+    //                   padding: const EdgeInsets.only(top: 20.0, left: 20, bottom: 0),
+    //                   child: Text(
+    //                     "Status",
+    //                     style: TextStyle(
+    //                       color: Colors.black,
+    //                       fontSize: 30.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ],
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 18),
+    //               child: Row(
+    //                 children: [
+    //                   Text("Deployment active time:"),
+    //                   Padding(
+    //                     padding: const EdgeInsets.only(left: 18.0),
+    //                     child: TimerBuilder.periodic(Duration(seconds: 1), builder: (context) {
+    //                       var b = DateFormat('MM-dd-yyyy HH:mm').parse(snapshot.data["starttime"].toString());
+    //                       final Duration myDuration = DateTime.parse(b.toString()).difference(DateTime.now());
+    //                       final withoutEquals = myDuration.toString().replaceAll(RegExp('-'), '');
+    //                       final gg = withoutEquals.toString().split('.')[0];
+    //                       return Text(
+    //                         "$gg ET",
+    //                         style: TextStyle(
+    //                           color: Colors.black,
+    //                           fontSize: 20.0,
+    //                           fontFamily: 'Nunito-Bold',
+    //                           fontWeight: FontWeight.bold,
+    //                         ),
+    //                       );
+    //                     }),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 50),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     "Scanned Vehicles",
+    //                     style: TextStyle(
+    //                       color: Colors.green,
+    //                       fontSize: 20.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 20),
+    //               child: Row(
+    //                 children: [
+    //                   Text("Total Scanned Vehicles: ",
+    //                       style: TextStyle(
+    //                         color: Colors.green,
+    //                       )),
+    //                   Text(
+    //                     _isScanEmpty ? '   ' + len.toString() : '',
+    //                     style: TextStyle(
+    //                       color: Colors.green,
+    //                       fontSize: 20.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 20),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     'Last Successful Scan:',
+    //                     style: TextStyle(
+    //                       color: Colors.green,
+    //                     ),
+    //                   ),
+    //                   Text(
+    //                     _isScanEmpty ? '      ' + snapshot.data['scannedvehicles'].last.toString() : '',
+    //                     style: TextStyle(
+    //                       color: Colors.green,
+    //                       fontSize: 20.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 20),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     _isScanEmpty ? snapshot.data['lastscan'].last.toString() : '',
+    //                     style: TextStyle(
+    //                       color: Colors.green,
+    //                       fontSize: 14.0,
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 50),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     "Flagged Vehicles",
+    //                     style: TextStyle(
+    //                       color: Colors.red,
+    //                       fontSize: 20.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                   IconButton(
+    //                     icon: Icon(Icons.info, size: 20.0, color: Colors.red),
+    //                     onPressed: () {
+    //                       fetchVehicleListFlag();
+    //                     },
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 20),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     "Total Flagged Vehicles: ",
+    //                     style: TextStyle(
+    //                       color: Colors.red,
+    //                     ),
+    //                   ),
+    //                   Text(
+    //                     _isFlagEmpty ? '   ' + lenflag.toString() : '',
+    //                     style: TextStyle(
+    //                       color: Colors.red,
+    //                       fontSize: 20.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 20),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     'Last Successful Flagged:',
+    //                     style: TextStyle(
+    //                       color: Colors.red,
+    //                     ),
+    //                   ),
+    //                   Text(
+    //                     _isFlagEmpty ? ' ' + snapshot.data['flaggedvehicles'].last.toString() : '',
+    //                     style: TextStyle(
+    //                       color: Colors.red,
+    //                       fontSize: 20.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                   IconButton(
+    //                     icon: Icon(Icons.info, size: 20.0, color: Colors.red),
+    //                     onPressed: () {
+    //                       fetchVehicleInfoFlag(snapshot.data['flaggedvehicles'].last.toString());
+    //                     },
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 20),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     _isFlagEmpty ? snapshot.data['lastflag'].last.toString() : '',
+    //                     style: TextStyle(
+    //                       color: Colors.red,
+    //                       fontSize: 14.0,
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+
+    //             // _buildTeam(),
+
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 50),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     "Found Vehicles",
+    //                     style: TextStyle(
+    //                       color: Colors.blue,
+    //                       fontSize: 20.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                   IconButton(
+    //                     icon: Icon(Icons.info, size: 20.0, color: Colors.blue),
+    //                     onPressed: () {
+    //                        fetchVehicleListFound();
+    //                     },
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 20),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     "Total Found Vehicles: ",
+    //                     style: TextStyle(
+    //                       color: Colors.blue,
+    //                     ),
+    //                   ),
+    //                   Text(
+    //                     _isFoundEmpty ? '   ' + lenvoi.toString() : '',
+    //                     style: TextStyle(
+    //                       color: Colors.blue,
+    //                       fontSize: 20.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 20),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     'Last Found Vehicle:',
+    //                     style: TextStyle(
+    //                       color: Colors.blue,
+    //                     ),
+    //                   ),
+    //                   Text(
+    //                     _isFoundEmpty ? ' ' + snapshot.data['vointerest'].last.toString() : '',
+    //                     style: TextStyle(
+    //                       color: Colors.blue,
+    //                       fontSize: 20.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                   IconButton(
+    //                     icon: Icon(Icons.info, size: 20.0, color: Colors.blue),
+    //                     onPressed: () {
+    //                       fetchVehicleInfoFound(snapshot.data['vointerest'].last.toString());
+    //                     },
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 20),
+    //               child: Row(
+    //                 children: [
+    //                   Text(
+    //                     _isFoundEmpty ? snapshot.data['voilast'].last.toString() : '',
+    //                     style: TextStyle(
+    //                       color: Colors.blue,
+    //                       fontSize: 14.0,
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // );
+
+    // Stack(
+    //   children: <Widget>[
+    //     Padding(
+    //       padding: isInvolve ? const EdgeInsets.only(left: 10.0, right: 10.0, top: 1300, bottom: 30) : const EdgeInsets.only(left: 10.0, right: 10.0, top: 920, bottom: 30),
+    //       child: Container(
+    //         width: Get.width,
+    //         height: 400,
+    //         decoration: BoxDecoration(
+    //           color: Colors.white,
+    //           borderRadius: new BorderRadius.circular(10.0),
+    //           boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+    //         ),
+    //         child: Column(
+    //           children: <Widget>[
+    //             Row(
+    //               children: [
+    //                 Padding(
+    //                   padding: const EdgeInsets.only(top: 20.0, left: 20, bottom: 0),
+    //                   child: Text(
+    //                     "Actions",
+    //                     style: TextStyle(
+    //                       color: Colors.black,
+    //                       fontSize: 30.0,
+    //                       fontFamily: 'Nunito-Bold',
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ],
+    //             ),
+
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 20),
+    //               child: Row(
+    //                 children: [
+    //                   Text("Compare Vehicles:"),
+    //                 ],
+    //               ),
+    //             ),
+
+    //             Row(
+    //               mainAxisAlignment: MainAxisAlignment.center,
+    //               children: <Widget>[
+    //                 Padding(
+    //                   padding: EdgeInsets.only(top: 30.0, right: 0.0),
+    //                   child: Container(
+    //                     decoration: new BoxDecoration(
+    //                       color: Color(0xff085078),
+    //                       borderRadius: BorderRadius.circular(60),
+    //                       boxShadow: [
+    //                         BoxShadow(
+    //                           color: Colors.green,
+    //                           blurRadius: 40.0, // soften the shadow
+    //                           spreadRadius: 0.0, //extend the shadow
+    //                           offset: Offset(
+    //                             0.0, // Move to right 10  horizontally
+    //                             0.0, // Move to bottom 10 Vertically
+    //                           ),
+    //                         )
+    //                       ],
+    //                     ),
+    //                     child: Stack(
+    //                       children: <Widget>[
+    //                         Center(
+    //                           child: new IconButton(
+    //                               icon: Icon(
+    //                                 Icons.camera_enhance,
+    //                                 color: Colors.white,
+    //                               ),
+    //                               iconSize: 40,
+    //                               onPressed: () {
+    //                                 Get.to(CameraApp());
+    //                                 print("Google clicked");
+    //                               }),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 ),
+    //                 Padding(
+    //                   padding: EdgeInsets.only(top: 30.0, left: 40, right: 0.0),
+    //                   child: Container(
+    //                     decoration: new BoxDecoration(
+    //                       color: Color(0xff085078),
+    //                       borderRadius: BorderRadius.circular(60),
+    //                       boxShadow: [
+    //                         BoxShadow(
+    //                           color: Colors.green,
+    //                           blurRadius: 40.0, // soften the shadow
+    //                           spreadRadius: 0.0, //extend the shadow
+    //                           offset: Offset(
+    //                             0.0, // Move to right 10  horizontally
+    //                             0.0, // Move to bottom 10 Vertically
+    //                           ),
+    //                         )
+    //                       ],
+    //                     ),
+    //                     child: Stack(
+    //                       children: <Widget>[
+    //                         Center(
+    //                           child: new IconButton(
+    //                               icon: Icon(
+    //                                 Icons.border_color,
+    //                                 color: Colors.white,
+    //                               ),
+    //                               iconSize: 40,
+    //                               onPressed: () {
+    //                                 print("Google clicked");
+    //                                 _showModalSheet();
+    //                               }),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ],
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.only(left: 18.0, top: 30),
+    //               child: Row(
+    //                 children: [
+    //                   Padding(
+    //                     padding: const EdgeInsets.only(top: 8.0, left: 0, bottom: 0),
+    //                     child: Row(
+    //                       children: [
+    //                         Text(
+    //                           "Vehicle with no identifications?",
+    //                           style: TextStyle(
+    //                             color: Colors.red,
+    //                             // fontSize: 20.0,
+    //                             fontFamily: 'Nunito-Bold',
+    //                             fontWeight: FontWeight.bold,
+    //                           ),
+    //                         ),
+    //                         GestureDetector(
+    //                           onTap: () {
+    //                             final dynamic tooltip = _toolTipKey.currentState;
+    //                             tooltip.ensureTooltipVisible();
+    //                           },
+    //                           child: Tooltip(
+    //                             key: _toolTipKey,
+    //                             // ignore: missing_required_param
+    //                             child: IconButton(
+    //                               icon: Icon(Icons.info, size: 20.0, color: Colors.red),
+    //                             ),
+    //                             message: 'If a Driver failed to show any identifcations or does not have any license plate installed then:\nIt is time for human interaction, and should be personally questioned.',
+    //                             padding: EdgeInsets.all(20),
+    //                             margin: EdgeInsets.all(20),
+    //                             showDuration: Duration(seconds: 10),
+    //                             decoration: BoxDecoration(
+    //                               color: Colors.blue.withOpacity(0.9),
+    //                               borderRadius: const BorderRadius.all(Radius.circular(4)),
+    //                             ),
+    //                             textStyle: TextStyle(color: Colors.white),
+    //                             preferBelow: true,
+    //                             verticalOffset: 20,
+    //                           ),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: EdgeInsets.only(top: 30.0, left: 0, right: 0.0),
+    //               child: Container(
+    //                 height: 60,
+    //                 width: 60,
+    //                 decoration: new BoxDecoration(
+    //                   color: Color(0xff085078),
+    //                   borderRadius: BorderRadius.circular(60),
+    //                   boxShadow: [
+    //                     BoxShadow(
+    //                       color: Colors.green,
+    //                       blurRadius: 40.0, // soften the shadow
+    //                       spreadRadius: 0.0, //extend the shadow
+    //                       offset: Offset(
+    //                         0.0, // Move to right 10  horizontally
+    //                         0.0, // Move to bottom 10 Vertically
+    //                       ),
+    //                     )
+    //                   ],
+    //                 ),
+    //                 child: Stack(
+    //                   children: <Widget>[
+    //                     Center(
+    //                       child: new IconButton(
+    //                           icon: Icon(
+    //                             Icons.receipt,
+    //                             color: Colors.white,
+    //                           ),
+    //                           iconSize: 40,
+    //                           onPressed: () {
+    //                             print("Google clicked");
+    //                             Get.to(WithoutIdent());
+    //                             // _showModalSheet();
+    //                           }),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ),
+    //             // _buildTeam(),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // ),
+
+    // Stack(
+    //   children: <Widget>[
+    //     Padding(
+    //       padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 20, bottom: 30),
+    //       child: Container(
+    //         width: Get.width,
+    //         height: isInvolve ? 430 : 200,
+    //         decoration: BoxDecoration(
+    //           color: Colors.white,
+    //           borderRadius: new BorderRadius.circular(10.0),
+    //           boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+    //         ),
+    //         child: Column(
+    //           children: <Widget>[
+    //             Padding(
+    //               padding: const EdgeInsets.only(top: 20.0, left: 10, right: 10),
+    //               child: Container(
+    //                 child: Column(
+    //                   children: [
+    //                     Row(
+    //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                       children: [
+    //                         Text(
+    //                           "Purpose of Deployment",
+    //                           style: TextStyle(
+    //                             color: Colors.black,
+    //                             fontSize: 24.0,
+    //                             fontFamily: 'Nunito-Bold',
+    //                             fontWeight: FontWeight.bold,
+    //                           ),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.only(top: 18.0),
+    //               child: Container(
+    //                 width: 300,
+    //                 decoration: BoxDecoration(
+    //                   shape: BoxShape.rectangle,
+    //                   borderRadius: BorderRadius.all(Radius.circular(10)),
+    //                   color: Colors.white,
+    //                   boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+    //                 ),
+    //                 child: Container(
+    //                   child: ListTile(
+    //                     title: AutoSizeText(
+    //                       "${Schedule.notes} ",
+    //                       style: TextStyle(
+    //                         color: Colors.black,
+    //                         fontSize: 15.0,
+    //                       ),
+    //                       minFontSize: 15,
+    //                       maxLines: 5,
+    //                       overflow: TextOverflow.ellipsis,
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //             isInvolve
+    //                 ? Padding(
+    //                     padding: const EdgeInsets.only(top: 20.0),
+    //                     child: Container(
+    //                       width: 300,
+    //                       child: Column(
+    //                         children: [
+    //                           Row(
+    //                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                             children: [
+    //                               Text(
+    //                                 "Vehicle Report: ",
+    //                                 style: TextStyle(
+    //                                   color: Colors.black,
+    //                                   fontSize: 15.0,
+    //                                   fontFamily: 'Nunito-Bold',
+    //                                   fontWeight: FontWeight.bold,
+    //                                 ),
+    //                               ),
+    //                             ],
+    //                           ),
+    //                         ],
+    //                       ),
+    //                     ),
+    //                   )
+    //                 : Text(''),
+    //             isInvolve
+    //                 ? Padding(
+    //                     padding: const EdgeInsets.only(left: 28.0, top: 8),
+    //                     child: Row(
+    //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                       children: [
+    //                         Text(
+    //                           "*Tap on the Vehicle Number to see the details.",
+    //                           style: TextStyle(
+    //                             color: Colors.red,
+    //                             fontSize: 12.0,
+    //                             fontFamily: 'Nunito-Bold',
+    //                             fontWeight: FontWeight.bold,
+    //                           ),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                   )
+    //                 : Text(''),
+    //             isInvolve
+    //                 ? Padding(
+    //                     padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
+    //                     child: Container(
+    //                       height: 200,
+    //                       width: 480,
+    //                       decoration: BoxDecoration(
+    //                         shape: BoxShape.rectangle,
+    //                         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+    //                         color: Colors.white,
+    //                       ),
+    //                       child: Container(
+    //                         child: ListView.builder(
+    //                           itemCount: Schedule.vehicle.length,
+    //                           itemBuilder: (_, index) {
+    //                             // final DocumentSnapshot _card =
+    //                             //     userList[index];
+    //                             return Column(
+    //                               children: <Widget>[
+    //                                 SizedBox(
+    //                                   height: 18.0,
+    //                                 ),
+    //                                 Padding(
+    //                                   padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
+    //                                   child: Container(
+    //                                     decoration: BoxDecoration(
+    //                                       shape: BoxShape.rectangle,
+    //                                       borderRadius: BorderRadius.all(Radius.circular(10)),
+    //                                       color: Colors.white,
+    //                                       boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+    //                                     ),
+    //                                     child: ListTile(
+    //                                       title: Text(Schedule.vehicle[index]),
+    //                                       onTap: () async {
+    //                                         // print(PastSchedule.missionid.toString());
+    //                                         // showVehicleInfo(PastSchedule.flaggedvehicles[index]);
+    //                                         fetchVehicleInfo(Schedule.vehicle[index]);
+    //                                       },
+    //                                     ),
+    //                                   ),
+    //                                 ),
+    //                               ],
+    //                             );
+    //                           },
+    //                         ),
+    //                       ),
+    //                     ),
+    //                   )
+    //                 : Text(''),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // ),
+
+    //... The children inside the column of ListView.builder
   }
 }
