@@ -11,6 +11,7 @@ import 'package:get_rekk/animations/custom_alert_success.dart';
 import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../main.dart';
@@ -400,6 +401,7 @@ class _PhoneState extends State<Phone> {
     var usercheck;
     var collectionid2 = uuid.v1();
     var activity = 'Phone number verified.';
+    SharedPreferences isPhoneVerified = await SharedPreferences.getInstance();
     AuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
 //for signing
     // await FirebaseAuth.instance.signInWithCredential(credential).then((user) {
@@ -413,6 +415,7 @@ class _PhoneState extends State<Phone> {
     // auth.currentUser.unlink(PhoneAuthProvider.PROVIDER_ID);
 
 //for linking
+//
     auth.currentUser.linkWithCredential(credential).then((user) async {
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.user.uid).get();
       username.docs.forEach((document) {
@@ -446,14 +449,16 @@ class _PhoneState extends State<Phone> {
             'editcreate_datetime': Timestamp.now(),
             'editcreate_collectionid': user.user.uid,
           });
-        }).then((value) {
+        }).then((value) async {
           Get.snackbar(
             "Success!",
             "Phone number verified successfully!",
             duration: Duration(seconds: 3),
           );
+          await isPhoneVerified.setString('isPhoneVerified', "true");
           Timer(Duration(seconds: 3), () {
             _btnController2.reset();
+
             // auth.signOut();
             if (widget.fromWhere == 'editUser') {
               Get.offAll(Splash());

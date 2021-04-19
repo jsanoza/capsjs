@@ -262,6 +262,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
     SharedPreferences ppUrlSP = await SharedPreferences.getInstance();
     SharedPreferences fullNameSP = await SharedPreferences.getInstance();
     SharedPreferences rankSP = await SharedPreferences.getInstance();
+    SharedPreferences isPhoneVerified = await SharedPreferences.getInstance();
     String errorMessage;
 
     // _onTap();
@@ -284,6 +285,7 @@ class _LogSignState extends State<LogSign> with SingleTickerProviderStateMixin {
           await ppUrlSP.setString('ppUrlSP', ppUrlx);
           await fullNameSP.setString('fullNameSP', fullnamex);
           await rankSP.setString('rankSP', rankx);
+          await isPhoneVerified.setString('isPhoneVerified', isPhoneVer);
 
           UserLog.ppUrl = hello2.data()['picUrl'];
           UserLog.fullName = hello2.data()['fullName'];

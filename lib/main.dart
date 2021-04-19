@@ -215,6 +215,7 @@ class SplashState extends State<Splash> {
     SharedPreferences ppUrlSP = await SharedPreferences.getInstance();
     SharedPreferences fullNameSP = await SharedPreferences.getInstance();
     SharedPreferences rankSP = await SharedPreferences.getInstance();
+    SharedPreferences isPhoneVerified = await SharedPreferences.getInstance();
     bool _seenxzz12355478911111 = (prefs.getBool('_seenxzz12355478911111') ?? false);
     if (_seenxzz12355478911111) {
       userLoggedin = user != null;
@@ -222,12 +223,22 @@ class SplashState extends State<Splash> {
         UserLog.ppUrl = ppUrlSP.getString("ppUrlSP");
         UserLog.fullName = fullNameSP.getString("fullNameSP");
         UserLog.rank = rankSP.getString("rankSP");
-
+        var isPhoneVerifiedx = isPhoneVerified.getString("isPhoneVerified");
+        print(isPhoneVerifiedx);
         var a = level.getString("level");
         print(a);
         //edit logsign to check on db userlevel from registration// ill do this tomorrow
         if (a == 'user') {
-          Get.offAll(UsersSched(), transition: Transition.fadeIn);
+          if (isPhoneVerifiedx.toString() == 'false') {
+            Get.offAll(
+                Phone(
+                  isVerified: false,
+                  fromWhere: 'editUser',
+                ),
+                transition: Transition.fadeIn);
+          } else {
+            Get.offAll(UsersSched(), transition: Transition.fadeIn);
+          }
         } else {
           Get.offAll(NewVehicle(), transition: Transition.fade);
         }
