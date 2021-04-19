@@ -7,7 +7,7 @@ import 'package:get_rekk/pages/foradmin/fourth.dart';
 import 'package:get_rekk/pages/foradmin/reset.dart';
 import 'package:get_rekk/pages/foradmin/upgradepost.dart';
 import 'package:get_rekk/pages/forchat/chat_screen.dart';
-import 'package:get_rekk/pages/forusers/cameratrial.dart';
+import 'package:get_rekk/pages/forcamera/cameratrial.dart';
 import 'package:get_rekk/pages/forusers/editinfo.dart';
 import 'package:get_rekk/pages/forusers/finalcamera.dart';
 import 'package:get_rekk/pages/forusers/loading.dart';

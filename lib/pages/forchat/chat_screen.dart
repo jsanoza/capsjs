@@ -33,6 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   getPost() async {
+     User user = auth.currentUser;
     QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid.toString()).get();
     username.docs.forEach((document) {
       email = document.data()['email'];

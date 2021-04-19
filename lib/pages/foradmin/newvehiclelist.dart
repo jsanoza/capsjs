@@ -5,41 +5,27 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
 import 'package:get_rekk/helpers/util.dart';
-import 'package:get_rekk/pages/foradmin/fourth.dart';
-import 'package:get_rekk/pages/foradmin/ongoingdetailspageone.dart';
-import 'package:get_rekk/pages/foradmin/ongoingdetailspagetwo.dart';
+import 'package:get_rekk/pages/foradmin/vehiclelist.dart';
 import 'package:uuid/uuid.dart';
 
 import '../loginsignup.dart';
+import 'foundlist.dart';
+import 'fourth.dart';
 
-class OngoingPage extends StatefulWidget {
+class NewVehicle extends StatefulWidget {
   @override
-  _OngoingPage createState() => _OngoingPage();
+  _NewVehicleState createState() => _NewVehicleState();
 }
 
-class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixin {
-  @override
-  // ignore: override_on_non_overriding_member
+class _NewVehicleState extends State<NewVehicle>
+    with SingleTickerProviderStateMixin {
   Offset _offset = Offset(0, 0);
   GlobalKey globalKey = GlobalKey();
   List<double> limits = [];
   TabController _tabController;
   bool isMenuOpen = false;
   FirebaseAuth auth = FirebaseAuth.instance;
-
   var uuid = Uuid();
-
-  @override
-  void initState() {
-    limits = [0, 0, 0, 0, 0, 0];
-    WidgetsBinding.instance.addPostFrameCallback(getPosition);
-    _tabController = TabController(
-      initialIndex: 0,
-      length: 2,
-      vsync: this,
-    );
-    super.initState();
-  }
 
   getPosition(duration) {
     RenderBox renderBox = globalKey.currentContext.findRenderObject();
@@ -57,7 +43,8 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
   }
 
   double getSize(int x) {
-    double size = (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 25 : 12;
+    double size =
+        (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 25 : 12;
     return size;
   }
 
@@ -68,7 +55,12 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
     FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
       'lastactivity_datetime': Timestamp.now(),
     }).then((value) {
-      FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+      FirebaseFirestore.instance
+          .collection('usertrail')
+          .doc(user.uid)
+          .collection('trail')
+          .doc(collectionid2)
+          .set({
         'userid': user.uid,
         'activity': 'Logged out session.',
         'editcreate_datetime': Timestamp.now(),
@@ -77,6 +69,18 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
       auth.signOut();
       Get.offAll(LogSign());
     });
+  }
+
+  @override
+  void initState() {
+    limits = [0, 0, 0, 0, 0, 0];
+    WidgetsBinding.instance.addPostFrameCallback(getPosition);
+    _tabController = TabController(
+      initialIndex: 0,
+      length: 2,
+      vsync: this,
+    );
+    super.initState();
   }
 
   @override
@@ -95,7 +99,8 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
             });
           },
           child: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
               return [
                 SliverAppBar(
                   // automaticallyImplyLeading: false,
@@ -128,8 +133,12 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
-                                "Ongoing",
-                                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Nunito-Bold'),
+                                "Vehicles",
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontFamily: 'Nunito-Bold'),
                               ),
                             ),
                             Padding(
@@ -158,7 +167,7 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                         ),
                       ),
                       background: Image.network(
-                        'https://cloudfront-us-east-1.images.arcpublishing.com/cmg/PZQVBPFW2FXTEMMO2EVXFTEXJA.jpg',
+                        'https://www.spiritinbusiness.org/wp-content/uploads/2019/08/images1101-5d67f83b74973-737x415.jpg',
                         fit: BoxFit.cover,
                       )),
                   // Make the initial height of the SliverAppBar larger than normal.
@@ -170,8 +179,8 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                       labelColor: Colors.black87,
                       unselectedLabelColor: Colors.grey,
                       tabs: [
-                        Tab(text: "Live Activity Feed"),
-                        Tab(text: "Details"),
+                        Tab(text: "Active List"),
+                        Tab(text: "Found"),
                       ],
                     ),
                   ),
@@ -182,13 +191,15 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
             body: TabBarView(
               // controller: _tabController,
               children: [
+                VehicleList(),
                 // Ongoingsched(),
                 // UpcomingState(),
-                OngoingdetailsPagetwo(),
-                OngoingdetailsPageone(),
+                // OngoingdetailsPagetwo(),
+                // OngoingdetailsPageone(),
                 // const Center(
                 //   child: Text('Display Tab 1', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 // ),
+                FoundList(),
               ],
             ),
           ),
@@ -210,7 +221,8 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                   });
                 }
 
-                if (details.localPosition.dx > sidebarSize - 20 && details.delta.distanceSquared > 2) {
+                if (details.localPosition.dx > sidebarSize - 20 &&
+                    details.delta.distanceSquared > 2) {
                   setState(() {
                     isMenuOpen = true;
                   });
@@ -244,13 +256,16 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                                   width: 120,
                                   // padding: EdgeInsets.all(8.0),
                                   child: CircleAvatar(
-                                    backgroundImage: NetworkImage(UserLog.ppUrl),
+                                    backgroundImage:
+                                        NetworkImage(UserLog.ppUrl),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 28.0),
                                   child: Text(
-                                    UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                    UserLog.rank +
+                                        '. ' +
+                                        UserLog.fullName.toUpperCase(),
                                     style: TextStyle(color: Colors.black45),
                                   ),
                                 ),
@@ -267,25 +282,41 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                           height: menuContainerHeight,
                           child: Column(
                             children: <Widget>[
-                              MyButton(text: "Add Schedules", iconData: Icons.library_add_check, textSize: getSize(0), height: (menuContainerHeight) / 6, selectedIndex: 1),
+                              MyButton(
+                                  text: "Schedule Details",
+                                  iconData: Icons.text_snippet,
+                                  textSize: getSize(0),
+                                  height: (menuContainerHeight) / 5,
+                                  selectedIndex: 0),
                               // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
-                              // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                              // MyButton(text: "Reset Users Password", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
-                              // MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 5),
-                              // // MyButton(
+                              MyButton(
+                                  text: "Add Schedule",
+                                  iconData: Icons.library_add_check,
+                                  textSize: getSize(1),
+                                  height: (menuContainerHeight) / 5,
+                                  selectedIndex: 1),
+                              // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 2),
+                              // MyButton(text: "Reset User Password", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 3),
+
+                              // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
+                              // MyButton(
                               //     text: "Fourth",
                               //     iconData: Icons.settings,
                               //     textSize: getSize(4),
                               //     height: (menuContainerHeight) / 5,
                               //     selectedIndex: 4),
-                              // MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
-
-                              // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 4),
-                              // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                              // MyButton(text: "Reset Password of User", iconData: Icons.replay, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 3),
-                              MyButton(text: "Vehicles", iconData: Icons.local_car_wash, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 5),
-                              MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
-                              MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
+                              MyButton(
+                                  text: "Edit Info",
+                                  iconData: Icons.app_registration,
+                                  textSize: getSize(2),
+                                  height: (menuContainerHeight) / 5,
+                                  selectedIndex: 2),
+                              MyButton(
+                                  text: "Manage Users",
+                                  iconData: Icons.settings_applications,
+                                  textSize: getSize(3),
+                                  height: (menuContainerHeight) / 5,
+                                  selectedIndex: 3),
                             ],
                           ),
                         ),
@@ -300,7 +331,8 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                                   builder: (BuildContext context) {
                                     return AlertDialog(
                                       title: const Text("Logout Confirmation"),
-                                      content: const Text("Are you sure you want to log out?"),
+                                      content: const Text(
+                                          "Are you sure you want to log out?"),
                                       actions: <Widget>[
                                         FlatButton(
                                             onPressed: () => {
@@ -308,7 +340,8 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                                                 },
                                             child: const Text("Yes")),
                                         FlatButton(
-                                          onPressed: () => Navigator.of(context).pop(false),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
                                           child: const Text("Cancel"),
                                         ),
                                       ],
@@ -320,12 +353,15 @@ class _OngoingPage extends State<OngoingPage> with SingleTickerProviderStateMixi
                               children: [
                                 Icon(
                                   Icons.logout,
-                                  color: Colors.lightGreen,
+                                  color: Color(0xff085078),
                                   size: 20.0,
                                 ),
                                 Text(
                                   '  Logout',
-                                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontFamily: 'Nunito-Bold'),
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Nunito-Bold'),
                                 ),
                               ],
                             ),
@@ -361,7 +397,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
       color: Colors.white,
       child: _tabBar,

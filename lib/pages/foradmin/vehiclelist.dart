@@ -15,6 +15,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:uuid/uuid.dart';
 
 import '../loginsignup.dart';
+import 'newvehiclelist.dart';
 
 class VehicleList extends StatefulWidget {
   @override
@@ -51,6 +52,7 @@ class _VehicleList extends State<VehicleList> {
   var uuid = Uuid();
   String finalVehResult;
   String finalMCResult;
+  List<String> dummylang = [];
   @override
   void initState() {
     limits = [0, 0, 0, 0, 0, 0];
@@ -87,7 +89,8 @@ class _VehicleList extends State<VehicleList> {
   }
 
   double getSize(int x) {
-    double size = (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 15 : 12;
+    double size =
+        (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 15 : 12;
     return size;
   }
 
@@ -95,7 +98,11 @@ class _VehicleList extends State<VehicleList> {
     _blackVisible = !_blackVisible;
   }
 
-  void _showSuccessAlert({String title, String content, VoidCallback onPressed, BuildContext context}) {
+  void _showSuccessAlert(
+      {String title,
+      String content,
+      VoidCallback onPressed,
+      BuildContext context}) {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -109,7 +116,11 @@ class _VehicleList extends State<VehicleList> {
     );
   }
 
-  void _showErrorAlert({String title, String content, VoidCallback onPressed, BuildContext context}) {
+  void _showErrorAlert(
+      {String title,
+      String content,
+      VoidCallback onPressed,
+      BuildContext context}) {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -132,304 +143,460 @@ class _VehicleList extends State<VehicleList> {
 
   _buildMain2() {
     ErrorWidget.builder = (FlutterErrorDetails details) => Container();
-    return Column(
-      children: <Widget>[
-        Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 30.0, left: 5, bottom: 10),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        "Vehicle List",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20.0,
-                          fontFamily: 'Nunito-Bold',
-                          fontWeight: FontWeight.bold,
-                        ),
+    return Container(
+      height: Get.height,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 30.0, left: 5, bottom: 10),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      "Vehicle List",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                        fontFamily: 'Nunito-Bold',
+                        fontWeight: FontWeight.bold,
                       ),
-                      Container(
-                        // color: Colors.transparent,
-                        decoration: new BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white,
-                              blurRadius: 50.0, // soften the shadow
-                              spreadRadius: 15.0, //extend the shadow
-                              offset: Offset(
-                                0.0, // Move to right 10  horizontally
-                                0.0, // Move to bottom 10 Vertically
-                              ),
-                            )
-                          ],
-                        ),
-                        height: 30,
-                        width: 30,
-                        child: Stack(
-                          children: <Widget>[
-                            Center(
-                              child: RaisedButton(
-                                onPressed: () {
-                                  _showAdd(context);
-                                  // _showModalSheet();
-                                  // _onTap();
-                                  // handleSignIn();
-                                }, //only after checking
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
-                                padding: const EdgeInsets.all(0.0),
-                                child: Ink(
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
-                                    borderRadius: BorderRadius.all(Radius.circular(80.0)),
-                                  ),
-                                  child: Container(
-                                    constraints: const BoxConstraints(minWidth: 88.0, minHeight: 36.0), // min sizes for Material buttons
-                                    alignment: Alignment.center,
-                                    child: Icon(Icons.add, size: 20, color: Colors.white),
-                                  ),
+                    ),
+                    Container(
+                      // color: Colors.transparent,
+                      decoration: new BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.white,
+                            blurRadius: 50.0, // soften the shadow
+                            spreadRadius: 15.0, //extend the shadow
+                            offset: Offset(
+                              0.0, // Move to right 10  horizontally
+                              0.0, // Move to bottom 10 Vertically
+                            ),
+                          )
+                        ],
+                      ),
+                      height: 30,
+                      width: 30,
+                      child: Stack(
+                        children: <Widget>[
+                          Center(
+                            child: RaisedButton(
+                              onPressed: () {
+                                _showAdd(context);
+                                // _showModalSheet();
+                                // _onTap();
+                                // handleSignIn();
+                              }, //only after checking
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(80.0)),
+                              padding: const EdgeInsets.all(0.0),
+                              child: Ink(
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                      colors: [
+                                        Color(0xff85D8CE),
+                                        Color(0xff085078)
+                                      ],
+                                      begin: const FractionalOffset(0.0, 0.0),
+                                      end: const FractionalOffset(1.0, 1.0),
+                                      stops: [0.0, 1.0],
+                                      tileMode: TileMode.clamp),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(80.0)),
+                                ),
+                                child: Container(
+                                  constraints: const BoxConstraints(
+                                      minWidth: 88.0,
+                                      minHeight:
+                                          36.0), // min sizes for Material buttons
+                                  alignment: Alignment.center,
+                                  child: Icon(Icons.add,
+                                      size: 20, color: Colors.white),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  // _secondShow ? _showSearchList() : Container(),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Container(
-                width: 480,
-                child: Column(
-                  children: [
-                    Container(
-                      height: 400,
-                      width: 480,
-                      color: Colors.white,
-                      child: StreamBuilder<QuerySnapshot>(
-                        stream: getHolder(),
-                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            return Text('');
-                          } else if (snapshot.connectionState == ConnectionState.done) {
-                            return Text('');
-                          } else {
-                            if (snapshot.data == null) {
-                              return Text('');
-                            } else {
-                              return Container(
-                                child: ListView.builder(
-                                  itemCount: snapshot.data.docs.length,
-                                  itemBuilder: (_, index) {
-                                    return Dismissible(
-                                      key: Key('item ${snapshot.data.docs.length}'),
-                                      background: Container(
-                                        color: Colors.redAccent,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(15),
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.delete, color: Colors.white),
-                                              Text('Remove from the list', style: TextStyle(color: Colors.white)),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      secondaryBackground: Container(
-                                        color: Colors.blueAccent,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(15),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              Icon(Icons.edit, color: Colors.white),
-                                              Text('Edit', style: TextStyle(color: Colors.white)),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      confirmDismiss: (DismissDirection direction) async {
-                                        if (direction == DismissDirection.startToEnd) {
-                                          return await showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text("Delete Confirmation"),
-                                                content: const Text("Are you sure you want to delete this item?"),
-                                                actions: <Widget>[
-                                                  FlatButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("Delete")),
-                                                  FlatButton(
-                                                    onPressed: () => Navigator.of(context).pop(false),
-                                                    child: const Text("Cancel"),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        } else {
-                                          return await showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text("Edit Confirmation"),
-                                                content: const Text("Are you sure you want to edit this item?"),
-                                                actions: <Widget>[
-                                                  FlatButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("Edit")),
-                                                  FlatButton(
-                                                    onPressed: () => Navigator.of(context).pop(false),
-                                                    child: const Text("Cancel"),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        }
-                                      },
-                                      onDismissed: (DismissDirection direction) async {
-                                        if (direction == DismissDirection.startToEnd) {
-                                          var hotcar = snapshot.data.docs[index]['query'].toString();
-                                          var activity = 'Deleted a hot-car with plate number: $hotcar';
-                                          User user = auth.currentUser;
-                                          var currentUser = user.uid;
-                                          var usercheck;
-                                          var collectionid2 = uuid.v1();
-
-                                          QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
-                                          username.docs.forEach((document) {
-                                            usercheck = document.data()['fullName'];
-                                          });
-
-                                          FirebaseFirestore.instance.collection("vehicles").doc(snapshot.data.docs[index]['query'].toString()).delete().then((value) {
-                                            print('deleted');
-                                          });
-
-                                          FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
-                                            // 'collectionid2': collectionid2,
-                                            'lastactivity_datetime': Timestamp.now(),
-                                          }).then((value) {
-                                            FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
-                                              // 'collectionid2': collectionid2,
-                                              'userid': user.uid,
-                                              'userfullname': usercheck,
-                                              'this_collectionid': collectionid2,
-                                              'activity': activity,
-                                              'editcreate_datetime': Timestamp.now(),
-                                              'editcreate_collectionid': snapshot.data.docs[index]['query'].toString(),
-                                            });
-                                          });
-
-                                          setState(
-                                            () {
-                                              print('left');
-                                            },
-                                          );
-                                        } else {
-                                          // FirebaseFirestore.instance.collection("trialvehicles").doc(snapshot.data.docs[index]['plate'].toString()).delete().then((value) {
-                                          //   vehiclelist.remove(snapshot.data.docs[index]['plate'].toString());
-                                          //   print('deleted');
-                                          //   print(vehiclelist);
-                                          // });
-
-                                          QuerySnapshot snap = await FirebaseFirestore.instance.collection('vehicles').where("vehicle", isEqualTo: snapshot.data.docs[index]['query']).get();
-                                          snap.docs.forEach((document) {
-                                            FirebaseFirestore.instance.collection("vehicles").doc(snapshot.data.docs[index]['query'].toString()).collection("editedVehicle").doc(snapshot.data.docs[index]['vehicle']).set({
-                                              'vehicle': document.data()['vehicle'],
-                                              'vehiclebrand': document.data()['vehiclebrand'],
-                                              'vehicledesc': document.data()['vehicledesc'],
-                                              'vehiclekind': document.data()['vehiclekind'],
-                                              'vehiclemodel': document.data()['vehiclemodel'],
-                                              'reason': document.data()['reason'],
-                                              'addedby': document.data()['addedby'],
-                                              'addedtime': document.data()['addedtime'],
-                                            });
-                                          });
-
-                                          setState(
-                                            () {
-                                              isEdited = true;
-                                              print('right');
-                                              _showAdd(context);
-                                              query = snapshot.data.docs[index]['query'].toString();
-                                              todeleteveh = snapshot.data.docs[index]['vehicle'].toString();
-                                              _vehiclekindTextController.text = snapshot.data.docs[index]['vehiclekind'].toString();
-                                              _vehicleplateTextController.text = snapshot.data.docs[index]['vehicle'].toString();
-                                              _vehiclebrandTextController.text = snapshot.data.docs[index]['vehiclebrand'].toString();
-                                              _vehiclemodelTextController.text = snapshot.data.docs[index]['vehiclemodel'].toString();
-                                              _vehicledescTextController.text = snapshot.data.docs[index]['vehicledesc'].toString();
-                                              _vehiclereasTextController.text = snapshot.data.docs[index]['reason'].toString();
-                                            },
-                                          );
-                                        }
-                                        setState(() {
-                                          // if (userSearchBlockName.isEmpty) {
-                                          //   _fourthShow = false;
-                                          // }
-                                        });
-                                      },
-                                      child: Column(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            height: 18.0,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.rectangle,
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                color: Colors.white,
-                                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                              ),
-                                              child: ListTile(
-                                                leading: Container(padding: EdgeInsets.all(8.0), child: Text(snapshot.data.docs[index]['vehicle'])
-                                                    // CircleAvatar(
-                                                    //   backgroundImage: NetworkImage(userList[index]["picUrl"]),
-                                                    // ),
-                                                    ),
-                                                title: Text(snapshot.data.docs[index]["vehiclebrand"]),
-                                                subtitle: Row(
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Padding(
-                                                        padding: EdgeInsets.only(left: 0.0),
-                                                        child: Text(
-                                                          snapshot.data.docs[index]["vehiclemodel"],
-                                                          style: TextStyle(color: Colors.black),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                onTap: () {},
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            }
-                          }
-                        },
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
+                // _secondShow ? _showSearchList() : Container(),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Container(
+              width: 480,
+              // height: Get.height,
+              child: Column(
+                children: [
+                  Container(
+                    height: 400,
+                    // width: Get.height,
+                    color: Colors.white,
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: getHolder(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          return Text('');
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.done) {
+                          return Text('');
+                        } else {
+                          if (snapshot.data == null) {
+                            return Text('');
+                          } else {
+                            return Container(
+                              height: Get.height,
+                              child: ListView.builder(
+                                itemCount: snapshot.data.docs.length,
+                                itemBuilder: (_, index) {
+                                  return Dismissible(
+                                    key: Key(
+                                        'item ${snapshot.data.docs.length}'),
+                                    background: Container(
+                                      color: Colors.redAccent,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15),
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.delete,
+                                                color: Colors.white),
+                                            Text('Remove from the list',
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    secondaryBackground: Container(
+                                      color: Colors.blueAccent,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Icon(Icons.edit,
+                                                color: Colors.white),
+                                            Text('Edit',
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    confirmDismiss:
+                                        (DismissDirection direction) async {
+                                      if (direction ==
+                                          DismissDirection.startToEnd) {
+                                        return await showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  "Delete Confirmation"),
+                                              content: const Text(
+                                                  "Are you sure you want to delete this item?"),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(true),
+                                                    child:
+                                                        const Text("Delete")),
+                                                FlatButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(false),
+                                                  child: const Text("Cancel"),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        return await showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  "Edit Confirmation"),
+                                              content: const Text(
+                                                  "Are you sure you want to edit this item?"),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(true),
+                                                    child:
+                                                        const Text("Edit")),
+                                                FlatButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(false),
+                                                  child: const Text("Cancel"),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    onDismissed:
+                                        (DismissDirection direction) async {
+                                      if (direction ==
+                                          DismissDirection.startToEnd) {
+                                        var hotcar = snapshot
+                                            .data.docs[index]['query']
+                                            .toString();
+                                        var activity =
+                                            'Deleted a hot-car with plate number: $hotcar';
+                                        User user = auth.currentUser;
+                                        var currentUser = user.uid;
+                                        var usercheck;
+                                        var collectionid2 = uuid.v1();
+
+                                        QuerySnapshot username =
+                                            await FirebaseFirestore.instance
+                                                .collection('users')
+                                                .where('collectionId',
+                                                    isEqualTo: user.uid)
+                                                .get();
+                                        username.docs.forEach((document) {
+                                          usercheck =
+                                              document.data()['fullName'];
+                                        });
+
+                                        FirebaseFirestore.instance
+                                            .collection("vehicles")
+                                            .doc(snapshot
+                                                .data.docs[index]['query']
+                                                .toString())
+                                            .delete()
+                                            .then((value) {
+                                          print('deleted');
+                                        });
+
+                                        FirebaseFirestore.instance
+                                            .collection('usertrail')
+                                            .doc(user.uid)
+                                            .set({
+                                          // 'collectionid2': collectionid2,
+                                          'lastactivity_datetime':
+                                              Timestamp.now(),
+                                        }).then((value) {
+                                          FirebaseFirestore.instance
+                                              .collection('usertrail')
+                                              .doc(user.uid)
+                                              .collection('trail')
+                                              .doc(collectionid2)
+                                              .set({
+                                            // 'collectionid2': collectionid2,
+                                            'userid': user.uid,
+                                            'userfullname': usercheck,
+                                            'this_collectionid':
+                                                collectionid2,
+                                            'activity': activity,
+                                            'editcreate_datetime':
+                                                Timestamp.now(),
+                                            'editcreate_collectionid':
+                                                snapshot
+                                                    .data.docs[index]['query']
+                                                    .toString(),
+                                          });
+                                        });
+
+                                        setState(
+                                          () {
+                                            print('left');
+                                          },
+                                        );
+                                      } else {
+                                        // FirebaseFirestore.instance.collection("trialvehicles").doc(snapshot.data.docs[index]['plate'].toString()).delete().then((value) {
+                                        //   vehiclelist.remove(snapshot.data.docs[index]['plate'].toString());
+                                        //   print('deleted');
+                                        //   print(vehiclelist);
+                                        // });
+
+                                        QuerySnapshot snap =
+                                            await FirebaseFirestore.instance
+                                                .collection('vehicles')
+                                                .where("vehicle",
+                                                    isEqualTo: snapshot.data
+                                                        .docs[index]['query'])
+                                                .get();
+                                        snap.docs.forEach((document) {
+                                          FirebaseFirestore.instance
+                                              .collection("vehicles")
+                                              .doc(snapshot
+                                                  .data.docs[index]['query']
+                                                  .toString())
+                                              .collection("editedVehicle")
+                                              .doc(snapshot.data.docs[index]
+                                                  ['vehicle'])
+                                              .set({
+                                            'vehicle':
+                                                document.data()['vehicle'],
+                                            'vehiclebrand': document
+                                                .data()['vehiclebrand'],
+                                            'vehicledesc': document
+                                                .data()['vehicledesc'],
+                                            'vehiclekind': document
+                                                .data()['vehiclekind'],
+                                            'vehiclemodel': document
+                                                .data()['vehiclemodel'],
+                                            'status': '',
+                                            'foundby': FieldValue.arrayUnion(
+                                                dummylang),
+                                            'foundbyuid': '',
+                                            'foundtime': Timestamp.now(),
+                                            'foundonmission': '',
+                                            'reason':
+                                                document.data()['reason'],
+                                            'addedby':
+                                                document.data()['addedby'],
+                                            'addedtime':
+                                                document.data()['addedtime'],
+                                          });
+                                        });
+
+                                        setState(
+                                          () {
+                                            isEdited = true;
+                                            print('right');
+                                            _showAdd(context);
+                                            query = snapshot
+                                                .data.docs[index]['query']
+                                                .toString();
+                                            todeleteveh = snapshot
+                                                .data.docs[index]['vehicle']
+                                                .toString();
+                                            _vehiclekindTextController.text =
+                                                snapshot
+                                                    .data
+                                                    .docs[index]
+                                                        ['vehiclekind']
+                                                    .toString();
+                                            _vehicleplateTextController.text =
+                                                snapshot.data
+                                                    .docs[index]['vehicle']
+                                                    .toString();
+                                            _vehiclebrandTextController.text =
+                                                snapshot
+                                                    .data
+                                                    .docs[index]
+                                                        ['vehiclebrand']
+                                                    .toString();
+                                            _vehiclemodelTextController.text =
+                                                snapshot
+                                                    .data
+                                                    .docs[index]
+                                                        ['vehiclemodel']
+                                                    .toString();
+                                            _vehicledescTextController.text =
+                                                snapshot
+                                                    .data
+                                                    .docs[index]
+                                                        ['vehicledesc']
+                                                    .toString();
+                                            _vehiclereasTextController.text =
+                                                snapshot.data
+                                                    .docs[index]['reason']
+                                                    .toString();
+                                          },
+                                        );
+                                      }
+                                      setState(() {
+                                        // if (userSearchBlockName.isEmpty) {
+                                        //   _fourthShow = false;
+                                        // }
+                                      });
+                                    },
+                                    child: Column(
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 18.0,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 5.0,
+                                              left: 8.0,
+                                              right: 8.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.rectangle,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10)),
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(.2),
+                                                    blurRadius: 30,
+                                                    spreadRadius: 5)
+                                              ],
+                                            ),
+                                            child: ListTile(
+                                              leading: Container(
+                                                  padding:
+                                                      EdgeInsets.all(8.0),
+                                                  child: Text(snapshot.data
+                                                      .docs[index]['vehicle'])
+                                                  // CircleAvatar(
+                                                  //   backgroundImage: NetworkImage(userList[index]["picUrl"]),
+                                                  // ),
+                                                  ),
+                                              title: Text(
+                                                  snapshot.data.docs[index]
+                                                      ["vehiclebrand"]),
+                                              subtitle: Row(
+                                                children: <Widget>[
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.only(
+                                                              left: 0.0),
+                                                      child: Text(
+                                                        snapshot.data
+                                                                .docs[index]
+                                                            ["vehiclemodel"],
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              onTap: () {},
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -450,7 +617,10 @@ class _VehicleList extends State<VehicleList> {
         var usercheck;
         var collectionid2 = uuid.v1();
 
-        QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
+        QuerySnapshot username = await FirebaseFirestore.instance
+            .collection('users')
+            .where('collectionId', isEqualTo: user.uid)
+            .get();
         username.docs.forEach((document) {
           usercheck = document.data()['fullName'];
         });
@@ -462,6 +632,10 @@ class _VehicleList extends State<VehicleList> {
           'vehicledesc': vdesc,
           'vehiclekind': vkind,
           'vehiclemodel': vmodel,
+          'foundby': FieldValue.arrayUnion(dummylang),
+          'foundbyuid': '',
+          'foundtime': Timestamp.now(),
+          'foundonmission': '',
           // 'addedby': 'toadd',
           // 'addedtime': Timestamp.now(),
           'editedby': 'toadd',
@@ -472,7 +646,12 @@ class _VehicleList extends State<VehicleList> {
             // 'collectionid2': collectionid2,
             'lastactivity_datetime': Timestamp.now(),
           }).then((value) {
-            FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+            FirebaseFirestore.instance
+                .collection('usertrail')
+                .doc(user.uid)
+                .collection('trail')
+                .doc(collectionid2)
+                .set({
               // 'collectionid2': collectionid2,
               'userid': user.uid,
               'userfullname': usercheck,
@@ -522,7 +701,10 @@ class _VehicleList extends State<VehicleList> {
         var usercheck;
         var collectionid2 = uuid.v1();
 
-        QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
+        QuerySnapshot username = await FirebaseFirestore.instance
+            .collection('users')
+            .where('collectionId', isEqualTo: user.uid)
+            .get();
         username.docs.forEach((document) {
           usercheck = document.data()['fullName'];
         });
@@ -537,12 +719,21 @@ class _VehicleList extends State<VehicleList> {
           'addedby': 'toadd',
           'addedtime': Timestamp.now(),
           'reason': vreas,
+          'foundby': FieldValue.arrayUnion(dummylang),
+          'foundbyuid': '',
+          'foundtime': Timestamp.now(),
+          'foundonmission': '',
         }).then((value) {
           FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
             // 'collectionid2': collectionid2,
             'lastactivity_datetime': Timestamp.now(),
           }).then((value) {
-            FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+            FirebaseFirestore.instance
+                .collection('usertrail')
+                .doc(user.uid)
+                .collection('trail')
+                .doc(collectionid2)
+                .set({
               // 'collectionid2': collectionid2,
               'userid': user.uid,
               'userfullname': usercheck,
@@ -615,7 +806,7 @@ class _VehicleList extends State<VehicleList> {
           left: true,
           top: true,
           right: true,
-          bottom: true,
+          bottom: false,
           minimum: const EdgeInsets.only(top: 25.0),
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter mystate) {
@@ -624,11 +815,17 @@ class _VehicleList extends State<VehicleList> {
                   leading: BackButton(
                       color: Colors.white,
                       onPressed: () async {
-                        FirebaseFirestore.instance.collection("vehicles").doc(query).collection("editedVehicle").doc(todeleteveh).delete();
+                        FirebaseFirestore.instance
+                            .collection("vehicles")
+                            .doc(query)
+                            .collection("editedVehicle")
+                            .doc(todeleteveh)
+                            .delete();
 
-                        Get.offAll(VehicleList());
+                        Get.offAll(NewVehicle());
                       }),
-                  title: Text("Add Vehicle", style: TextStyle(color: Colors.white)),
+                  title: Text("Add Vehicle",
+                      style: TextStyle(color: Colors.white)),
                   backgroundColor: Color(0xff085078),
                 ),
                 body: SingleChildScrollView(
@@ -639,7 +836,8 @@ class _VehicleList extends State<VehicleList> {
                         Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(top: 30, left: 20.0),
+                              padding:
+                                  const EdgeInsets.only(top: 30, left: 20.0),
                               child: Text(
                                 "Vehicle List",
                                 style: TextStyle(
@@ -655,7 +853,8 @@ class _VehicleList extends State<VehicleList> {
                         Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
+                              padding:
+                                  const EdgeInsets.only(left: 20.0, top: 20),
                               child: Text(
                                 "Kind of Vehicle",
                                 style: TextStyle(
@@ -669,12 +868,14 @@ class _VehicleList extends State<VehicleList> {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                          padding: const EdgeInsets.only(
+                              top: 8.0, right: 8, left: 8),
                           child: TextField(
                             maxLength: 50,
                             controller: _vehiclekindTextController,
                             inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                              new FilteringTextInputFormatter.allow(
+                                  RegExp("[a-zA-Z 0-9]")),
                             ],
                             decoration: InputDecoration(
                                 counterText: '',
@@ -687,13 +888,15 @@ class _VehicleList extends State<VehicleList> {
                                 ),
                                 contentPadding: EdgeInsets.only(left: 25.0),
                                 hintText: 'Vehicle Kind',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
                           ),
                         ),
                         Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
+                              padding:
+                                  const EdgeInsets.only(left: 20.0, top: 20),
                               child: Text(
                                 "Vehicle Plate Number",
                                 style: TextStyle(
@@ -707,14 +910,16 @@ class _VehicleList extends State<VehicleList> {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                          padding: const EdgeInsets.only(
+                              top: 8.0, right: 8, left: 8),
                           child: TextField(
                             textCapitalization: TextCapitalization.characters,
                             maxLength: 10,
                             maxLengthEnforced: true,
                             controller: _vehicleplateTextController,
                             inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                              new FilteringTextInputFormatter.allow(
+                                  RegExp("[a-zA-Z 0-9]")),
                             ],
                             decoration: InputDecoration(
                                 counterText: '',
@@ -727,13 +932,15 @@ class _VehicleList extends State<VehicleList> {
                                 ),
                                 contentPadding: EdgeInsets.only(left: 25.0),
                                 hintText: 'Vehicle Plate Number',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
                           ),
                         ),
                         Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
+                              padding:
+                                  const EdgeInsets.only(left: 20.0, top: 20),
                               child: Text(
                                 "Vehicle Brand",
                                 style: TextStyle(
@@ -747,12 +954,14 @@ class _VehicleList extends State<VehicleList> {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                          padding: const EdgeInsets.only(
+                              top: 8.0, right: 8, left: 8),
                           child: TextField(
                             maxLength: 50,
                             controller: _vehiclebrandTextController,
                             inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                              new FilteringTextInputFormatter.allow(
+                                  RegExp("[a-zA-Z 0-9]")),
                             ],
                             decoration: InputDecoration(
                                 counterText: '',
@@ -765,13 +974,15 @@ class _VehicleList extends State<VehicleList> {
                                 ),
                                 contentPadding: EdgeInsets.only(left: 25.0),
                                 hintText: 'Vehicle Brand',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
                           ),
                         ),
                         Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 20.0, top: 20),
+                              padding:
+                                  const EdgeInsets.only(left: 20.0, top: 20),
                               child: Text(
                                 "Vehicle Model",
                                 style: TextStyle(
@@ -785,12 +996,14 @@ class _VehicleList extends State<VehicleList> {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                          padding: const EdgeInsets.only(
+                              top: 8.0, right: 8, left: 8),
                           child: TextField(
                             maxLength: 50,
                             controller: _vehiclemodelTextController,
                             inputFormatters: [
-                              new FilteringTextInputFormatter.allow(RegExp("[a-zA-Z 0-9]")),
+                              new FilteringTextInputFormatter.allow(
+                                  RegExp("[a-zA-Z 0-9]")),
                             ],
                             decoration: InputDecoration(
                                 counterText: '',
@@ -803,13 +1016,15 @@ class _VehicleList extends State<VehicleList> {
                                 ),
                                 contentPadding: EdgeInsets.only(left: 25.0),
                                 hintText: 'Vehicle Model',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0))),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
                           ),
                         ),
                         Column(
                           children: <Widget>[
                             Padding(
-                              padding: const EdgeInsets.only(top: 30.0, left: 20, right: 0, bottom: 0),
+                              padding: const EdgeInsets.only(
+                                  top: 30.0, left: 20, right: 0, bottom: 0),
                               child: Row(
                                 children: [
                                   Text(
@@ -827,13 +1042,15 @@ class _VehicleList extends State<VehicleList> {
                             Container(
                               height: 100,
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20),
+                                padding: const EdgeInsets.only(
+                                    left: 15.0, right: 15, bottom: 20),
                                 child: TextField(
                                   controller: _vehicledescTextController,
                                   maxLines: null,
                                   expands: true,
                                   keyboardType: TextInputType.multiline,
-                                  decoration: InputDecoration(hintText: "Tap to write..."),
+                                  decoration: InputDecoration(
+                                      hintText: "Tap to write..."),
                                 ),
                               ),
                             ),
@@ -842,7 +1059,8 @@ class _VehicleList extends State<VehicleList> {
                         Column(
                           children: <Widget>[
                             Padding(
-                              padding: const EdgeInsets.only(top: 30.0, left: 20, right: 0, bottom: 0),
+                              padding: const EdgeInsets.only(
+                                  top: 30.0, left: 20, right: 0, bottom: 0),
                               child: Row(
                                 children: [
                                   Text(
@@ -860,47 +1078,81 @@ class _VehicleList extends State<VehicleList> {
                             Container(
                               height: 100,
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20),
+                                padding: const EdgeInsets.only(
+                                    left: 15.0, right: 15, bottom: 20),
                                 child: TextField(
                                   controller: _vehiclereasTextController,
                                   maxLines: null,
                                   expands: true,
                                   keyboardType: TextInputType.multiline,
-                                  decoration: InputDecoration(hintText: "Tap to write..."),
+                                  decoration: InputDecoration(
+                                      hintText: "Tap to write..."),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(top: 0.0, right: 0, left: 5, bottom: 30),
+                              padding: const EdgeInsets.only(
+                                  top: 0.0, right: 0, left: 5, bottom: 30),
                               child: Column(
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
                                       RoundedLoadingButton(
                                         color: Color(0xff085078),
-                                        child: Text('Add', style: TextStyle(color: Colors.white, fontFamily: 'Nunito-Regular', fontSize: 18)),
+                                        child: Text('Add',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'Nunito-Regular',
+                                                fontSize: 18)),
                                         controller: _btnController,
                                         onPressed: () async {
-                                          String vkind = _vehiclekindTextController.text;
-                                          String vplate = _vehicleplateTextController.text;
-                                          String vbrand = _vehiclebrandTextController.text;
-                                          String vmodel = _vehiclemodelTextController.text;
-                                          String vdesc = _vehicledescTextController.text;
-                                          String vreas = _vehiclereasTextController.text;
-                                          String result = _vehicleplateTextController.text.toUpperCase().substring(0, _vehicleplateTextController.text.toUpperCase().indexOf(' '));
+                                          String vkind =
+                                              _vehiclekindTextController.text;
+                                          String vplate =
+                                              _vehicleplateTextController.text;
+                                          String vbrand =
+                                              _vehiclebrandTextController.text;
+                                          String vmodel =
+                                              _vehiclemodelTextController.text;
+                                          String vdesc =
+                                              _vehicledescTextController.text;
+                                          String vreas =
+                                              _vehiclereasTextController.text;
+                                          String result =
+                                              _vehicleplateTextController.text
+                                                  .toUpperCase()
+                                                  .substring(
+                                                      0,
+                                                      _vehicleplateTextController
+                                                          .text
+                                                          .toUpperCase()
+                                                          .indexOf(' '));
                                           print(result);
-                                          String s1 = _vehicleplateTextController.text.substring(_vehicleplateTextController.text.indexOf(" ") + 1);
+                                          String s1 = _vehicleplateTextController
+                                              .text
+                                              .substring(
+                                                  _vehicleplateTextController
+                                                          .text
+                                                          .indexOf(" ") +
+                                                      1);
                                           print(s1);
 
                                           String characters = "[a-zA-Z]";
                                           RegExp regChar = RegExp(characters);
                                           String digits = "[0-9]";
                                           RegExp regDig = RegExp(digits);
-                                          if (vkind.isEmpty || vplate.isEmpty || vbrand.isEmpty || vmodel.isEmpty || vdesc.isEmpty || vreas.isEmpty) {
+                                          if (vkind.isEmpty ||
+                                              vplate.isEmpty ||
+                                              vbrand.isEmpty ||
+                                              vmodel.isEmpty ||
+                                              vdesc.isEmpty ||
+                                              vreas.isEmpty) {
                                             _showErrorAlert(
                                                 title: "Vehicle adding failed.",
-                                                content: 'All fields required!', //show error firebase
+                                                content:
+                                                    'All fields required!', //show error firebase
                                                 onPressed: _changeBlackVisible,
                                                 context: context);
                                             _btnController.reset();
@@ -915,22 +1167,37 @@ class _VehicleList extends State<VehicleList> {
                                                 if (s1.length == 5) {
                                                   print('ok 5 digits sya');
                                                   setState(() {
-                                                    finalVehResult = result + " " + s1;
+                                                    finalVehResult =
+                                                        result + " " + s1;
                                                     // checktoDB();
                                                     _toDBfromModal();
                                                   });
 
-                                                  print('this is the final result');
+                                                  print(
+                                                      'this is the final result');
                                                   print(finalMCResult);
                                                 } else {
                                                   //error kase hindi naman sya 5 digits.
-                                                  print('hindi sya 5 digits not valid');
-                                                  _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                  print(
+                                                      'hindi sya 5 digits not valid');
+                                                  _showErrorAlert(
+                                                      title: "INPUT FAILED",
+                                                      content:
+                                                          "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345",
+                                                      onPressed:
+                                                          _changeBlackVisible,
+                                                      context: context);
                                                   _btnController.reset();
                                                 }
                                               } else {
                                                 //error kase may letters sa dapat na digit lang
-                                                _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                _showErrorAlert(
+                                                    title: "INPUT FAILED",
+                                                    content:
+                                                        "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345",
+                                                    onPressed:
+                                                        _changeBlackVisible,
+                                                    context: context);
                                                 _btnController.reset();
                                               }
                                             } else {
@@ -940,36 +1207,64 @@ class _VehicleList extends State<VehicleList> {
                                                   print('ok number sya');
                                                   if (s1.length == 4) {
                                                     setState(() {
-                                                      finalVehResult = result + " " + s1;
+                                                      finalVehResult =
+                                                          result + " " + s1;
                                                       // checktoDB();
                                                       _toDBfromModal();
                                                     });
-                                                    print('this is the final result');
+                                                    print(
+                                                        'this is the final result');
                                                     print(finalVehResult);
                                                   } else {
-                                                    print('kulang or sobra ang number');
-                                                    _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                    print(
+                                                        'kulang or sobra ang number');
+                                                    _showErrorAlert(
+                                                        title: "INPUT FAILED",
+                                                        content:
+                                                            "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345",
+                                                        onPressed:
+                                                            _changeBlackVisible,
+                                                        context: context);
                                                     _btnController.reset();
                                                   }
                                                 } else {
                                                   print('hindi sya number');
-                                                  _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                  _showErrorAlert(
+                                                      title: "INPUT FAILED",
+                                                      content:
+                                                          "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345",
+                                                      onPressed:
+                                                          _changeBlackVisible,
+                                                      context: context);
                                                   _btnController.reset();
                                                 }
                                               } else {
                                                 print('lagpas sa 3');
-                                                _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                                _showErrorAlert(
+                                                    title: "INPUT FAILED",
+                                                    content:
+                                                        "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345",
+                                                    onPressed:
+                                                        _changeBlackVisible,
+                                                    context: context);
                                                 _btnController.reset();
                                               }
                                             }
                                           } else {
-                                            _showErrorAlert(title: "INPUT FAILED", content: "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345", onPressed: _changeBlackVisible, context: context);
+                                            _showErrorAlert(
+                                                title: "INPUT FAILED",
+                                                content:
+                                                    "Please enter a valid License Plate. \n Example: ABC 1234 / MC 12345",
+                                                onPressed: _changeBlackVisible,
+                                                context: context);
                                             print('no');
                                             _btnController.reset();
                                           }
 
-                                          FocusScope.of(context).requestFocus(new FocusNode());
-                                          SystemChannels.textInput.invokeMethod('TextInput.hide');
+                                          FocusScope.of(context)
+                                              .requestFocus(new FocusNode());
+                                          SystemChannels.textInput
+                                              .invokeMethod('TextInput.hide');
                                         },
                                       ),
                                     ],
@@ -998,7 +1293,12 @@ class _VehicleList extends State<VehicleList> {
     FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
       'lastactivity_datetime': Timestamp.now(),
     }).then((value) {
-      FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('trail').doc(collectionid2).set({
+      FirebaseFirestore.instance
+          .collection('usertrail')
+          .doc(user.uid)
+          .collection('trail')
+          .doc(collectionid2)
+          .set({
         'userid': user.uid,
         'activity': 'Logged out session.',
         'editcreate_datetime': Timestamp.now(),
@@ -1014,269 +1314,338 @@ class _VehicleList extends State<VehicleList> {
     //size ng sidebar
     double sidebarSize = Get.width * 0.60;
     double menuContainerHeight = Get.height / 2;
-
+    // return _buildMain2();
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: Stack(children: <Widget>[
-        Container(
-          height: 400,
-          decoration: BoxDecoration(
-            borderRadius: new BorderRadius.only(bottomRight: new Radius.circular(30.0), bottomLeft: new Radius.circular(0.0)),
-            gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              isMenuOpen = false;
-            });
-          },
-          child: NotificationListener<OverscrollIndicatorNotification>(
-            // ignore: missing_return
-            onNotification: (overscroll) {
-              overscroll.disallowGlow();
-            },
-            child: Container(
-              height: Get.height,
-              decoration: BoxDecoration(),
-              child: Stack(
-                children: <Widget>[
-                  CustomScrollView(
-                    physics: BouncingScrollPhysics(),
-                    slivers: <Widget>[
-                      SliverAppBar(
-                        brightness: Brightness.light,
-                        backgroundColor: Color(0xff085078),
-                        floating: true,
-                        pinned: true,
-                        snap: true,
-                        shadowColor: Color(0xff085078),
-                        flexibleSpace: FlexibleSpaceBar(
-                            centerTitle: true,
-                            title: Padding(
-                              padding: const EdgeInsets.only(top: 30.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                      "Vehicle List",
-                                      style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Nunito-Bold'),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 1.0),
-                                    child: AvatarGlow(
-                                      startDelay: Duration(milliseconds: 0),
-                                      glowColor: Colors.red,
-                                      endRadius: 40.0,
-                                      duration: Duration(milliseconds: 2000),
-                                      repeat: true,
-                                      showTwoGlows: true,
-                                      repeatPauseDuration: Duration(milliseconds: 0),
-                                      child: IconButton(
-                                        iconSize: 25.0,
-                                        icon: Icon(Icons.menu),
-                                        color: Colors.white,
-                                        onPressed: () {
-                                          setState(() {
-                                            isMenuOpen = true;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            background: Image.network(
-                              'https://www.spiritinbusiness.org/wp-content/uploads/2019/08/images1101-5d67f83b74973-737x415.jpg',
-                              fit: BoxFit.cover,
-                            )),
-                        expandedHeight: 200,
-                      ),
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int pdIndex) {
-                            return SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Stack(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 30, bottom: 80),
-                                        child: Container(
-                                            width: Get.width,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: new BorderRadius.circular(10.0),
-                                              boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
-                                            ),
-                                            child:
-                                                // Container()),
-                                                _buildMain2()),
-                                      ),
-                                    ],
-                                  )
-                                  //... The children inside the column of ListView.builder
-                                ],
-                              ),
-                            );
-                          },
-                          // Builds 1000 ListTiles
-                          childCount: 1,
-                        ),
-                      )
-                    ],
-                  ),
-
-                  //here starts of the animation and navigation bar
-                  AnimatedPositioned(
-                    duration: Duration(milliseconds: 1500),
-                    //gawing + 1 if gusto mo may nakalitaw
-                    //pero much better looking if + 0
-                    left: isMenuOpen ? 0 : -sidebarSize + 0,
-                    top: 0,
-                    curve: Curves.elasticOut,
-                    child: SizedBox(
-                      width: sidebarSize,
-                      child: GestureDetector(
-                        onPanUpdate: (details) {
-                          if (details.localPosition.dx <= sidebarSize) {
-                            setState(() {
-                              _offset = details.localPosition;
-                            });
-                          }
-
-                          if (details.localPosition.dx > sidebarSize - 20 && details.delta.distanceSquared > 2) {
-                            setState(() {
-                              isMenuOpen = true;
-                            });
-                          }
-                        },
-                        onPanEnd: (details) {
-                          setState(() {
-                            _offset = Offset(0, 0);
-                          });
-                        },
-                        child: Stack(
-                          children: <Widget>[
-                            CustomPaint(
-                              size: Size(sidebarSize, Get.height),
-                              painter: DrawerPainter(offset: _offset),
-                            ),
-                            Container(
-                              height: Get.height,
-                              width: sidebarSize,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.max,
-                                children: <Widget>[
-                                  Container(
-                                    height: Get.height * 0.30,
-                                    child: Center(
-                                      child: Column(
-                                        children: <Widget>[
-                                          Container(
-                                            height: 120,
-                                            width: 120,
-                                            // padding: EdgeInsets.all(8.0),
-                                            child: CircleAvatar(
-                                              backgroundImage: NetworkImage(UserLog.ppUrl),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 28.0),
-                                            child: Text(
-                                              UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
-                                              style: TextStyle(color: Colors.black45),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Divider(
-                                    thickness: 1,
-                                  ),
-                                  Container(
-                                    key: globalKey,
-                                    width: double.infinity,
-                                    height: menuContainerHeight,
-                                    child: Column(
-                                      children: <Widget>[
-                                        MyButton(text: "Schedule Details", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
-                                        // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
-                                        MyButton(text: "Add Schedule", iconData: Icons.library_add_check, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 1),
-                                        // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 2),
-                                        // MyButton(text: "Reset User Password", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 3),
-
-                                        // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
-                                        // MyButton(
-                                        //     text: "Fourth",
-                                        //     iconData: Icons.settings,
-                                        //     textSize: getSize(4),
-                                        //     height: (menuContainerHeight) / 5,
-                                        //     selectedIndex: 4),
-                                        MyButton(text: "Edit Info", iconData: Icons.app_registration, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
-                                        MyButton(text: "Manage Users", iconData: Icons.settings_applications, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text("Logout Confirmation"),
-                                                content: const Text("Are you sure you want to log out?"),
-                                                actions: <Widget>[
-                                                  FlatButton(
-                                                      onPressed: () => {
-                                                            signOut(),
-                                                          },
-                                                      child: const Text("Yes")),
-                                                  FlatButton(
-                                                    onPressed: () => Navigator.of(context).pop(false),
-                                                    child: const Text("Cancel"),
-                                                  ),
-                                                ],
-                                              );
-                                            });
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.logout,
-                                            color: Color(0xff085078),
-                                            size: 25.0,
-                                          ),
-                                          Text(
-                                            '  Logout',
-                                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontFamily: 'Nunito-Bold'),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ]),
+      body: Container(
+        height: Get.height,
+        width: Get.width,
+        child: _buildMain2(),
+      ),
     );
   }
 }
+//     return Scaffold(
+//       resizeToAvoidBottomInset: true,
+//       body: Stack(children: <Widget>[
+//         Container(
+//           height: 400,
+//           decoration: BoxDecoration(
+//             borderRadius: new BorderRadius.only(
+//                 bottomRight: new Radius.circular(30.0),
+//                 bottomLeft: new Radius.circular(0.0)),
+//             gradient: new LinearGradient(
+//                 colors: [Color(0xff85D8CE), Color(0xff085078)],
+//                 begin: const FractionalOffset(0.0, 0.0),
+//                 end: const FractionalOffset(1.0, 1.0),
+//                 stops: [0.0, 1.0],
+//                 tileMode: TileMode.clamp),
+//           ),
+//         ),
+//         GestureDetector(
+//           onTap: () {
+//             setState(() {
+//               isMenuOpen = false;
+//             });
+//           },
+//           child: NotificationListener<OverscrollIndicatorNotification>(
+//             // ignore: missing_return
+//             onNotification: (overscroll) {
+//               overscroll.disallowGlow();
+//             },
+//             child: Container(
+//               height: Get.height,
+//               decoration: BoxDecoration(),
+//               child: Stack(
+//                 children: <Widget>[
+//                   CustomScrollView(
+//                     physics: BouncingScrollPhysics(),
+//                     slivers: <Widget>[
+//                       SliverAppBar(
+//                         brightness: Brightness.light,
+//                         backgroundColor: Color(0xff085078),
+//                         floating: true,
+//                         pinned: true,
+//                         snap: false,
+//                         shadowColor: Color(0xff085078),
+//                         flexibleSpace: FlexibleSpaceBar(
+//                             centerTitle: true,
+//                             title: Padding(
+//                               padding: const EdgeInsets.only(top: 30.0),
+//                               child: Row(
+//                                 mainAxisAlignment:
+//                                     MainAxisAlignment.spaceAround,
+//                                 children: <Widget>[
+//                                   Padding(
+//                                     padding: const EdgeInsets.only(top: 8.0),
+//                                     child: Text(
+//                                       "Vehicle List",
+//                                       style: TextStyle(
+//                                           fontSize: 20.0,
+//                                           fontWeight: FontWeight.bold,
+//                                           color: Colors.white,
+//                                           fontFamily: 'Nunito-Bold'),
+//                                     ),
+//                                   ),
+//                                   Padding(
+//                                     padding: const EdgeInsets.only(top: 1.0),
+//                                     child: AvatarGlow(
+//                                       startDelay: Duration(milliseconds: 0),
+//                                       glowColor: Colors.red,
+//                                       endRadius: 40.0,
+//                                       duration: Duration(milliseconds: 2000),
+//                                       repeat: true,
+//                                       showTwoGlows: true,
+//                                       repeatPauseDuration:
+//                                           Duration(milliseconds: 0),
+//                                       child: IconButton(
+//                                         iconSize: 25.0,
+//                                         icon: Icon(Icons.menu),
+//                                         color: Colors.white,
+//                                         onPressed: () {
+//                                           setState(() {
+//                                             isMenuOpen = true;
+//                                           });
+//                                         },
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                             background: Image.network(
+//                               'https://www.spiritinbusiness.org/wp-content/uploads/2019/08/images1101-5d67f83b74973-737x415.jpg',
+//                               fit: BoxFit.cover,
+//                             )),
+//                         expandedHeight: 200,
+//                       ),
+//                       SliverList(
+//                         delegate: SliverChildBuilderDelegate(
+//                           (BuildContext context, int pdIndex) {
+//                             return SingleChildScrollView(
+//                               child: Column(
+//                                 children: [
+//                                   Stack(
+//                                     children: <Widget>[
+//                                       Padding(
+//                                         padding: const EdgeInsets.only(
+//                                             left: 20.0,
+//                                             right: 20.0,
+//                                             top: 30,
+//                                             bottom: 80),
+//                                         child: Container(
+//                                             width: Get.width,
+//                                             decoration: BoxDecoration(
+//                                               color: Colors.white,
+//                                               borderRadius:
+//                                                   new BorderRadius.circular(
+//                                                       10.0),
+//                                               boxShadow: [
+//                                                 BoxShadow(
+//                                                     color: Colors.black
+//                                                         .withOpacity(.40),
+//                                                     blurRadius: 30,
+//                                                     spreadRadius: 1)
+//                                               ],
+//                                             ),
+//                                             child:
+//                                                 // Container()),
+//                                                 _buildMain2()),
+//                                       ),
+//                                     ],
+//                                   )
+//                                   //... The children inside the column of ListView.builder
+//                                 ],
+//                               ),
+//                             );
+//                           },
+//                           // Builds 1000 ListTiles
+//                           childCount: 1,
+//                         ),
+//                       )
+//                     ],
+//                   ),
+
+//                   //here starts of the animation and navigation bar
+//                   AnimatedPositioned(
+//                     duration: Duration(milliseconds: 1500),
+//                     //gawing + 1 if gusto mo may nakalitaw
+//                     //pero much better looking if + 0
+//                     left: isMenuOpen ? 0 : -sidebarSize + 0,
+//                     top: 0,
+//                     curve: Curves.elasticOut,
+//                     child: SizedBox(
+//                       width: sidebarSize,
+//                       child: GestureDetector(
+//                         onPanUpdate: (details) {
+//                           if (details.localPosition.dx <= sidebarSize) {
+//                             setState(() {
+//                               _offset = details.localPosition;
+//                             });
+//                           }
+
+//                           if (details.localPosition.dx > sidebarSize - 20 &&
+//                               details.delta.distanceSquared > 2) {
+//                             setState(() {
+//                               isMenuOpen = true;
+//                             });
+//                           }
+//                         },
+//                         onPanEnd: (details) {
+//                           setState(() {
+//                             _offset = Offset(0, 0);
+//                           });
+//                         },
+//                         child: Stack(
+//                           children: <Widget>[
+//                             CustomPaint(
+//                               size: Size(sidebarSize, Get.height),
+//                               painter: DrawerPainter(offset: _offset),
+//                             ),
+//                             Container(
+//                               height: Get.height,
+//                               width: sidebarSize,
+//                               child: Column(
+//                                 mainAxisAlignment: MainAxisAlignment.center,
+//                                 mainAxisSize: MainAxisSize.max,
+//                                 children: <Widget>[
+//                                   Container(
+//                                     height: Get.height * 0.30,
+//                                     child: Center(
+//                                       child: Column(
+//                                         children: <Widget>[
+//                                           Container(
+//                                             height: 120,
+//                                             width: 120,
+//                                             // padding: EdgeInsets.all(8.0),
+//                                             child: CircleAvatar(
+//                                               backgroundImage:
+//                                                   NetworkImage(UserLog.ppUrl),
+//                                             ),
+//                                           ),
+//                                           Padding(
+//                                             padding: const EdgeInsets.only(
+//                                                 top: 28.0),
+//                                             child: Text(
+//                                               UserLog.rank +
+//                                                   '. ' +
+//                                                   UserLog.fullName
+//                                                       .toUpperCase(),
+//                                               style: TextStyle(
+//                                                   color: Colors.black45),
+//                                             ),
+//                                           ),
+//                                         ],
+//                                       ),
+//                                     ),
+//                                   ),
+//                                   Divider(
+//                                     thickness: 1,
+//                                   ),
+//                                   Container(
+//                                     key: globalKey,
+//                                     width: double.infinity,
+//                                     height: menuContainerHeight,
+//                                     child: Column(
+//                                       children: <Widget>[
+//                                         MyButton(
+//                                             text: "Schedule Details",
+//                                             iconData: Icons.text_snippet,
+//                                             textSize: getSize(0),
+//                                             height: (menuContainerHeight) / 5,
+//                                             selectedIndex: 0),
+//                                         // MyButton(text: "Upgrade User Position", iconData: Icons.upgrade, textSize: getSize(1), height: (menuContainerHeight) / 6, selectedIndex: 4),
+//                                         MyButton(
+//                                             text: "Add Schedule",
+//                                             iconData: Icons.library_add_check,
+//                                             textSize: getSize(1),
+//                                             height: (menuContainerHeight) / 5,
+//                                             selectedIndex: 1),
+//                                         // MyButton(text: "Register New User", iconData: Icons.app_registration, textSize: getSize(3), height: (menuContainerHeight) / 6, selectedIndex: 2),
+//                                         // MyButton(text: "Reset User Password", iconData: Icons.local_car_wash, textSize: getSize(4), height: (menuContainerHeight) / 6, selectedIndex: 3),
+
+//                                         // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
+//                                         // MyButton(
+//                                         //     text: "Fourth",
+//                                         //     iconData: Icons.settings,
+//                                         //     textSize: getSize(4),
+//                                         //     height: (menuContainerHeight) / 5,
+//                                         //     selectedIndex: 4),
+//                                         MyButton(
+//                                             text: "Edit Info",
+//                                             iconData: Icons.app_registration,
+//                                             textSize: getSize(2),
+//                                             height: (menuContainerHeight) / 5,
+//                                             selectedIndex: 2),
+//                                         MyButton(
+//                                             text: "Manage Users",
+//                                             iconData:
+//                                                 Icons.settings_applications,
+//                                             textSize: getSize(3),
+//                                             height: (menuContainerHeight) / 5,
+//                                             selectedIndex: 3),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                   Padding(
+//                                     padding: const EdgeInsets.only(left: 20.0),
+//                                     child: GestureDetector(
+//                                       onTap: () {
+//                                         showDialog(
+//                                             context: context,
+//                                             builder: (BuildContext context) {
+//                                               return AlertDialog(
+//                                                 title: const Text(
+//                                                     "Logout Confirmation"),
+//                                                 content: const Text(
+//                                                     "Are you sure you want to log out?"),
+//                                                 actions: <Widget>[
+//                                                   FlatButton(
+//                                                       onPressed: () => {
+//                                                             signOut(),
+//                                                           },
+//                                                       child: const Text("Yes")),
+//                                                   FlatButton(
+//                                                     onPressed: () =>
+//                                                         Navigator.of(context)
+//                                                             .pop(false),
+//                                                     child: const Text("Cancel"),
+//                                                   ),
+//                                                 ],
+//                                               );
+//                                             });
+//                                       },
+//                                       child: Row(
+//                                         children: [
+//                                           Icon(
+//                                             Icons.logout,
+//                                             color: Color(0xff085078),
+//                                             size: 25.0,
+//                                           ),
+//                                           Text(
+//                                             '  Logout',
+//                                             style: TextStyle(
+//                                                 color: Colors.black,
+//                                                 fontWeight: FontWeight.bold,
+//                                                 fontFamily: 'Nunito-Bold'),
+//                                           ),
+//                                         ],
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       ]),
+//     );
+//   }
+// }

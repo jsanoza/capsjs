@@ -6,6 +6,7 @@ import 'package:get_rekk/pages/foradmin/first.dart';
 import 'package:get_rekk/pages/foradmin/fourth.dart';
 import 'package:get_rekk/pages/foradmin/manageusers.dart';
 import 'package:get_rekk/pages/foradmin/newSched..dart';
+import 'package:get_rekk/pages/foradmin/newvehiclelist.dart';
 
 import 'package:get_rekk/pages/foradmin/reset.dart';
 import 'package:get_rekk/pages/foradmin/upgradepost.dart';
@@ -78,7 +79,7 @@ class _MyButtonState extends State<MyButton> {
 
             case 5:
               print('Fifth');
-              Get.offAll(VehicleList(), transition: Transition.native);
+              Get.offAll(NewVehicle(), transition: Transition.native);
               break;
 
             default:

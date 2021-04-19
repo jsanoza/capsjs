@@ -311,7 +311,7 @@ $whyreason
           left: true,
           top: true,
           right: true,
-          bottom: true,
+          bottom: false,
           minimum: const EdgeInsets.only(top: 25.0),
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter mystate) {
@@ -365,7 +365,7 @@ $whyreason
                                         Column(
                                           children: [
                                             Container(
-                                              width: 340,
+                                             width: Get.width,
                                               height: isInvolve ? 500 : 250,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.rectangle,
@@ -510,7 +510,7 @@ $whyreason
                                           child: Column(
                                             children: [
                                               Container(
-                                                width: 340,
+                                                 width: Get.width,
                                                 height: 400,
                                                 decoration: BoxDecoration(
                                                   shape: BoxShape.rectangle,

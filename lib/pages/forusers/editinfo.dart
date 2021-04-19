@@ -1291,7 +1291,7 @@ Confirm editing your user info?
                         backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
-                        snap: true,
+                        snap: false,
                         shadowColor: Colors.green,
                         flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,

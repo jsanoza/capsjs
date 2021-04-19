@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_rekk/helpers/navbutton.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
-import 'forusers/cameratrial.dart';
+import 'forcamera/cameratrial.dart';
 
 class Third extends StatefulWidget {
   @override

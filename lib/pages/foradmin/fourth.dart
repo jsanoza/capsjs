@@ -109,7 +109,7 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
                     backgroundColor: Color(0xff085078),
                     floating: true,
                     pinned: true,
-                    snap: true,
+                    snap: false,
                     shadowColor: Colors.green,
                     // Display a placeholder widget to visualize the shrinking size.
                     flexibleSpace: FlexibleSpaceBar(
@@ -152,7 +152,7 @@ class _FourthState extends State<Fourth> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         background: Image.network(
-                          'http://assets.rappler.com/06696A2E78D4413381305F1C37AA81A8/img/274588CF4DB844A3BDD42F0D16CF98A9/marikina-cainta-checkpoint-covid-19-lockdown-march-15-2020-004.jpg',
+                          'https://assets.rappler.com/06696A2E78D4413381305F1C37AA81A8/img/274588CF4DB844A3BDD42F0D16CF98A9/marikina-cainta-checkpoint-covid-19-lockdown-march-15-2020-004.jpg',
                           fit: BoxFit.cover,
                         )),
                     // Make the initial height of the SliverAppBar larger than normal.

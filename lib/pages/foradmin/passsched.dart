@@ -54,7 +54,11 @@ class _PassschedStateState extends State<PassschedState> {
               //   return userSearchItemsName.contains(documentSnapshot['badgeNum']);
               // }).toList();
 
-              final filteredDocs = snapshot.data.docs.where((doc) => DateFormat('MM-dd-yyyy HH:mm').parse(doc.data()['endtime']).isBefore(DateTime.now())).toList();
+              final filteredDocs = snapshot.data.docs
+                  .where((doc) => DateFormat('MM-dd-yyyy HH:mm')
+                      .parse(doc.data()['endtime'])
+                      .isBefore(DateTime.now()))
+                  .toList();
 
               return Container(
                 child: ListView.builder(
@@ -62,13 +66,16 @@ class _PassschedStateState extends State<PassschedState> {
                   itemBuilder: (_, index) {
                     // print(snapshot.data.docs[index]['datecreated'].toDate());
                     // var a = DateTime.parse(snapshot.data.docs[index]['endtime'].toString());
-                    var a = DateFormat('MM-dd-yyyy HH:mm').parse(filteredDocs[index]['endtime'].toString());
+                    var a = DateFormat('MM-dd-yyyy HH:mm')
+                        .parse(filteredDocs[index]['endtime'].toString());
                     String formattedTime = DateFormat.Hm().format(a);
 
-                    var b = DateFormat('MM-dd-yyyy HH:mm').parse(filteredDocs[index]['starttime'].toString());
+                    var b = DateFormat('MM-dd-yyyy HH:mm')
+                        .parse(filteredDocs[index]['starttime'].toString());
                     String formattedTime1 = DateFormat.Hm().format(b);
 
-                    var c = DateFormat('MM-dd-yyyy HH:mm').parse(filteredDocs[index]['starttime'].toString());
+                    var c = DateFormat('MM-dd-yyyy HH:mm')
+                        .parse(filteredDocs[index]['starttime'].toString());
                     String formattedTime2 = DateFormat.yMd().format(c);
 
                     print(a);
@@ -78,23 +85,33 @@ class _PassschedStateState extends State<PassschedState> {
                           height: 0.0,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 0.0, left: 8.0, right: 8.0, top: 30),
+                          padding: const EdgeInsets.only(
+                              bottom: 0.0, left: 8.0, right: 8.0, top: 30),
                           child: Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
                               color: Colors.white,
-                              boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black.withOpacity(.2),
+                                    blurRadius: 30,
+                                    spreadRadius: 5)
+                              ],
                             ),
                             child: ListTile(
                               leading: Container(
-                                padding: EdgeInsets.only(left: 8.0, right: 8, top: 12),
+                                padding: EdgeInsets.only(
+                                    left: 8.0, right: 8, top: 12),
                                 // child: CircleAvatar(
                                 //   backgroundImage: NetworkImage(_card["shopsdp"]),
                                 // ),
                                 child: Text(formattedTime2),
                               ),
-                              title: Text(filteredDocs[index]["missionname"].toString()),
+                              title: AutoSizeText(
+                                  filteredDocs[index]["missionname"].toString(),
+                                  overflow: TextOverflow.ellipsis),
                               subtitle: Container(
                                 height: 50,
                                 child: Column(
@@ -108,15 +125,18 @@ class _PassschedStateState extends State<PassschedState> {
                                           children: [
                                             Text(
                                               formattedTime1.toString(),
-                                              style: TextStyle(color: Colors.black),
+                                              style: TextStyle(
+                                                  color: Colors.black),
                                             ),
                                             Text(
                                               " - ",
-                                              style: TextStyle(color: Colors.black),
+                                              style: TextStyle(
+                                                  color: Colors.black),
                                             ),
                                             Text(
                                               formattedTime.toString(),
-                                              style: TextStyle(color: Colors.black),
+                                              style: TextStyle(
+                                                  color: Colors.black),
                                             ),
                                           ],
                                         ),
@@ -136,15 +156,25 @@ class _PassschedStateState extends State<PassschedState> {
                                 ),
                               ),
                               onTap: () {
-                                PastSchedule.missionname = filteredDocs[index]['missionname'];
-                                PastSchedule.starttime = filteredDocs[index]["starttime"];
-                                PastSchedule.endtime = filteredDocs[index]["endtime"];
-                                PastSchedule.purpose = filteredDocs[index]["notes"];
-                                PastSchedule.missionid = filteredDocs[index]['collectionid'];
+                                PastSchedule.missionname =
+                                    filteredDocs[index]['missionname'];
+                                PastSchedule.starttime =
+                                    filteredDocs[index]["starttime"];
+                                PastSchedule.endtime =
+                                    filteredDocs[index]["endtime"];
+                                PastSchedule.purpose =
+                                    filteredDocs[index]["notes"];
+                                PastSchedule.missionid =
+                                    filteredDocs[index]['collectionid'];
                                 // PastSchedule.date = filteredDocs[index]["date"];
-                                PastSchedule.flaggedvehicles = new List<String>.from(filteredDocs[index]['flaggedvehicles']);
-                                PastSchedule.scannedvehicles = new List<String>.from(filteredDocs[index]['scannedvehicles']);
-                                PastSchedule.vehicles = new List<String>.from(filteredDocs[index]['vehicle']);
+                                PastSchedule.flaggedvehicles =
+                                    new List<String>.from(
+                                        filteredDocs[index]['flaggedvehicles']);
+                                PastSchedule.scannedvehicles =
+                                    new List<String>.from(
+                                        filteredDocs[index]['scannedvehicles']);
+                                PastSchedule.vehicles = new List<String>.from(
+                                    filteredDocs[index]['vehicle']);
 
                                 why = '';
                                 whydesc = '';
@@ -176,7 +206,10 @@ class _PassschedStateState extends State<PassschedState> {
   }
 
   fetchVehicleInfo(String index) async {
-    QuerySnapshot search = await FirebaseFirestore.instance.collection('vehicles').where('query', isEqualTo: index).get();
+    QuerySnapshot search = await FirebaseFirestore.instance
+        .collection('vehicles')
+        .where('query', isEqualTo: index)
+        .get();
     search.docs.forEach((element) {
       why = element.data()['query'];
       whydesc = element.data()['vehicledesc'];
@@ -238,7 +271,12 @@ $whyreason
     print("mi here");
     List<String> hello = [];
     hello.add(index);
-    QuerySnapshot search = await FirebaseFirestore.instance.collection('schedule').doc(PastSchedule.missionid).collection('flagged').where('scannedvehicles', arrayContainsAny: hello).get();
+    QuerySnapshot search = await FirebaseFirestore.instance
+        .collection('schedule')
+        .doc(PastSchedule.missionid)
+        .collection('flagged')
+        .where('scannedvehicles', arrayContainsAny: hello)
+        .get();
     search.docs.forEach((document) async {
       setState(() {
         reason = document.data()['reason'];
@@ -304,9 +342,9 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
       builder: (builder) {
         return SafeArea(
           left: true,
-          top: true,
+          top: false,
           right: true,
-          bottom: true,
+          bottom: false,
           minimum: const EdgeInsets.only(top: 25.0),
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter mystate) {
@@ -352,7 +390,8 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 30.0),
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, right: 10.0, top: 30.0),
                                   child: Container(
                                     width: 560,
                                     child: Stack(
@@ -360,32 +399,49 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
                                         Column(
                                           children: [
                                             Container(
-                                              width: 340,
+                                              width: Get.width,
                                               height: isInvolve ? 500 : 250,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.rectangle,
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10)),
                                                 color: Colors.white,
-                                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(.2),
+                                                      blurRadius: 30,
+                                                      spreadRadius: 5)
+                                                ],
                                               ),
                                               child: Column(
                                                 children: [
                                                   Padding(
-                                                    padding: const EdgeInsets.only(top: 10.0),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 10.0),
                                                     child: Container(
                                                       width: 300,
                                                       child: Column(
                                                         children: [
                                                           Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
                                                             children: [
                                                               Text(
                                                                 "Main Purpose of Deployment: ",
-                                                                style: TextStyle(
-                                                                  color: Colors.black,
-                                                                  fontSize: 15.0,
-                                                                  fontFamily: 'Nunito-Bold',
-                                                                  fontWeight: FontWeight.bold,
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize:
+                                                                      15.0,
+                                                                  fontFamily:
+                                                                      'Nunito-Bold',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
                                                                 ),
                                                               ),
                                                             ],
@@ -395,26 +451,43 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets.only(top: 18.0),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 18.0),
                                                     child: Container(
                                                       width: 300,
                                                       decoration: BoxDecoration(
-                                                        shape: BoxShape.rectangle,
-                                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                        shape:
+                                                            BoxShape.rectangle,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    10)),
                                                         color: Colors.white,
-                                                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      .2),
+                                                              blurRadius: 30,
+                                                              spreadRadius: 5)
+                                                        ],
                                                       ),
                                                       child: Container(
                                                         child: ListTile(
                                                           title: AutoSizeText(
                                                             "${PastSchedule.purpose} ",
                                                             style: TextStyle(
-                                                              color: Colors.black,
+                                                              color:
+                                                                  Colors.black,
                                                               fontSize: 15.0,
                                                             ),
                                                             minFontSize: 15,
                                                             maxLines: 5,
-                                                            overflow: TextOverflow.ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                       ),
@@ -422,21 +495,31 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
                                                   ),
                                                   isInvolve
                                                       ? Padding(
-                                                          padding: const EdgeInsets.only(top: 20.0),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 20.0),
                                                           child: Container(
                                                             width: 300,
                                                             child: Column(
                                                               children: [
                                                                 Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
                                                                   children: [
                                                                     Text(
                                                                       "Vehicle Report: ",
-                                                                      style: TextStyle(
-                                                                        color: Colors.black,
-                                                                        fontSize: 15.0,
-                                                                        fontFamily: 'Nunito-Bold',
-                                                                        fontWeight: FontWeight.bold,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontSize:
+                                                                            15.0,
+                                                                        fontFamily:
+                                                                            'Nunito-Bold',
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -448,38 +531,75 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
                                                       : Text(''),
                                                   isInvolve
                                                       ? Padding(
-                                                          padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 20.0,
+                                                                  right: 20.0,
+                                                                  top: 10.0),
                                                           child: Container(
                                                             height: 270,
                                                             width: 480,
-                                                            decoration: BoxDecoration(
-                                                              shape: BoxShape.rectangle,
-                                                              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                                              color: Colors.white,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .rectangle,
+                                                              borderRadius: BorderRadius.only(
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                  bottomRight: Radius
+                                                                      .circular(
+                                                                          10)),
+                                                              color:
+                                                                  Colors.white,
                                                             ),
                                                             child: Container(
-                                                              child: ListView.builder(
-                                                                itemCount: PastSchedule.vehicles.length,
-                                                                itemBuilder: (_, index) {
+                                                              child: ListView
+                                                                  .builder(
+                                                                itemCount:
+                                                                    PastSchedule
+                                                                        .vehicles
+                                                                        .length,
+                                                                itemBuilder:
+                                                                    (_, index) {
                                                                   // final DocumentSnapshot _card =
                                                                   //     userList[index];
                                                                   return Column(
-                                                                    children: <Widget>[
+                                                                    children: <
+                                                                        Widget>[
                                                                       SizedBox(
-                                                                        height: 18.0,
+                                                                        height:
+                                                                            18.0,
                                                                       ),
                                                                       Padding(
-                                                                        padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
-                                                                        child: Container(
-                                                                          decoration: BoxDecoration(
-                                                                            shape: BoxShape.rectangle,
-                                                                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                                            color: Colors.white,
-                                                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                                                        padding: const EdgeInsets.only(
+                                                                            bottom:
+                                                                                5.0,
+                                                                            left:
+                                                                                8.0,
+                                                                            right:
+                                                                                8.0),
+                                                                        child:
+                                                                            Container(
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            shape:
+                                                                                BoxShape.rectangle,
+                                                                            borderRadius:
+                                                                                BorderRadius.all(Radius.circular(10)),
+                                                                            color:
+                                                                                Colors.white,
+                                                                            boxShadow: [
+                                                                              BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)
+                                                                            ],
                                                                           ),
-                                                                          child: ListTile(
-                                                                            title: Text(PastSchedule.vehicles[index]),
-                                                                            onTap: () async {
+                                                                          child:
+                                                                              ListTile(
+                                                                            title:
+                                                                                Text(PastSchedule.vehicles[index]),
+                                                                            onTap:
+                                                                                () async {
                                                                               // print(PastSchedule.missionid.toString());
                                                                               // showVehicleInfo(PastSchedule.flaggedvehicles[index]);
                                                                               fetchVehicleInfo(PastSchedule.vehicles[index]);
@@ -501,36 +621,58 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
                                           ],
                                         ),
                                         Padding(
-                                          padding: isInvolve ? const EdgeInsets.only(top: 530.0, bottom: 70) : const EdgeInsets.only(top: 270.0, bottom: 70),
+                                          padding: isInvolve
+                                              ? const EdgeInsets.only(
+                                                  top: 530.0, bottom: 70)
+                                              : const EdgeInsets.only(
+                                                  top: 270.0, bottom: 70),
                                           child: Column(
                                             children: [
                                               Container(
-                                                width: 340,
+                                               width: Get.width,
                                                 height: 400,
                                                 decoration: BoxDecoration(
                                                   shape: BoxShape.rectangle,
-                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(10)),
                                                   color: Colors.white,
-                                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                        color: Colors.black
+                                                            .withOpacity(.2),
+                                                        blurRadius: 30,
+                                                        spreadRadius: 5)
+                                                  ],
                                                 ),
                                                 child: Column(
                                                   children: [
                                                     Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 10.0),
                                                       child: Container(
                                                         width: 300,
                                                         child: Column(
                                                           children: [
                                                             Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
                                                               children: [
                                                                 Text(
                                                                   "While at the deployment: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: 15.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        15.0,
+                                                                    fontFamily:
+                                                                        'Nunito-Bold',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                   ),
                                                                 ),
                                                               ],
@@ -540,21 +682,33 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
                                                       ),
                                                     ),
                                                     Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0, left: 0),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 10.0,
+                                                              left: 0),
                                                       child: Container(
                                                         width: 300,
                                                         child: Column(
                                                           children: [
                                                             Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
                                                               children: [
                                                                 Text(
-                                                                  "Total # of scanned vehicles: " + "${PastSchedule.scannedvehicles.length} ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.green,
-                                                                    fontSize: 18.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
+                                                                  "Total # of scanned vehicles: " +
+                                                                      "${PastSchedule.scannedvehicles.length} ",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .green,
+                                                                    fontSize:
+                                                                        18.0,
+                                                                    fontFamily:
+                                                                        'Nunito-Bold',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                   ),
                                                                 ),
                                                               ],
@@ -565,35 +719,55 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
                                                     ),
 
                                                     Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0, left: 0),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 10.0,
+                                                              left: 0),
                                                       child: Container(
                                                         width: 300,
                                                         child: Column(
                                                           children: [
                                                             Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
                                                               children: [
                                                                 Text(
-                                                                  "Total # of flagged vehicles: " + "${PastSchedule.flaggedvehicles.length} ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.red,
-                                                                    fontSize: 18.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
+                                                                  "Total # of flagged vehicles: " +
+                                                                      "${PastSchedule.flaggedvehicles.length} ",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    fontSize:
+                                                                        18.0,
+                                                                    fontFamily:
+                                                                        'Nunito-Bold',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
                                                             Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
                                                               children: [
                                                                 Text(
                                                                   "Click on the vehicle number to see the details: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.red,
-                                                                    fontSize: 12.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    fontSize:
+                                                                        12.0,
+                                                                    fontFamily:
+                                                                        'Nunito-Bold',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                   ),
                                                                 ),
                                                               ],
@@ -603,40 +777,82 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
                                                       ),
                                                     ),
                                                     Padding(
-                                                      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 20.0,
+                                                              right: 20.0,
+                                                              top: 10.0),
                                                       child: Container(
                                                         height: 270,
                                                         width: 480,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.rectangle,
-                                                          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          shape: BoxShape
+                                                              .rectangle,
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                  bottomRight: Radius
+                                                                      .circular(
+                                                                          10)),
                                                           color: Colors.white,
                                                         ),
                                                         child: Container(
-                                                          child: ListView.builder(
-                                                            itemCount: PastSchedule.flaggedvehicles.length,
-                                                            itemBuilder: (_, index) {
+                                                          child:
+                                                              ListView.builder(
+                                                            itemCount: PastSchedule
+                                                                .flaggedvehicles
+                                                                .length,
+                                                            itemBuilder:
+                                                                (_, index) {
                                                               // final DocumentSnapshot _card =
                                                               //     userList[index];
                                                               return Column(
-                                                                children: <Widget>[
+                                                                children: <
+                                                                    Widget>[
                                                                   SizedBox(
-                                                                    height: 18.0,
+                                                                    height:
+                                                                        18.0,
                                                                   ),
                                                                   Padding(
-                                                                    padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
-                                                                    child: Container(
-                                                                      decoration: BoxDecoration(
-                                                                        shape: BoxShape.rectangle,
-                                                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                                        color: Colors.white,
-                                                                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        bottom:
+                                                                            5.0,
+                                                                        left:
+                                                                            8.0,
+                                                                        right:
+                                                                            8.0),
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        shape: BoxShape
+                                                                            .rectangle,
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(10)),
+                                                                        color: Colors
+                                                                            .white,
+                                                                        boxShadow: [
+                                                                          BoxShadow(
+                                                                              color: Colors.black.withOpacity(.2),
+                                                                              blurRadius: 30,
+                                                                              spreadRadius: 5)
+                                                                        ],
                                                                       ),
-                                                                      child: ListTile(
-                                                                        title: Text(PastSchedule.flaggedvehicles[index]),
-                                                                        onTap: () async {
-                                                                          print(PastSchedule.missionid.toString());
-                                                                          showVehicleInfo(PastSchedule.flaggedvehicles[index]);
+                                                                      child:
+                                                                          ListTile(
+                                                                        title: Text(
+                                                                            PastSchedule.flaggedvehicles[index]),
+                                                                        onTap:
+                                                                            () async {
+                                                                          print(PastSchedule
+                                                                              .missionid
+                                                                              .toString());
+                                                                          showVehicleInfo(
+                                                                              PastSchedule.flaggedvehicles[index]);
                                                                         },
                                                                       ),
                                                                     ),
@@ -731,19 +947,30 @@ ${DateFormat.yMMMd().add_jm().format(datetime)}
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(.40),
+                        blurRadius: 30,
+                        spreadRadius: 1)
+                  ],
                 ),
                 child: _buildFuture(),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 14.0, right: 14.0, top: 50, bottom: 40),
+              padding: const EdgeInsets.only(
+                  left: 14.0, right: 14.0, top: 50, bottom: 40),
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.circular(10.0),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.40), blurRadius: 30, spreadRadius: 1)],
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(.40),
+                        blurRadius: 30,
+                        spreadRadius: 1)
+                  ],
                 ),
                 child: Column(
                   children: <Widget>[

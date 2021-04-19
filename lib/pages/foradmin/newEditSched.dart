@@ -223,6 +223,7 @@ Ends at: $eeeTime
     missionname = _missionnameTextController.text;
     List<String> toadd = [];
     var collectionid2 = uuid.v1();
+    List<String> dummylang = [];
     var usercheck;
 
     var activity = 'Edited a schedule with mission name: $missionname';
@@ -251,6 +252,11 @@ Ends at: $eeeTime
             'vehiclekind': document.data()['kind'],
             'vehiclemodel': document.data()['model'],
             'addedby': 'toadd',
+            'status': '',
+            'foundby': FieldValue.arrayUnion(dummylang),
+            'foundbyuid': '',
+            'foundtime': Timestamp.now(),
+            'foundonmission': '',
             'addedtime': Timestamp.now(),
           }).then((value) async {
             // FirebaseFirestore.instance.collection("trialvehicles").doc(vehiclelist[i]).delete().then((value) {
@@ -455,6 +461,8 @@ Ends at: $eeeTime
         'lastflag': '',
         'scannedvehicles': '',
         'lastscan': '',
+        'voilast': '',
+        'vointerest': '',
       }).then((value) {
         FirebaseFirestore.instance.collection("schedule").doc(oldcollectionid.toString()).update({
           //  'likedby': FieldValue.arrayUnion(hello),
@@ -492,6 +500,8 @@ Ends at: $eeeTime
           'lastflag': '',
           'scannedvehicles': '',
           'lastscan': '',
+          'voilast': '',
+          'vointerest': '',
         });
         FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
           // 'collectionid2': collectionid2,
@@ -2944,7 +2954,8 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(
+                                                                        colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -3239,7 +3250,8 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(
+                                                                        colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -3535,7 +3547,8 @@ Ends at: $eeeTime
                                                                 padding: const EdgeInsets.all(0.0),
                                                                 child: Ink(
                                                                   decoration: const BoxDecoration(
-                                                                    gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                                    gradient: LinearGradient(
+                                                                        colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                                     borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                                   ),
                                                                   child: Container(
@@ -4432,7 +4445,7 @@ Ends at: $eeeTime
           left: true,
           top: true,
           right: true,
-          bottom: true,
+          bottom: false,
           minimum: const EdgeInsets.only(top: 25.0),
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter mystate) {
@@ -4604,7 +4617,8 @@ Ends at: $eeeTime
                                                           padding: const EdgeInsets.all(0.0),
                                                           child: Ink(
                                                             decoration: const BoxDecoration(
-                                                              gradient: LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                                                              gradient: LinearGradient(
+                                                                  colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
                                                               borderRadius: BorderRadius.all(Radius.circular(80.0)),
                                                             ),
                                                             child: Container(
@@ -4862,7 +4876,7 @@ Ends at: $eeeTime
                         backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
-                        snap: true,
+                        snap: false,
                         shadowColor: Colors.green,
                         flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,

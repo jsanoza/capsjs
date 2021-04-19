@@ -242,7 +242,7 @@ $whyreason
           left: true,
           top: true,
           right: true,
-          bottom: true,
+          bottom: false,
           minimum: const EdgeInsets.only(top: 25.0),
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter mystate) {

@@ -62,6 +62,7 @@ dependencies:
   workmanager:
   auto_size_text: ^2.1.0
   otp_text_field: ^1.0.2
+  mask_text_input_formatter: ^1.2.1
 
 dev_dependencies:
   flutter_test:

@@ -9,10 +9,11 @@ import 'package:get/get.dart';
 import 'package:get_rekk/pages/boarding.dart';
 import 'package:get_rekk/pages/foradmin/dashboard.dart';
 import 'package:get_rekk/pages/foradmin/fourth.dart';
+import 'package:get_rekk/pages/foradmin/newvehiclelist.dart';
 import 'package:get_rekk/pages/foradmin/vehiclelist.dart';
 import 'package:get_rekk/pages/forchat/chat_screen.dart';
 import 'package:get_rekk/pages/forusers/editinfo.dart';
-import 'package:get_rekk/pages/forusers/flagged.dart';
+import 'package:get_rekk/pages/forcamera/flagged.dart';
 import 'package:get_rekk/pages/forusers/letstrry.dart';
 import 'package:get_rekk/pages/forusers/loading.dart';
 import 'package:get_rekk/pages/phoneverification.dart';
@@ -228,7 +229,7 @@ class SplashState extends State<Splash> {
         if (a == 'user') {
           Get.offAll(UsersSched(), transition: Transition.fadeIn);
         } else {
-          Get.offAll(Fourth(), transition: Transition.fade);
+          Get.offAll(NewVehicle(), transition: Transition.fade);
         }
       } else {
         Get.offAll(LogSign(), transition: Transition.fade);

@@ -48,7 +48,7 @@ class _UsersOngoingdetailsPageoneState extends State<UsersOngoingdetailsPageone>
                                 Column(
                                   children: [
                                     Container(
-                                      width: 340,
+                                      width: Get.width,
                                       height: 120,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.rectangle,

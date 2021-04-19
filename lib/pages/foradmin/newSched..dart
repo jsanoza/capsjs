@@ -251,6 +251,7 @@ Ends at: $eeeTime
     User user = auth.currentUser;
     var currentUser = user.uid;
     var usercheck;
+    List<String> dummylang = [];
     var outputFormat2 = DateFormat('MM-dd-yyyy hh:mm a');
     var finalCreate = outputFormat2.format(DateTime.now());
     missionname = _missionnameTextController.text;
@@ -280,6 +281,11 @@ Ends at: $eeeTime
             'vehicledesc': document.data()['desc'],
             'vehiclekind': document.data()['kind'],
             'vehiclemodel': document.data()['model'],
+            'status': '',
+            'foundby': FieldValue.arrayUnion(dummylang),
+            'foundbyuid': '',
+            'foundtime': Timestamp.now(),
+            'foundonmission': '',
             'reason': notes,
             'addedby': user.uid,
             'addedtime': Timestamp.now(),
@@ -424,6 +430,8 @@ Ends at: $eeeTime
         'lastflag': '',
         'scannedvehicles': '',
         'lastscan': '',
+        'voilast': '',
+        'vointerest': '',
       }).then((value) {
         FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
           // 'collectionid2': collectionid2,
@@ -1659,7 +1667,7 @@ Ends at: $eeeTime
           left: true,
           top: true,
           right: true,
-          bottom: true,
+          bottom: false,
           minimum: const EdgeInsets.only(top: 25.0),
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter mystate) {
@@ -4745,7 +4753,7 @@ Ends at: $eeeTime
                         backgroundColor: Color(0xff085078),
                         floating: true,
                         pinned: true,
-                        snap: true,
+                        snap: false,
                         shadowColor: Colors.green,
                         flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,

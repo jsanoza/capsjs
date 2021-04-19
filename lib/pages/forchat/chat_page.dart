@@ -336,12 +336,12 @@ class _ChatPageState extends State<ChatPage> {
                                             padding: const EdgeInsets.only(top: 3.0, right: 50),
                                             child: Row(
                                               children: [
-                                                Spacer(
-                                                  flex: 1,
-                                                ),
-                                                Spacer(
-                                                  flex: 2,
-                                                ),
+                                                // Spacer(
+                                                //   flex: 1,
+                                                // ),
+                                                // Spacer(
+                                                //   flex: 2,
+                                                // ),
                                                 Text(formattedTime1, textAlign: TextAlign.start, style: TextStyle(fontSize: 12.0, color: Colors.white)),
                                               ],
                                             ),

@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:torch_compat/torch_compat.dart';
 import '../../main.dart';
-import '../results.dart';
+import 'results.dart';
 
 class CameraApp extends StatefulWidget {
   @override
@@ -118,76 +118,37 @@ class _CameraAppState extends State<CameraApp> {
     var size = MediaQuery.of(context).size.width;
     // final deviceRatio = size.width / size.height;
     return Container(
-        // constraints: const BoxConstraints.expand(),
-        child: _camera == null
-            ? const Center(
-                child: Text(
-                  'Initializing Camera...',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 30.0,
-                  ),
+      // constraints: const BoxConstraints.expand(),
+      child: _camera == null
+          ? const Center(
+              child: Text(
+                'Initializing Camera...',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 30.0,
                 ),
-              )
-            // : Container(
-            //     margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-            //     child: AspectRatio(
-            //       aspectRatio: _camera.value.aspectRatio,
-            //       child: Stack(
-            //         fit: StackFit.expand, //dont forget this shit
-            //         children: <Widget>[
-            //           CameraPreview(_camera),
-            //           _buildResults(),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            //   : Center(
-            //     child: Card(
-            //     clipBehavior: Clip.antiAlias,
-            //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
-            //     child: AspectRatio(
-            //       aspectRatio: 1.586,
-            //       child: OverflowBox(
-            //         alignment: Alignment.center,
-            //         child: FittedBox(
-            //           fit: BoxFit.fitWidth,
-            //           child: Container(
-            //             width: size.width,
-            //             height: size.height / 1.586,
-            //             child: Stack(
-            //               fit: StackFit.expand,
-            //               children: <Widget>[
-            //                 CameraPreview(_camera),
-            //                 // IconButton(icon: Icon(Icons.camera_alt, size: 50), onPressed: null),
-            //                 _buildResults(),
-            //               ],
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            // ),
-            //   ),
-            : Center(
-                child: Container(
-                  width: size,
-                  height: size,
-                  child: ClipRect(
-                    child: OverflowBox(
-                      alignment: Alignment.center,
-                      child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Container(
-                          width: size,
-                          height: size / _camera.value.aspectRatio,
-                          child: Stack(fit: StackFit.expand, children: <Widget>[CameraPreview(_camera), _buildResults()]),
-                        ),
+              ),
+            )
+          : Center(
+              child: Container(
+                width: size,
+                height: size,
+                child: ClipRect(
+                  child: OverflowBox(
+                    alignment: Alignment.center,
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Container(
+                        width: size,
+                        height: size / _camera.value.aspectRatio,
+                        child: Stack(fit: StackFit.expand, children: <Widget>[CameraPreview(_camera), _buildResults()]),
                       ),
                     ),
                   ),
                 ),
-              ));
+              ),
+            ),
+    );
   }
 
   Future<File> testCompressAndGetFile(File file, String targetPath) async {
@@ -230,11 +191,13 @@ class _CameraAppState extends State<CameraApp> {
       print("Processing is progress ...");
       return null;
     }
-
     try {
+      // await _camera.takePicture(imagePath);
+      print('OKAY');
+
       await controller.takePicture(imagePath);
-      File file = File(imagePath);
-      await testCompressAndGetFile(file, tempPath);
+      // File file = File(imagePath);
+      // await testCompressAndGetFile(file, tempPath);
       if (_isTorchOn = true) {
         TorchCompat.turnOff();
         _isTorchOn = false;
@@ -253,54 +216,90 @@ class _CameraAppState extends State<CameraApp> {
     if (!controller.value.isInitialized) {
       return Container();
     }
-    return Stack(
-      children: <Widget>[
-        _buildImage(),
-        Padding(
-          padding: const EdgeInsets.only(right: 20, left: 20, bottom: 60),
-          child: Container(
-            alignment: Alignment.bottomCenter,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                RaisedButton.icon(
-                  icon: Icon(Icons.camera),
-                  label: Text("Take"),
-                  onPressed: () async {
-                    await _takePicture().then((String path) {
-                      if (path != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => DetailScreenx(path)),
-                        );
-                      }
-                    });
-                  },
-                ),
-                _isTorchOn
-                    ? RaisedButton.icon(
-                        icon: Icon(Icons.flash_on),
-                        label: Text("Flash"),
-                        onPressed: () {
-                          setState(() {
-                            TorchCompat.turnOff();
-                            _isTorchOn = false;
-                          });
-                        })
-                    : RaisedButton.icon(
-                        icon: Icon(Icons.flash_off),
-                        label: Text("Flash"),
-                        onPressed: () {
-                          setState(() {
-                            TorchCompat.turnOn();
-                            _isTorchOn = true;
-                          });
-                        }),
-              ],
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+        ),
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              left: 40,
+              top: 70,
+              child: Column(
+                children: [
+                  Text(
+                    "Via Camera",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30.0,
+                      fontFamily: 'Nunito-Bold',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        )
-      ],
+            _buildImage(),
+            Padding(
+              padding: const EdgeInsets.only(right: 20, left: 20, bottom: 60),
+              child: Container(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xff085078), // background
+                        onPrimary: Colors.white, // foreground
+                      ),
+                      icon: Icon(Icons.camera),
+                      label: Text("Take"),
+                      onPressed: () async {
+                        await _takePicture().then((String path) {
+                          if (path != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => DetailScreenx(path)),
+                            );
+                          }
+                        });
+                      },
+                    ),
+                    _isTorchOn
+                        ? ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              primary: Color(0xff085078), // background
+                              onPrimary: Colors.white, // foreground
+                            ),
+                            icon: Icon(Icons.flash_on),
+                            label: Text("Flash"),
+                            onPressed: () {
+                              setState(() {
+                                TorchCompat.turnOff();
+                                _isTorchOn = false;
+                              });
+                            })
+                        : ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              primary: Color(0xff085078), // background
+                              onPrimary: Colors.white, // foreground
+                            ),
+                            icon: Icon(Icons.flash_off),
+                            label: Text("Flash"),
+                            onPressed: () {
+                              setState(() {
+                                TorchCompat.turnOn();
+                                _isTorchOn = true;
+                              });
+                            }),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

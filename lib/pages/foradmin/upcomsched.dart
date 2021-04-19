@@ -276,858 +276,311 @@ $whyreason
       builder: (builder) {
         return SafeArea(
           left: true,
-          top: true,
+          top: false,
           right: true,
-          bottom: true,
+          bottom: false,
           minimum: const EdgeInsets.only(top: 25.0),
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter mystate) {
               return Scaffold(
-                appBar: AppBar(
-                  leading: BackButton(color: Colors.white),
-                  title: Text("Details", style: TextStyle(color: Colors.white)),
-                  backgroundColor: Color(0xff085078),
-                  actions: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(right: 38.0),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.edit,
+                  appBar: AppBar(
+                    leading: BackButton(color: Colors.white),
+                    title: Text("Details", style: TextStyle(color: Colors.white)),
+                    backgroundColor: Color(0xff085078),
+                    actions: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(right: 38.0),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                          ),
+                          onPressed: () async {
+                            var usercheck;
+                            User user = auth.currentUser;
+                            QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
+                            username.docs.forEach((document) {
+              usercheck = document.data()['fullName'];
+                            });
+                            // do something
+                            for (var i = 0; i < Schedule.vehicle.length; i++) {
+              QuerySnapshot snap = await FirebaseFirestore.instance.collection('vehicles').where("query", isEqualTo: Schedule.vehicle[i]).get();
+              snap.docs.forEach((document) {
+                FirebaseFirestore.instance.collection('trialvehicles').doc(Schedule.vehicle[i]).set({
+                  'plate': document.data()['vehicle'],
+                  // 'vehicle': document.data()['plate'],
+                  'brand': document.data()['vehiclebrand'],
+                  'desc': document.data()['vehicledesc'],
+                  'kind': document.data()['vehiclekind'],
+                  'model': document.data()['vehiclemodel'],
+                }).then((value) {
+                  // FirebaseFirestore.instance.collection("trialvehicles").doc(vehiclelist[i]).delete().then((value) {
+                  //   print('deleted');
+                  //   print(vehiclelist);
+                  // });
+                });
+              });
+                            }
+                            var outputFormat2x = DateFormat('MM-dd-yyyy hh:mm a');
+                            var finalCreatex = outputFormat2x.format(DateTime.now());
+                            List<String> toadd = [];
+                            toadd.add(usercheck.toString());
+                            Schedule.editedtime = finalCreatex;
+                            FirebaseFirestore.instance.collection("editedSchedule").doc(Schedule.collectionid).collection("editedSchedule").doc(finalCreatex).set({
+              "teamlead": Schedule.teamlead,
+              "spotter": Schedule.spotter,
+              "spokesperson": Schedule.spokesperson,
+              // "date": finalDate.toString(),
+              "starttime": Schedule.starttime,
+              "endtime": Schedule.endtime,
+              "location": Schedule.location,
+              "kind": Schedule.kind,
+              "datecreated": Schedule.datecreated,
+              "createdby": Schedule.createdby,
+              "status": Schedule.status,
+              "notes": Schedule.notes,
+              "missionname": Schedule.missionname,
+              "collectionid": Schedule.collectionid,
+              "blockteamname": FieldValue.arrayUnion(Schedule.blockteamname),
+              "investteamname": FieldValue.arrayUnion(Schedule.investteamname),
+              "searchteamname": FieldValue.arrayUnion(Schedule.searchteamname),
+              "secuteamname": FieldValue.arrayUnion(Schedule.secuteamname),
+              "blockteam": FieldValue.arrayUnion(Schedule.blockteam),
+              "investteam": FieldValue.arrayUnion(Schedule.investteam),
+              "searchteam": FieldValue.arrayUnion(Schedule.searchteam),
+              "secuteam": FieldValue.arrayUnion(Schedule.secuteam),
+              "editedby": FieldValue.arrayUnion(toadd),
+              "vehicle": Schedule.vehicle,
+              "memberuid": FieldValue.arrayUnion(Schedule.memberuid),
+              "editedtime": finalCreatex,
+              'flaggedvehicles': Schedule.flaggedvehicles,
+              'lastflag': Schedule.lastflag,
+              'scannedvehicles': Schedule.scannedvehicles,
+              'lastscan': Schedule.lastscan,
+              // Schedule.latloc = filteredDocs[index]['loclat'].toDouble();
+              //   Schedule.lngloc = filteredDocs[index]['lngloc'].toDouble();
+              // "loclat": Schedule.latloc.toString(),
+              // "loclng": Schedule.lngloc.toString()
+                            });
+                            Schedule.editedtime = finalCreatex;
+                            Get.offAll(NewEditSched());
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                  body: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
                           color: Colors.white,
                         ),
-                        onPressed: () async {
-                          var usercheck;
-                          User user = auth.currentUser;
-                          QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
-                          username.docs.forEach((document) {
-                            usercheck = document.data()['fullName'];
-                          });
-                          // do something
-                          for (var i = 0; i < Schedule.vehicle.length; i++) {
-                            QuerySnapshot snap = await FirebaseFirestore.instance.collection('vehicles').where("query", isEqualTo: Schedule.vehicle[i]).get();
-                            snap.docs.forEach((document) {
-                              FirebaseFirestore.instance.collection('trialvehicles').doc(Schedule.vehicle[i]).set({
-                                'plate': document.data()['vehicle'],
-                                // 'vehicle': document.data()['plate'],
-                                'brand': document.data()['vehiclebrand'],
-                                'desc': document.data()['vehicledesc'],
-                                'kind': document.data()['vehiclekind'],
-                                'model': document.data()['vehiclemodel'],
-                              }).then((value) {
-                                // FirebaseFirestore.instance.collection("trialvehicles").doc(vehiclelist[i]).delete().then((value) {
-                                //   print('deleted');
-                                //   print(vehiclelist);
-                                // });
-                              });
-                            });
-                          }
-                          var outputFormat2x = DateFormat('MM-dd-yyyy hh:mm a');
-                          var finalCreatex = outputFormat2x.format(DateTime.now());
-                          List<String> toadd = [];
-                          toadd.add(usercheck.toString());
-                          Schedule.editedtime = finalCreatex;
-                          FirebaseFirestore.instance.collection("editedSchedule").doc(Schedule.collectionid).collection("editedSchedule").doc(finalCreatex).set({
-                            "teamlead": Schedule.teamlead,
-                            "spotter": Schedule.spotter,
-                            "spokesperson": Schedule.spokesperson,
-                            // "date": finalDate.toString(),
-                            "starttime": Schedule.starttime,
-                            "endtime": Schedule.endtime,
-                            "location": Schedule.location,
-                            "kind": Schedule.kind,
-                            "datecreated": Schedule.datecreated,
-                            "createdby": Schedule.createdby,
-                            "status": Schedule.status,
-                            "notes": Schedule.notes,
-                            "missionname": Schedule.missionname,
-                            "collectionid": Schedule.collectionid,
-                            "blockteamname": FieldValue.arrayUnion(Schedule.blockteamname),
-                            "investteamname": FieldValue.arrayUnion(Schedule.investteamname),
-                            "searchteamname": FieldValue.arrayUnion(Schedule.searchteamname),
-                            "secuteamname": FieldValue.arrayUnion(Schedule.secuteamname),
-                            "blockteam": FieldValue.arrayUnion(Schedule.blockteam),
-                            "investteam": FieldValue.arrayUnion(Schedule.investteam),
-                            "searchteam": FieldValue.arrayUnion(Schedule.searchteam),
-                            "secuteam": FieldValue.arrayUnion(Schedule.secuteam),
-                            "editedby": FieldValue.arrayUnion(toadd),
-                            "vehicle": Schedule.vehicle,
-                            "memberuid": FieldValue.arrayUnion(Schedule.memberuid),
-                            "editedtime": finalCreatex,
-                            'flaggedvehicles': Schedule.flaggedvehicles,
-                            'lastflag': Schedule.lastflag,
-                            'scannedvehicles': Schedule.scannedvehicles,
-                            'lastscan': Schedule.lastscan,
-                            // Schedule.latloc = filteredDocs[index]['loclat'].toDouble();
-                            //   Schedule.lngloc = filteredDocs[index]['lngloc'].toDouble();
-                            // "loclat": Schedule.latloc.toString(),
-                            // "loclng": Schedule.lngloc.toString()
-                          });
-                          Schedule.editedtime = finalCreatex;
-                          Get.offAll(NewEditSched());
-                        },
                       ),
-                    )
-                  ],
-                ),
-                body: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        color: Colors.white,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 0.0,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: AutoSizeText(
+                      Schedule.missionname,
+                      style: TextStyle(
+                        color: Color(0xff085078),
+                        fontSize: 40.0,
+                        fontFamily: 'Nunito-Bold',
+                        fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 1,
+                      minFontSize: 40,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 0.0,
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 20.0),
-                                  child: AutoSizeText(
-                                    Schedule.missionname,
-                                    style: TextStyle(
-                                      color: Color(0xff085078),
-                                      fontSize: 40.0,
-                                      fontFamily: 'Nunito-Bold',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                    minFontSize: 40,
-                                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 30.0),
+                    child: Container(
+                      width: Get.width,
+                      child: Stack(
+                        children: [
+                          Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18.0, bottom: 30),
+                                child: Container(
+                                   width: Get.width,
+                                  height: isInvolve ? 500 : 250,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 30.0),
-                                  child: Container(
-                                    width: Get.width,
-                                    child: Stack(
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 18.0, bottom: 30),
-                                              child: Container(
-                                                width: 340,
-                                                height: isInvolve ? 500 : 250,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
-                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                  color: Colors.white,
-                                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "Main Purpose of Deployment: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: 15.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 18.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.rectangle,
-                                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.white,
-                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                        ),
-                                                        child: Container(
-                                                          child: ListTile(
-                                                            title: AutoSizeText(
-                                                              "${Schedule.notes} ",
-                                                              style: TextStyle(
-                                                                color: Colors.black,
-                                                                fontSize: 15.0,
-                                                              ),
-                                                              minFontSize: 15,
-                                                              maxLines: 5,
-                                                              overflow: TextOverflow.ellipsis,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    isInvolve
-                                                        ? Padding(
-                                                            padding: const EdgeInsets.only(top: 20.0),
-                                                            child: Container(
-                                                              width: 300,
-                                                              child: Column(
-                                                                children: [
-                                                                  Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                        "Vehicle Report: ",
-                                                                        style: TextStyle(
-                                                                          color: Colors.black,
-                                                                          fontSize: 15.0,
-                                                                          fontFamily: 'Nunito-Bold',
-                                                                          fontWeight: FontWeight.bold,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.all(8.0),
-                                                                    child: Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                      children: [
-                                                                        Text(
-                                                                          "*Tap on the Vehicle Number to see the details.",
-                                                                          style: TextStyle(
-                                                                            color: Colors.red,
-                                                                            fontSize: 12.0,
-                                                                            fontFamily: 'Nunito-Bold',
-                                                                            fontWeight: FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          )
-                                                        : Text(''),
-                                                    isInvolve
-                                                        ? Padding(
-                                                            padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
-                                                            child: Container(
-                                                              height: 270,
-                                                              width: 480,
-                                                              decoration: BoxDecoration(
-                                                                shape: BoxShape.rectangle,
-                                                                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                                                color: Colors.white,
-                                                              ),
-                                                              child: Container(
-                                                                child: ListView.builder(
-                                                                  itemCount: Schedule.vehicle.length,
-                                                                  itemBuilder: (_, index) {
-                                                                    // final DocumentSnapshot _card =
-                                                                    //     userList[index];
-                                                                    return Column(
-                                                                      children: <Widget>[
-                                                                        SizedBox(
-                                                                          height: 18.0,
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
-                                                                          child: Container(
-                                                                            decoration: BoxDecoration(
-                                                                              shape: BoxShape.rectangle,
-                                                                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                                              color: Colors.white,
-                                                                              boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                                            ),
-                                                                            child: ListTile(
-                                                                              title: Text(Schedule.vehicle[index]),
-                                                                              onTap: () async {
-                                                                                // print(PastSchedule.missionid.toString());
-                                                                                // showVehicleInfo(PastSchedule.flaggedvehicles[index]);
-                                                                                fetchVehicleInfo(Schedule.vehicle[index]);
-                                                                              },
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          )
-                                                        : Text(''),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              width: 340,
-                                              height: 120,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.rectangle,
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                color: Colors.white,
-                                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                              ),
-                                              child: Column(
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0),
+                                        child: Container(
+                                          width: 300,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(top: 10.0),
-                                                    child: Container(
-                                                      width: 300,
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                            children: [
-                                                              Text(
-                                                                "Team Leader: ",
-                                                                style: TextStyle(
-                                                                  color: Colors.black,
-                                                                  fontSize: 15.0,
-                                                                  fontFamily: 'Nunito-Bold',
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(top: 18.0),
-                                                    child: Container(
-                                                      width: 300,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.rectangle,
-                                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                        color: Colors.white,
-                                                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                      ),
-                                                      child: Column(
-                                                        children: [
-                                                          ListTile(
-                                                            title: Text("${Schedule.teamlead} "),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                  Text(
+                                                    "Main Purpose of Deployment: ",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15.0,
+                                                      fontFamily: 'Nunito-Bold',
+                                                      fontWeight: FontWeight.bold,
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 18.0),
-                                              child: Container(
-                                                width: 340,
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
-                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                  color: Colors.white,
-                                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "Spokesperson: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: 15.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 18.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.rectangle,
-                                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.white,
-                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                        ),
-                                                        child: Column(
-                                                          children: [
-                                                            ListTile(
-                                                              title: Text("${Schedule.spokesperson} "),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 18.0),
-                                              child: Container(
-                                                width: 340,
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
-                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                  color: Colors.white,
-                                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "Spotter: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: 15.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 18.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.rectangle,
-                                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.white,
-                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                        ),
-                                                        child: Column(
-                                                          children: [
-                                                            ListTile(
-                                                              title: Text("${Schedule.spotter} "),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 18.0),
-                                              child: Container(
-                                                width: 340,
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
-                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                  color: Colors.white,
-                                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "Date Scheduled: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: 15.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 18.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.rectangle,
-                                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.white,
-                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                        ),
-                                                        child: Column(
-                                                          children: [
-                                                            ListTile(
-                                                              title: Text("${Schedule.date} "),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 18.0),
-                                              child: Container(
-                                                width: 340,
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
-                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                  color: Colors.white,
-                                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "Start Time: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: 15.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 18.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.rectangle,
-                                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.white,
-                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                        ),
-                                                        child: Column(
-                                                          children: [
-                                                            ListTile(
-                                                              title: Text("${Schedule.starttimeFormatted} "),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 18.0),
-                                              child: Container(
-                                                width: 340,
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
-                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                  color: Colors.white,
-                                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "End Time: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: 15.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 18.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.rectangle,
-                                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.white,
-                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                        ),
-                                                        child: Column(
-                                                          children: [
-                                                            ListTile(
-                                                              title: Text("${Schedule.endtimeFormatted} "),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 18.0),
-                                              child: Container(
-                                                width: 340,
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
-                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                  color: Colors.white,
-                                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "Location: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: 15.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 18.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.rectangle,
-                                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.white,
-                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                        ),
-                                                        child: Column(
-                                                          children: [
-                                                            ListTile(
-                                                              title: Text("${Schedule.location} "),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 18.0),
-                                              child: Container(
-                                                width: 340,
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
-                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                  color: Colors.white,
-                                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "Type of Mission: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: 15.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 18.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.rectangle,
-                                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.white,
-                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                        ),
-                                                        child: Column(
-                                                          children: [
-                                                            ListTile(
-                                                              title: Text("${Schedule.kind} "),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 18.0),
-                                              child: Container(
-                                                width: 340,
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
-                                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                  color: Colors.white,
-                                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 10.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "Created By: ",
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: 15.0,
-                                                                    fontFamily: 'Nunito-Bold',
-                                                                    fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(top: 18.0),
-                                                      child: Container(
-                                                        width: 300,
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.rectangle,
-                                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.white,
-                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                                        ),
-                                                        child: Column(
-                                                          children: [
-                                                            ListTile(
-                                                              title: Text("${Schedule.createdby} "),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 18.0),
+                                        child: Container(
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: Colors.white,
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                          ),
+                                          child: Container(
+                                            child: ListTile(
+                                              title: AutoSizeText(
+                                                "${Schedule.notes} ",
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 15.0,
+                                                ),
+                                                minFontSize: 15,
+                                                maxLines: 5,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      isInvolve
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(top: 20.0),
+                                              child: Container(
+                                                width: 300,
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          "Vehicle Report: ",
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 15.0,
+                                                            fontFamily: 'Nunito-Bold',
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            "*Tap on the Vehicle Number to see the details.",
+                                                            style: TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 12.0,
+                                                              fontFamily: 'Nunito-Bold',
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          : Text(''),
+                                      isInvolve
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
+                                              child: Container(
+                                                height: 270,
+                                                width: 480,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.rectangle,
+                                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                                  color: Colors.white,
+                                                ),
+                                                child: Container(
+                                                  child: ListView.builder(
+                                                    itemCount: Schedule.vehicle.length,
+                                                    itemBuilder: (_, index) {
+                                                      // final DocumentSnapshot _card =
+                                                      //     userList[index];
+                                                      return Column(
+                                                        children: <Widget>[
+                                                          SizedBox(
+                                                            height: 18.0,
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                shape: BoxShape.rectangle,
+                                                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                                color: Colors.white,
+                                                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                                              ),
+                                                              child: ListTile(
+                                                                title: Text(Schedule.vehicle[index]),
+                                                                onTap: () async {
+                                                                  // print(PastSchedule.missionid.toString());
+                                                                  // showVehicleInfo(PastSchedule.flaggedvehicles[index]);
+                                                                  fetchVehicleInfo(Schedule.vehicle[index]);
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          : Text(''),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 18.0),
-                              child: Container(
-                                width: 352.5,
-                                height: 42,
+                              ),
+                              Container(
+                                width: 340,
+                                height: 120,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
                                   color: Colors.white,
                                   boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
                                 ),
                                 child: Column(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 18.0),
+                                      padding: const EdgeInsets.only(top: 10.0),
                                       child: Container(
                                         width: 300,
                                         child: Column(
@@ -1136,7 +589,7 @@ $whyreason
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
                                                 Text(
-                                                  "Investigation Sub Team: (${Schedule.investteamname.length})",
+                                                  "Team Leader: ",
                                                   style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 15.0,
@@ -1150,85 +603,20 @@ $whyreason
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0),
-                              child: Container(
-                                height: 180,
-                                width: 480,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                  color: Colors.white,
-                                ),
-                                child: Container(
-                                  child: ListView.builder(
-                                    itemCount: Schedule.investteamname.length,
-                                    itemBuilder: (_, index) {
-                                      // final DocumentSnapshot _card =
-                                      //     userList[index];
-                                      return Column(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            height: 18.0,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.rectangle,
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                color: Colors.white,
-                                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                              ),
-                                              child: ListTile(
-                                                title: Text(Schedule.investteamname[index]),
-                                                onTap: () {},
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 18.0),
-                              child: Container(
-                                width: 352.5,
-                                height: 42,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                                  color: Colors.white,
-                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                ),
-                                child: Column(
-                                  children: [
                                     Padding(
                                       padding: const EdgeInsets.only(top: 18.0),
                                       child: Container(
                                         width: 300,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.rectangle,
+                                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                                          color: Colors.white,
+                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                        ),
                                         child: Column(
                                           children: [
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "Search Sub Team: (${Schedule.searchteamname.length})",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 15.0,
-                                                    fontFamily: 'Nunito-Bold',
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
+                                            ListTile(
+                                              title: Text("${Schedule.teamlead} "),
                                             ),
                                           ],
                                         ),
@@ -1237,225 +625,837 @@ $whyreason
                                   ],
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0),
-                              child: Container(
-                                height: 180,
-                                width: 480,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                  color: Colors.white,
-                                ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18.0),
                                 child: Container(
-                                  child: ListView.builder(
-                                    itemCount: Schedule.searchteamname.length,
-                                    itemBuilder: (_, index) {
-                                      // final DocumentSnapshot _card =
-                                      //     userList[index];
-                                      return Column(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            height: 18.0,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.rectangle,
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                color: Colors.white,
-                                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                  width: 340,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0),
+                                        child: Container(
+                                          width: 300,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Spokesperson: ",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15.0,
+                                                      fontFamily: 'Nunito-Bold',
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              child: ListTile(
-                                                title: Text(Schedule.searchteamname[index]),
-                                                onTap: () {},
-                                              ),
-                                            ),
+                                            ],
                                           ),
-                                        ],
-                                      );
-                                    },
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 18.0),
+                                        child: Container(
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: Colors.white,
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                title: Text("${Schedule.spokesperson} "),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18.0),
+                                child: Container(
+                                  width: 340,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0),
+                                        child: Container(
+                                          width: 300,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Spotter: ",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15.0,
+                                                      fontFamily: 'Nunito-Bold',
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 18.0),
+                                        child: Container(
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: Colors.white,
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                title: Text("${Schedule.spotter} "),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18.0),
+                                child: Container(
+                                  width: 340,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0),
+                                        child: Container(
+                                          width: 300,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Date Scheduled: ",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15.0,
+                                                      fontFamily: 'Nunito-Bold',
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 18.0),
+                                        child: Container(
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: Colors.white,
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                title: Text("${Schedule.date} "),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18.0),
+                                child: Container(
+                                  width: 340,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0),
+                                        child: Container(
+                                          width: 300,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Start Time: ",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15.0,
+                                                      fontFamily: 'Nunito-Bold',
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 18.0),
+                                        child: Container(
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: Colors.white,
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                title: Text("${Schedule.starttimeFormatted} "),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18.0),
+                                child: Container(
+                                  width: 340,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0),
+                                        child: Container(
+                                          width: 300,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "End Time: ",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15.0,
+                                                      fontFamily: 'Nunito-Bold',
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 18.0),
+                                        child: Container(
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: Colors.white,
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                title: Text("${Schedule.endtimeFormatted} "),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18.0),
+                                child: Container(
+                                  width: 340,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0),
+                                        child: Container(
+                                          width: 300,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Location: ",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15.0,
+                                                      fontFamily: 'Nunito-Bold',
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 18.0),
+                                        child: Container(
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: Colors.white,
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                title: Text("${Schedule.location} "),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18.0),
+                                child: Container(
+                                  width: 340,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0),
+                                        child: Container(
+                                          width: 300,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Type of Mission: ",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15.0,
+                                                      fontFamily: 'Nunito-Bold',
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 18.0),
+                                        child: Container(
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: Colors.white,
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                title: Text("${Schedule.kind} "),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18.0),
+                                child: Container(
+                                  width: 340,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0),
+                                        child: Container(
+                                          width: 300,
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Created By: ",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15.0,
+                                                      fontFamily: 'Nunito-Bold',
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 18.0),
+                                        child: Container(
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: Colors.white,
+                                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                title: Text("${Schedule.createdby} "),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 18.0),
+                child: Container(
+                  width: 352.5,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                    color: Colors.white,
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 18.0),
+                        child: Container(
+                          width: 300,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Investigation Sub Team: (${Schedule.investteamname.length})",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.0,
+                                      fontFamily: 'Nunito-Bold',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0),
+                child: Container(
+                  height: 180,
+                  width: 480,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                    color: Colors.white,
+                  ),
+                  child: Container(
+                    child: ListView.builder(
+                      itemCount: Schedule.investteamname.length,
+                      itemBuilder: (_, index) {
+                        // final DocumentSnapshot _card =
+                        //     userList[index];
+                        return Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 18.0,
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(top: 18.0),
+                              padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
                               child: Container(
-                                width: 352.5,
-                                height: 42,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
                                   color: Colors.white,
                                   boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
                                 ),
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 18.0),
-                                      child: Container(
-                                        width: 300,
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "Security Sub Team: (${Schedule.secuteamname.length})",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 15.0,
-                                                    fontFamily: 'Nunito-Bold',
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0),
-                              child: Container(
-                                height: 180,
-                                width: 480,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                  color: Colors.white,
-                                ),
-                                child: Container(
-                                  child: ListView.builder(
-                                    itemCount: Schedule.secuteamname.length,
-                                    itemBuilder: (_, index) {
-                                      // final DocumentSnapshot _card =
-                                      //     userList[index];
-                                      return Column(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            height: 18.0,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.rectangle,
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                color: Colors.white,
-                                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                              ),
-                                              child: ListTile(
-                                                title: Text(Schedule.secuteamname[index]),
-                                                onTap: () {},
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 18.0),
-                              child: Container(
-                                width: 352.5,
-                                height: 42,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                                  color: Colors.white,
-                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                ),
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 18.0),
-                                      child: Container(
-                                        width: 300,
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "Block Sub Team: (${Schedule.blockteamname.length})",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 15.0,
-                                                    fontFamily: 'Nunito-Bold',
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0, bottom: 40),
-                              child: Container(
-                                height: 180,
-                                width: 480,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                  color: Colors.white,
-                                ),
-                                child: Container(
-                                  child: ListView.builder(
-                                    itemCount: Schedule.blockteamname.length,
-                                    itemBuilder: (_, index) {
-                                      // final DocumentSnapshot _card =
-                                      //     userList[index];
-                                      return Column(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            height: 18.0,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.rectangle,
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                color: Colors.white,
-                                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
-                                              ),
-                                              child: ListTile(
-                                                title: Text(Schedule.blockteamname[index]),
-                                                onTap: () {},
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
+                                child: ListTile(
+                                  title: Text(Schedule.investteamname[index]),
+                                  onTap: () {},
                                 ),
                               ),
                             ),
                           ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 18.0),
+                child: Container(
+                  width: 352.5,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                    color: Colors.white,
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 18.0),
+                        child: Container(
+                          width: 300,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Search Sub Team: (${Schedule.searchteamname.length})",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.0,
+                                      fontFamily: 'Nunito-Bold',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              );
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0),
+                child: Container(
+                  height: 180,
+                  width: 480,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                    color: Colors.white,
+                  ),
+                  child: Container(
+                    child: ListView.builder(
+                      itemCount: Schedule.searchteamname.length,
+                      itemBuilder: (_, index) {
+                        // final DocumentSnapshot _card =
+                        //     userList[index];
+                        return Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 18.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  color: Colors.white,
+                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                ),
+                                child: ListTile(
+                                  title: Text(Schedule.searchteamname[index]),
+                                  onTap: () {},
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 18.0),
+                child: Container(
+                  width: 352.5,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                    color: Colors.white,
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 18.0),
+                        child: Container(
+                          width: 300,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Security Sub Team: (${Schedule.secuteamname.length})",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.0,
+                                      fontFamily: 'Nunito-Bold',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0),
+                child: Container(
+                  height: 180,
+                  width: 480,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                    color: Colors.white,
+                  ),
+                  child: Container(
+                    child: ListView.builder(
+                      itemCount: Schedule.secuteamname.length,
+                      itemBuilder: (_, index) {
+                        // final DocumentSnapshot _card =
+                        //     userList[index];
+                        return Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 18.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  color: Colors.white,
+                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                ),
+                                child: ListTile(
+                                  title: Text(Schedule.secuteamname[index]),
+                                  onTap: () {},
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 18.0),
+                child: Container(
+                  width: 352.5,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                    color: Colors.white,
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 18.0),
+                        child: Container(
+                          width: 300,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Block Sub Team: (${Schedule.blockteamname.length})",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.0,
+                                      fontFamily: 'Nunito-Bold',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0, bottom: 40),
+                child: Container(
+                  height: 180,
+                  width: 480,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                    color: Colors.white,
+                  ),
+                  child: Container(
+                    child: ListView.builder(
+                      itemCount: Schedule.blockteamname.length,
+                      itemBuilder: (_, index) {
+                        // final DocumentSnapshot _card =
+                        //     userList[index];
+                        return Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 18.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, right: 8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  color: Colors.white,
+                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.2), blurRadius: 30, spreadRadius: 5)],
+                                ),
+                                child: ListTile(
+                                  title: Text(Schedule.blockteamname[index]),
+                                  onTap: () {},
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
             },
           ),
         );

@@ -8,13 +8,15 @@ import 'package:get_rekk/pages/foradmin/ongoingdetailspageone.dart';
 import 'package:get_rekk/pages/foradmin/ongoingdetailspagetwo.dart';
 import 'package:get_rekk/pages/forusers/usersongoingdetailspageone.dart';
 import 'package:get_rekk/pages/forusers/usersongoingdetailspagetwo.dart';
+import 'package:get_rekk/pages/forusers/userssched.dart';
 
 class UsersOngoingDetailsPage extends StatefulWidget {
   @override
   _UsersOngoingDetailsPage createState() => _UsersOngoingDetailsPage();
 }
 
-class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with SingleTickerProviderStateMixin {
+class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage>
+    with SingleTickerProviderStateMixin {
   @override
   // ignore: override_on_non_overriding_member
   Offset _offset = Offset(0, 0);
@@ -51,7 +53,8 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
   }
 
   double getSize(int x) {
-    double size = (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 25 : 12;
+    double size =
+        (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 25 : 12;
     return size;
   }
 
@@ -71,14 +74,20 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
             });
           },
           child: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
               return [
                 SliverAppBar(
                   // automaticallyImplyLeading: false,
                   // title:
                   // Allows the user to reveal the app bar if they begin scrolling back
                   // up the list of items.
-                  leading: BackButton(color: Colors.white),
+                  leading: BackButton(
+                    color: Colors.white,
+                    onPressed: () {
+                      Get.to(UsersSched());
+                    },
+                  ),
                   brightness: Brightness.light,
                   backgroundColor: Color(0xff085078),
                   floating: true,
@@ -99,7 +108,11 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
                                 "Ongoing",
-                                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Nunito-Bold'),
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontFamily: 'Nunito-Bold'),
                               ),
                             ),
                             Padding(
@@ -180,7 +193,8 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
                   });
                 }
 
-                if (details.localPosition.dx > sidebarSize - 20 && details.delta.distanceSquared > 2) {
+                if (details.localPosition.dx > sidebarSize - 20 &&
+                    details.delta.distanceSquared > 2) {
                   setState(() {
                     isMenuOpen = true;
                   });
@@ -214,13 +228,16 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
                                   width: 120,
                                   // padding: EdgeInsets.all(8.0),
                                   child: CircleAvatar(
-                                    backgroundImage: NetworkImage(UserLog.ppUrl),
+                                    backgroundImage:
+                                        NetworkImage(UserLog.ppUrl),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 28.0),
                                   child: Text(
-                                    UserLog.rank + '. ' + UserLog.fullName.toUpperCase(),
+                                    UserLog.rank +
+                                        '. ' +
+                                        UserLog.fullName.toUpperCase(),
                                     style: TextStyle(color: Colors.black45),
                                   ),
                                 ),
@@ -237,8 +254,18 @@ class _UsersOngoingDetailsPage extends State<UsersOngoingDetailsPage> with Singl
                           height: menuContainerHeight,
                           child: Column(
                             children: <Widget>[
-                              MyButton2(text: "User Schedule", iconData: Icons.text_snippet, textSize: getSize(0), height: (menuContainerHeight) / 5, selectedIndex: 0),
-                              MyButton2(text: "Edit Info", iconData: Icons.edit, textSize: getSize(1), height: (menuContainerHeight) / 5, selectedIndex: 1),
+                              MyButton2(
+                                  text: "User Schedule",
+                                  iconData: Icons.text_snippet,
+                                  textSize: getSize(0),
+                                  height: (menuContainerHeight) / 5,
+                                  selectedIndex: 0),
+                              MyButton2(
+                                  text: "Edit Info",
+                                  iconData: Icons.edit,
+                                  textSize: getSize(1),
+                                  height: (menuContainerHeight) / 5,
+                                  selectedIndex: 1),
                               // MyButton2(text: "OCR", iconData: Icons.camera, textSize: getSize(2), height: (menuContainerHeight) / 5, selectedIndex: 2),
                               // MyButton(text: "Third Page", iconData: Icons.attach_file, textSize: getSize(3), height: (menuContainerHeight) / 5, selectedIndex: 3),
                               // MyButton(
@@ -280,7 +307,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
       color: Colors.white,
       child: _tabBar,

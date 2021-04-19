@@ -251,7 +251,7 @@ class _UsersSchedState extends State<UsersSched> with SingleTickerProviderStateM
                       backgroundColor: Color(0xff085078),
                       floating: true,
                       pinned: true,
-                      snap: true,
+                      snap: false,
                       shadowColor: Colors.green,
                       // Display a placeholder widget to visualize the shrinking size.
                       flexibleSpace: FlexibleSpaceBar(
