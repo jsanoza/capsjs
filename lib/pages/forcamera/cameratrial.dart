@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
@@ -19,6 +20,103 @@ class CameraApp extends StatefulWidget {
 }
 
 class _CameraAppState extends State<CameraApp> {
+//   CameraController _controller;
+
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     _controller = CameraController(cameras[0], ResolutionPreset.medium);
+//     _controller.initialize().then((_) {
+//       if (!mounted) {
+//         return;
+//       }
+//       setState(() {});
+//     });
+//   }
+
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+
+//   Future<String> _takePicture() async {
+//     if (!_controller.value.isInitialized) {
+//       print("Controller is not initialized");
+//       return null;
+//     }
+
+//     // Formatting Date and Time
+//     String dateTime = DateFormat.yMMMd().addPattern('-').add_Hms().format(DateTime.now()).toString();
+
+//     String formattedDateTime = dateTime.replaceAll(' ', '');
+//     print("Formatted: $formattedDateTime");
+
+//     final Directory appDocDir = await getApplicationDocumentsDirectory();
+//     final String visionDir = '${appDocDir.path}/Photos/Vision\ Images';
+//     await Directory(visionDir).create(recursive: true);
+//     final String imagePath = '$visionDir/image_$formattedDateTime.jpg';
+
+//     if (_controller.value.isTakingPicture) {
+//       print("Processing is progress ...");
+//       return null;
+//     }
+
+//     try {
+//       await _controller.takePicture(imagePath);
+//     } on CameraException catch (e) {
+//       print("Camera Exception: $e");
+//       return null;
+//     }
+
+//     return imagePath;
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('ML Vision'),
+//       ),
+//       body: _controller.value.isInitialized
+//           ? Stack(
+//               children: <Widget>[
+//                 CameraPreview(_controller),
+//                 Padding(
+//                   padding: const EdgeInsets.all(20.0),
+//                   child: Container(
+//                     alignment: Alignment.bottomCenter,
+//                     child: RaisedButton.icon(
+//                       icon: Icon(Icons.camera),
+//                       label: Text("Click"),
+//                       onPressed: () async {
+//                         await _takePicture().then((String path) {
+//                           if (path != null) {
+//                             Navigator.push(
+//                               context,
+//                               MaterialPageRoute(
+//                                 builder: (context) => DetailScreenx(path),
+//                               ),
+//                             );
+//                           }
+//                         });
+//                       },
+//                     ),
+//                   ),
+//                 )
+//               ],
+//             )
+//           : Container(
+//               color: Colors.black,
+//               child: Center(
+//                 child: CircularProgressIndicator(),
+//               ),
+//             ),
+//     );
+//   }
+// }
+
   CameraController controller;
   CameraController _camera;
   Detector _currentDetector = Detector.text;
@@ -32,7 +130,7 @@ class _CameraAppState extends State<CameraApp> {
   void initState() {
     super.initState();
     _initializeCamera();
-    controller = CameraController(cameras[0], ResolutionPreset.veryHigh);
+    controller = CameraController(cameras[0], ResolutionPreset.medium);
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -46,17 +144,26 @@ class _CameraAppState extends State<CameraApp> {
       _recognizer.close();
     });
     _currentDetector = null;
+    // controller.dispose();
     // TorchCompat.dispose();
     super.dispose();
+  }
+
+  refresh() {
+    setState(() {
+      print('narefreshakoa');
+      _initializeCamera();
+    });
   }
 
   void _initializeCamera() async {
     final CameraDescription description = await ScannerUtils.getCamera(_direction);
 
-    _camera = CameraController(
-      description,
-      defaultTargetPlatform == TargetPlatform.iOS ? ResolutionPreset.medium : ResolutionPreset.medium,
-    );
+    // _camera = CameraController(
+    //   description,
+    //   defaultTargetPlatform == TargetPlatform.iOS ? ResolutionPreset.medium : ResolutionPreset.medium,
+    // );
+    _camera = CameraController(cameras[0], ResolutionPreset.medium);
     await _camera.initialize();
 
     _camera.startImageStream((CameraImage image) {
@@ -186,8 +293,8 @@ class _CameraAppState extends State<CameraApp> {
     final String imagePath = '$visionDir/image_$formattedDateTime.jpg';
     final String tempPath = '$visionDir/image_$formattedDateTime+1.jpg';
     //set a temporary path to compressandgetfile for the image reader to read
-    print('$tempPath.length' + 'hello2');
-    if (controller.value.isTakingPicture) {
+    print('$imagePath.length' + 'hello2');
+    if (_camera.value.isTakingPicture) {
       print("Processing is progress ...");
       return null;
     }
@@ -196,8 +303,8 @@ class _CameraAppState extends State<CameraApp> {
       print('OKAY');
 
       await controller.takePicture(imagePath);
-      // File file = File(imagePath);
-      // await testCompressAndGetFile(file, tempPath);
+      File file = File(imagePath);
+      await testCompressAndGetFile(file, tempPath);
       if (_isTorchOn = true) {
         TorchCompat.turnOff();
         _isTorchOn = false;
@@ -256,12 +363,17 @@ class _CameraAppState extends State<CameraApp> {
                       icon: Icon(Icons.camera),
                       label: Text("Take"),
                       onPressed: () async {
+                        _camera.stopImageStream();
                         await _takePicture().then((String path) {
                           if (path != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => DetailScreenx(path)),
-                            );
+                            Get.to(DetailScreenx(
+                              imagePath: path,
+                              notifyList: refresh(),
+                            ));
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(builder: (context) => DetailScreenx(path)),
+                            // );
                           }
                         });
                       },

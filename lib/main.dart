@@ -240,7 +240,7 @@ class SplashState extends State<Splash> {
             Get.offAll(UsersSched(), transition: Transition.fadeIn);
           }
         } else {
-          Get.offAll(NewVehicle(), transition: Transition.fade);
+          Get.offAll(Fourth(), transition: Transition.fade);
         }
       } else {
         Get.offAll(LogSign(), transition: Transition.fade);

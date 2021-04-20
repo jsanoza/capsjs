@@ -15,7 +15,10 @@ import 'package:intl/intl.dart';
 
 class DetailScreenx extends StatefulWidget {
   final String imagePath;
-  DetailScreenx(this.imagePath);
+  final Function() notifyList;
+
+  const DetailScreenx({Key key, this.imagePath, this.notifyList}) : super(key: key);
+  // DetailScreenx(this.imagePath);
 
   @override
   _DetailScreenxState createState() => new _DetailScreenxState(imagePath);
@@ -64,21 +67,17 @@ class _DetailScreenxState extends State<DetailScreenx> {
       await _getImageSize(imageFile);
     }
 
-    final FirebaseVisionImage visionImage =
-        FirebaseVisionImage.fromFile(imageFile);
+    final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(imageFile);
 
-    final TextRecognizer textRecognizer =
-        FirebaseVision.instance.textRecognizer();
+    final TextRecognizer textRecognizer = FirebaseVision.instance.textRecognizer();
 
-    final VisionText visionText =
-        await textRecognizer.processImage(visionImage);
+    final VisionText visionText = await textRecognizer.processImage(visionImage);
 
     String pattern = r"^[A-Z]{0,4}[\s]*[0-9]{0,5}$";
     RegExp regEx = RegExp(pattern);
 
     var keys = ['APC', '7778', 'REGION', 'NCR', 'MC', 'POGI', 'LANG', 'TAKBO'];
-    var regex1 =
-        new RegExp("\\b(?:${keys.join('|')})\\b", caseSensitive: false);
+    var regex1 = new RegExp("\\b(?:${keys.join('|')})\\b", caseSensitive: false);
 
     String mailAddress = "";
     for (TextBlock block in visionText.blocks) {
@@ -141,6 +140,7 @@ class _DetailScreenxState extends State<DetailScreenx> {
 
   @override
   void initState() {
+    ErrorWidget.builder = (FlutterErrorDetails details) => Container();
     _initializeVision();
     super.initState();
   }
@@ -149,11 +149,7 @@ class _DetailScreenxState extends State<DetailScreenx> {
     _blackVisible = !_blackVisible;
   }
 
-  void _showSuccessAlert(
-      {String title,
-      String content,
-      VoidCallback onPressed,
-      BuildContext context}) {
+  void _showSuccessAlert({String title, String content, VoidCallback onPressed, BuildContext context}) {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -172,23 +168,14 @@ class _DetailScreenxState extends State<DetailScreenx> {
     User user = auth.currentUser;
     String useruid = user.uid.toString();
 
-    var a = await FirebaseFirestore.instance
-        .collection('vehicles')
-        .where('vehicle', isEqualTo: plate)
-        .get();
+    var a = await FirebaseFirestore.instance.collection('vehicles').where('vehicle', isEqualTo: plate).get();
 
-    QuerySnapshot username = await FirebaseFirestore.instance
-        .collection('users')
-        .where('collectionId', isEqualTo: useruid)
-        .get();
+    QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: useruid).get();
     username.docs.forEach((document) {
       usercheck = document.data()['badgeNum'].toString();
     });
 
-    QuerySnapshot getLevel = await FirebaseFirestore.instance
-        .collection('userlevel')
-        .where('badgeNum', isEqualTo: usercheck)
-        .get();
+    QuerySnapshot getLevel = await FirebaseFirestore.instance.collection('userlevel').where('badgeNum', isEqualTo: usercheck).get();
     getLevel.docs.forEach((document) {
       userlevel = document.data()['level'].toString();
     });
@@ -348,42 +335,28 @@ Therefore this will not be added on your list.
     List<String> alluid = [];
     var collectionid2 = uuid.v1();
     List<String> scannedby = [];
-    QuerySnapshot usernamex = await FirebaseFirestore.instance
-        .collection('users')
-        .where('collectionId', isEqualTo: user.uid)
-        .get();
+    QuerySnapshot usernamex = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
     usernamex.docs.forEach((document) {
       finalUser = document.data()['fullName'];
       finalRank = document.data()['rank'];
     });
     scannedby.add(plate + ' found by: ' + ' ' + finalRank + ' ' + finalUser);
-    QuerySnapshot username = await FirebaseFirestore.instance
-        .collection('schedule')
-        .where('collectionid', isEqualTo: Schedule.collectionid.toString())
-        .where('vointerest', arrayContains: plate)
-        .get();
+    QuerySnapshot username = await FirebaseFirestore.instance.collection('schedule').where('collectionid', isEqualTo: Schedule.collectionid.toString()).where('vointerest', arrayContains: plate).get();
     username.docs.forEach((document) {
       print('true' + 'MERON NA NITO SA DB BRO');
       _isTrue = true;
     });
 
     if (_isTrue == true) {
-      print(
-          'show alert that there is already a scanned vehicle with this plate number!');
+      print('show alert that there is already a scanned vehicle with this plate number!');
       showSomeonez2(context);
     } else {
-      QuerySnapshot check = await FirebaseFirestore.instance
-          .collection('users')
-          .where('collectionId', isNotEqualTo: 'dummy')
-          .get();
+      QuerySnapshot check = await FirebaseFirestore.instance.collection('users').where('collectionId', isNotEqualTo: 'dummy').get();
       check.docs.forEach((document) async {
         alluid.add(document.data()['collectionId'].toString());
       });
 
-      QuerySnapshot getVehicleDetails = await FirebaseFirestore.instance
-          .collection('vehicles')
-          .where('query', isEqualTo: recognizedText)
-          .get();
+      QuerySnapshot getVehicleDetails = await FirebaseFirestore.instance.collection('vehicles').where('query', isEqualTo: recognizedText).get();
       getVehicleDetails.docs.forEach((document) {
         FirebaseFirestore.instance.collection('found').doc(recognizedText).set({
           'foundby': FieldValue.arrayUnion(scannedby),
@@ -400,22 +373,13 @@ Therefore this will not be added on your list.
           "vehiclemodel": document.data()['vehiclemodel'],
           "timestamp": document.data()['addedtime'],
         }).then((value) {
-          FirebaseFirestore.instance
-              .collection('vehicles')
-              .doc(recognizedText)
-              .delete();
+          FirebaseFirestore.instance.collection('vehicles').doc(recognizedText).delete();
         }).then((valuex) {
-          FirebaseFirestore.instance
-              .collection("schedule")
-              .doc(Schedule.collectionid.toString())
-              .update({
+          FirebaseFirestore.instance.collection("schedule").doc(Schedule.collectionid.toString()).update({
             'vointerest': FieldValue.arrayUnion(listplate),
             'voilast': FieldValue.arrayUnion(scannedby),
           }).then((value) {
-            FirebaseFirestore.instance
-                .collection('flag')
-                .doc(listplate.toString())
-                .set({
+            FirebaseFirestore.instance.collection('flag').doc(listplate.toString()).set({
               'flaggedvehicles': FieldValue.arrayUnion(listplate),
               'lastflag': FieldValue.arrayUnion(scannedby),
               'collectionid': Schedule.collectionid,
@@ -424,41 +388,23 @@ Therefore this will not be added on your list.
               'seen': FieldValue.arrayUnion(alluid),
             }).then((value) async {
               //add to sub document
-              FirebaseFirestore.instance
-                  .collection('schedule')
-                  .doc(Schedule.collectionid.toString())
-                  .collection('vointerest')
-                  .doc(plate.toString())
-                  .set({
+              FirebaseFirestore.instance.collection('schedule').doc(Schedule.collectionid.toString()).collection('vointerest').doc(plate.toString()).set({
                 'scannedvehicles': FieldValue.arrayUnion(listplate),
                 'whoscanned': user.uid,
                 'scannedtime': Timestamp.now(),
                 'scannedby': user.uid,
               }).then((value) {
                 //add to users document
-                FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(user.uid)
-                    .collection('schedule')
-                    .doc(Schedule.collectionid)
-                    .collection('vointerest')
-                    .doc(plate)
-                    .set({
+                FirebaseFirestore.instance.collection('users').doc(user.uid).collection('schedule').doc(Schedule.collectionid).collection('vointerest').doc(plate).set({
                   'scannedvehicles': plate,
                   'query': plate,
                   'scannedtime': Timestamp.now(),
                 }).then((value) {
                   //add to usertrail
-                  FirebaseFirestore.instance
-                      .collection('usertrail')
-                      .doc(user.uid)
-                      .collection('schedscan')
-                      .doc(collectionid2)
-                      .set({
+                  FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('schedscan').doc(collectionid2).set({
                     'userid': user.uid,
                     'this_collectionid': collectionid2,
-                    'activity':
-                        'Found a vehicle of interest with plate number: $plate',
+                    'activity': 'Found a vehicle of interest with plate number: $plate',
                     'editcreate_datetime': Timestamp.now(),
                     'editcreate_collectionid': Schedule.collectionid,
                     'vehicle': plate,
@@ -550,7 +496,7 @@ Therefore this will not be added on your list.
           content: "Added!", //show error firebase
           onPressed: _changeBlackVisible,
           context: context);
-          // Get.back();
+      // Get.back();
       // _vehicleplateTextController.text = '';
     }
   }
@@ -566,71 +512,43 @@ Therefore this will not be added on your list.
     var collectionid2 = uuid.v1();
     print(plate);
     //first get the users full name
-    QuerySnapshot usernamex = await FirebaseFirestore.instance
-        .collection('users')
-        .where('collectionId', isEqualTo: user.uid)
-        .get();
+    QuerySnapshot usernamex = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
     usernamex.docs.forEach((document) {
       finalUser = document.data()['fullName'];
       finalRank = document.data()['rank'];
     });
     scannedby.add(plate + ' scanned by: ' + ' ' + finalRank + ' ' + finalUser);
     //check if vehicle is already scanned
-    QuerySnapshot username = await FirebaseFirestore.instance
-        .collection('schedule')
-        .where('collectionid', isEqualTo: Schedule.collectionid.toString())
-        .where('scannedvehicles', arrayContains: plate)
-        .get();
+    QuerySnapshot username = await FirebaseFirestore.instance.collection('schedule').where('collectionid', isEqualTo: Schedule.collectionid.toString()).where('scannedvehicles', arrayContains: plate).get();
     username.docs.forEach((document) {
       print('true' + 'MERON NA NITO SA DB BRO');
       _isTrue = true;
     });
     //show flagged here if resisting ang perpetrator
     if (_isTrue == true) {
-      print(
-          'show alert that there is already a scanned vehicle with this plate number!');
+      print('show alert that there is already a scanned vehicle with this plate number!');
       showSomeone(context);
     } else {
       //else add the plate to the list in the schedule
-      FirebaseFirestore.instance
-          .collection("schedule")
-          .doc(Schedule.collectionid.toString())
-          .update({
+      FirebaseFirestore.instance.collection("schedule").doc(Schedule.collectionid.toString()).update({
         'scannedvehicles': FieldValue.arrayUnion(listplate),
         'lastscan': FieldValue.arrayUnion(scannedby),
       }).then((value) async {
         //add to sub document
-        FirebaseFirestore.instance
-            .collection('schedule')
-            .doc(Schedule.collectionid.toString())
-            .collection('spot')
-            .doc(plate.toString())
-            .set({
+        FirebaseFirestore.instance.collection('schedule').doc(Schedule.collectionid.toString()).collection('spot').doc(plate.toString()).set({
           'scannedvehicles': FieldValue.arrayUnion(listplate),
           'whoscanned': user.uid,
           'scannedtime': Timestamp.now(),
           'scannedby': user.uid,
         }).then((value) {
           //add to users document
-          FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .collection('schedule')
-              .doc(Schedule.collectionid)
-              .collection('scannedvehicles')
-              .doc(plate)
-              .set({
+          FirebaseFirestore.instance.collection('users').doc(user.uid).collection('schedule').doc(Schedule.collectionid).collection('scannedvehicles').doc(plate).set({
             'scannedvehicles': plate,
             'query': plate,
             'scannedtime': Timestamp.now(),
           }).then((value) {
             //add to usertrail
-            FirebaseFirestore.instance
-                .collection('usertrail')
-                .doc(user.uid)
-                .collection('schedscan')
-                .doc(collectionid2)
-                .set({
+            FirebaseFirestore.instance.collection('usertrail').doc(user.uid).collection('schedscan').doc(collectionid2).set({
               'userid': user.uid,
               'this_collectionid': collectionid2,
               'activity': 'Scanned a vehicle with plate number: $plate',
@@ -652,360 +570,280 @@ Therefore this will not be added on your list.
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff085078),
-        title: Text(
-          "Plate Details",
-          style: TextStyle(color: Colors.white),
+    return WillPopScope(
+      onWillPop: () {
+        print('Backbutton pressed (device or appbar button), do whatever you want.');
+        widget.notifyList();
+        Get.back();
+        return Future.value(false);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xff085078),
+          title: Text(
+            "Plate Details",
+            style: TextStyle(color: Colors.white),
+          ),
+          // ignore: missing_required_param
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Get.back();
+            },
+            // onPressed: () => Get.to(CameraApp(), transition: Transition.fadeIn),
+          ),
         ),
-        // ignore: missing_required_param
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Get.back();
-          },
-          // onPressed: () => Get.to(CameraApp(), transition: Transition.fadeIn),
-        ),
-      ),
-      body: _imageSize != null
-          ? SingleChildScrollView(
-              child: Stack(
-                children: <Widget>[
-                  _isDone
-                      ? Container(
-                          height: Get.height,
-                          width: Get.width,
-                          decoration: BoxDecoration(
-                            gradient: new LinearGradient(
-                                colors: [Color(0xff85D8CE), Color(0xff085078)],
-                                begin: const FractionalOffset(0.0, 0.0),
-                                end: const FractionalOffset(1.0, 1.0),
-                                stops: [0.0, 1.0],
-                                tileMode: TileMode.clamp),
-                          ),
-                          child: Stack(
-                            children: <Widget>[
-                              Container(
-                                width: double.maxFinite,
-                                height: 300,
-                                color: Colors.black,
-                                child: CustomPaint(
-                                  foregroundPainter:
-                                      TextDetectorPainter(_imageSize, _blocks),
-                                  child: AspectRatio(
-                                    aspectRatio: _imageSize.aspectRatio,
-                                    child: Image.file(
-                                      File(path),
+        body: _imageSize != null
+            ? SingleChildScrollView(
+                child: Stack(
+                  children: <Widget>[
+                    _isDone
+                        ? Container(
+                            height: Get.height,
+                            width: Get.width,
+                            decoration: BoxDecoration(
+                              gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                            ),
+                            child: Stack(
+                              children: <Widget>[
+                                Container(
+                                  width: double.maxFinite,
+                                  height: 300,
+                                  color: Colors.black,
+                                  child: CustomPaint(
+                                    foregroundPainter: TextDetectorPainter(_imageSize, _blocks),
+                                    child: AspectRatio(
+                                      aspectRatio: _imageSize.aspectRatio,
+                                      child: Image.file(
+                                        File(path),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              conditionvoi
-                                  ? Align(
-                                      alignment: Alignment.center,
-                                      child: Card(
-                                        elevation: 8,
-                                        color: Colors.white,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(25.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Row(),
-                                              Container(
-                                                height: 50,
-                                                child: SingleChildScrollView(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      AutoSizeText(
-                                                        recognizedText,
-                                                        style: TextStyle(
-                                                            color: Colors.red,
-                                                            fontSize: 30),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          final dynamic
-                                                              tooltip =
-                                                              _toolTipKey
-                                                                  .currentState;
-                                                          tooltip
-                                                              .ensureTooltipVisible();
-                                                        },
-                                                        child: Tooltip(
-                                                          key: _toolTipKey,
-                                                          // ignore: missing_required_param
-                                                          child: IconButton(
-                                                            icon: Icon(
-                                                                Icons.info,
-                                                                size: 38.0,
-                                                                color:
-                                                                    Colors.red),
-                                                          ),
-                                                          message: '\n' +
-                                                              recognizedText
-                                                                  .toString() +
-                                                              '\n\n' +
-                                                              vehicledesc
-                                                                  .toString() +
-                                                              '\n' +
-                                                              vehiclemodel
-                                                                  .toString() +
-                                                              '\n' +
-                                                              vehiclekind
-                                                                  .toString() +
-                                                              '\n' +
-                                                              vehiclebrand
-                                                                  .toString() +
-                                                              '\n\nREASON: ' +
-                                                              reason
-                                                                  .toString() +
-                                                              '\n\n\nADDED TIME: ' +
-                                                              formattedTime1
-                                                                  .toString(),
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  20),
-                                                          margin:
-                                                              EdgeInsets.all(
-                                                                  20),
-                                                          showDuration:
-                                                              Duration(
-                                                                  seconds: 10),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.blue
-                                                                .withOpacity(
-                                                                    0.9),
-                                                            borderRadius:
-                                                                const BorderRadius
-                                                                        .all(
-                                                                    Radius
-                                                                        .circular(
-                                                                            4)),
-                                                          ),
-                                                          textStyle: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                          preferBelow: true,
-                                                          verticalOffset: 20,
+                                conditionvoi
+                                    ? Align(
+                                        alignment: Alignment.center,
+                                        child: Card(
+                                          elevation: 8,
+                                          color: Colors.white,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(25.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Row(),
+                                                Container(
+                                                  height: 50,
+                                                  child: SingleChildScrollView(
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        AutoSizeText(
+                                                          recognizedText,
+                                                          style: TextStyle(color: Colors.red, fontSize: 30),
+                                                          overflow: TextOverflow.ellipsis,
                                                         ),
-                                                      ),
-                                                    ],
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            final dynamic tooltip = _toolTipKey.currentState;
+                                                            tooltip.ensureTooltipVisible();
+                                                          },
+                                                          child: Tooltip(
+                                                            key: _toolTipKey,
+                                                            // ignore: missing_required_param
+                                                            child: IconButton(
+                                                              icon: Icon(Icons.info, size: 38.0, color: Colors.red),
+                                                            ),
+                                                            message: '\n' +
+                                                                recognizedText.toString() +
+                                                                '\n\n' +
+                                                                vehicledesc.toString() +
+                                                                '\n' +
+                                                                vehiclemodel.toString() +
+                                                                '\n' +
+                                                                vehiclekind.toString() +
+                                                                '\n' +
+                                                                vehiclebrand.toString() +
+                                                                '\n\nREASON: ' +
+                                                                reason.toString() +
+                                                                '\n\n\nADDED TIME: ' +
+                                                                formattedTime1.toString(),
+                                                            padding: EdgeInsets.all(20),
+                                                            margin: EdgeInsets.all(20),
+                                                            showDuration: Duration(seconds: 10),
+                                                            decoration: BoxDecoration(
+                                                              color: Colors.blue.withOpacity(0.9),
+                                                              borderRadius: const BorderRadius.all(Radius.circular(4)),
+                                                            ),
+                                                            textStyle: TextStyle(color: Colors.white),
+                                                            preferBelow: true,
+                                                            verticalOffset: 20,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 18.0,
-                                                    left: 8,
-                                                    right: 8,
-                                                    top: 20),
-                                                child: Text(
-                                                  "THIS VEHICLE IS ON OUR LIST!",
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 24),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(bottom: 18.0, left: 8, right: 8, top: 20),
+                                                  child: Text(
+                                                    "THIS VEHICLE IS ON OUR LIST!",
+                                                    style: TextStyle(color: Colors.red, fontSize: 24),
+                                                  ),
                                                 ),
-                                              ),
-                                              Container(
-                                                // height: 100,
-                                                width: Get.width,
-                                                child: SingleChildScrollView(
-                                                  child: AutoSizeText(
-                                                    '''
+                                                Container(
+                                                  // height: 100,
+                                                  width: Get.width,
+                                                  child: SingleChildScrollView(
+                                                    child: AutoSizeText(
+                                                      '''
 Click on the Information button to see the details.
 
 Click on the Notify Now button to notify all team mates.
 
 ''',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: <Widget>[
-                                                  ElevatedButton.icon(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        primary: Color(
-                                                            0xff085078), // background
-                                                        onPrimary: Colors
-                                                            .white, // foreground
-                                                      ),
-                                                      icon: Icon(Icons
-                                                          .report_problem_outlined),
-                                                      label:
-                                                          Text("Notify now!"),
-                                                      onPressed: () async {
-                                                        interest();
-                                                      }),
-                                                  //   Get.offAll(Flagged(
-                                                  //       vehicle: recognizedText,
-                                                  //       wherefrom: userlevel));
-                                                  // }),
-                                                  // ElevatedButton.icon(
-                                                  //     style: ElevatedButton.styleFrom(
-                                                  //       primary:
-                                                  //           Color(0xff085078), // background
-                                                  //       onPrimary:
-                                                  //           Colors.white, // foreground
-                                                  //     ),
-                                                  //     icon: Icon(Icons.add_box_outlined),
-                                                  //     label: Text("Submit"),
-                                                  //     onPressed: () {
-                                                  //       savetoDB();
-                                                  //     }),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : Align(
-                                      alignment: Alignment.center,
-                                      child: Card(
-                                        elevation: 8,
-                                        color: Colors.white,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(25.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Row(),
-                                              Container(
-                                                height: 50,
-                                                child: SingleChildScrollView(
-                                                  child: Center(
-                                                    child: AutoSizeText(
-                                                      recognizedText,
-                                                      style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 30),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                      overflow: TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              Text(
-                                                "Not on our list!",
-                                                style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontSize: 30),
-                                              ),
-                                              Container(
-                                                // height: 100,
-                                                width: Get.width,
-                                                child: SingleChildScrollView(
-                                                  child: AutoSizeText(
-                                                    '''
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  children: <Widget>[
+                                                    ElevatedButton.icon(
+                                                        style: ElevatedButton.styleFrom(
+                                                          primary: Color(0xff085078), // background
+                                                          onPrimary: Colors.white, // foreground
+                                                        ),
+                                                        icon: Icon(Icons.report_problem_outlined),
+                                                        label: Text("Notify now!"),
+                                                        onPressed: () async {
+                                                          interest();
+                                                        }),
+                                                    //   Get.offAll(Flagged(
+                                                    //       vehicle: recognizedText,
+                                                    //       wherefrom: userlevel));
+                                                    // }),
+                                                    // ElevatedButton.icon(
+                                                    //     style: ElevatedButton.styleFrom(
+                                                    //       primary:
+                                                    //           Color(0xff085078), // background
+                                                    //       onPrimary:
+                                                    //           Colors.white, // foreground
+                                                    //     ),
+                                                    //     icon: Icon(Icons.add_box_outlined),
+                                                    //     label: Text("Submit"),
+                                                    //     onPressed: () {
+                                                    //       savetoDB();
+                                                    //     }),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Align(
+                                        alignment: Alignment.center,
+                                        child: Card(
+                                          elevation: 8,
+                                          color: Colors.white,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(25.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Row(),
+                                                Container(
+                                                  height: 50,
+                                                  child: SingleChildScrollView(
+                                                    child: Center(
+                                                      child: AutoSizeText(
+                                                        recognizedText,
+                                                        style: TextStyle(color: Colors.black, fontSize: 30),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "Not on our list!",
+                                                  style: TextStyle(color: Colors.green, fontSize: 30),
+                                                ),
+                                                Container(
+                                                  // height: 100,
+                                                  width: Get.width,
+                                                  child: SingleChildScrollView(
+                                                    child: AutoSizeText(
+                                                      '''
 This vehicle is not on our list.
 
 Please choose carefully whether to Flag
 this vehicle or not.
 
 ''',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: <Widget>[
-                                                  ElevatedButton.icon(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        primary: Color(
-                                                            0xff085078), // background
-                                                        onPrimary: Colors
-                                                            .white, // foreground
-                                                      ),
-                                                      icon: Icon(
-                                                          Icons.flag_outlined),
-                                                      label: Text("Flag"),
-                                                      onPressed: () async {
-                                                        Get.offAll(Flagged(
-                                                            vehicle:
-                                                                recognizedText,
-                                                            wherefrom:
-                                                                userlevel));
-                                                      }),
-                                                  ElevatedButton.icon(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        primary: Color(
-                                                            0xff085078), // background
-                                                        onPrimary: Colors
-                                                            .white, // foreground
-                                                      ),
-                                                      icon: Icon(Icons
-                                                          .add_box_outlined),
-                                                      label: Text("Submit"),
-                                                      onPressed: () {
-                                                        savetoDB();
-                                                      }),
-                                                ],
-                                              ),
-                                            ],
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  children: <Widget>[
+                                                    ElevatedButton.icon(
+                                                        style: ElevatedButton.styleFrom(
+                                                          primary: Color(0xff085078), // background
+                                                          onPrimary: Colors.white, // foreground
+                                                        ),
+                                                        icon: Icon(Icons.flag_outlined),
+                                                        label: Text("Flag"),
+                                                        onPressed: () async {
+                                                          Get.offAll(Flagged(vehicle: recognizedText, wherefrom: userlevel));
+                                                        }),
+                                                    ElevatedButton.icon(
+                                                        style: ElevatedButton.styleFrom(
+                                                          primary: Color(0xff085078), // background
+                                                          onPrimary: Colors.white, // foreground
+                                                        ),
+                                                        icon: Icon(Icons.add_box_outlined),
+                                                        label: Text("Submit"),
+                                                        onPressed: () {
+                                                          savetoDB();
+                                                        }),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                            ],
+                              ],
+                            ),
+                          )
+                        : Container(
+                            height: Get.height,
+                            width: Get.width,
+                            decoration: BoxDecoration(
+                              gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                            ),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
-                        )
-                      : Container(
-                          height: Get.height,
-                          width: Get.width,
-                          decoration: BoxDecoration(
-                            gradient: new LinearGradient(
-                                colors: [Color(0xff85D8CE), Color(0xff085078)],
-                                begin: const FractionalOffset(0.0, 0.0),
-                                end: const FractionalOffset(1.0, 1.0),
-                                stops: [0.0, 1.0],
-                                tileMode: TileMode.clamp),
-                          ),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                ],
+                  ],
+                ),
+              )
+            : Container(
+                height: Get.height,
+                width: Get.width,
+                decoration: BoxDecoration(
+                  gradient: new LinearGradient(colors: [Color(0xff85D8CE), Color(0xff085078)], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                ),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
-            )
-          : Container(
-              height: Get.height,
-              width: Get.width,
-              decoration: BoxDecoration(
-                gradient: new LinearGradient(
-                    colors: [Color(0xff85D8CE), Color(0xff085078)],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 1.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp),
-              ),
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
+      ),
     );
   }
 }
