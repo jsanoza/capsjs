@@ -1033,6 +1033,7 @@ Confirm changing your password?
         };
         var response = await http.post(url, body: jsonEncode(data));
         codefromphp = response.body;
+        print(codefromphp);
         print(response.body.length);
         if (response.body.length > 11) {
           _showErrorAlert(
@@ -1041,8 +1042,8 @@ Confirm changing your password?
               onPressed: _changeBlackVisible,
               context: context);
           _btnController2.reset();
-          // auth.signOut();
-          // Get.to(LogSign());
+          auth.signOut();
+          Get.to(LogSign());
           codeReset = false;
         } else {
           _showSuccessAlert(
