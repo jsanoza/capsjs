@@ -484,6 +484,7 @@ class _PhoneState extends State<Phone> {
               content: errorMessage, //show error firebase
               onPressed: _changeBlackVisible,
               context: context);
+          _btnController2.reset();
           break;
         case "invalid-verification-code":
           errorMessage = " The sms verification code used to create the phone link credential is invalid.";
@@ -492,8 +493,16 @@ class _PhoneState extends State<Phone> {
               content: errorMessage, //show error firebase
               onPressed: _changeBlackVisible,
               context: context);
+          _btnController2.reset();
           break;
         default:
+          errorMessage = " Other user has already been linked to the given provider.";
+          _showErrorAlert(
+              title: "Verification failed.",
+              content: errorMessage, //show error firebase
+              onPressed: _changeBlackVisible,
+              context: context);
+          _btnController2.reset();
           errorMessage = "An undefined Error happened.";
       }
     });

@@ -264,6 +264,7 @@ Confirm changing your password?
 
   changeit() async {
     checkCurrentPasswordValid = await validateCurrentPassword(_oldPasswordTextController.text.toUpperCase());
+    print("I AM HERE");
     // _btnController1.reset();
     var collectionid2 = uuid.v1();
     User user = auth.currentUser;
@@ -272,7 +273,7 @@ Confirm changing your password?
     var activity = 'Reset Password via Verified Phone Number.';
     if (checkCurrentPasswordValid == true) {
       print(checkCurrentPasswordValid);
-
+      print("I AM HERE2");
       // try {
       QuerySnapshot username = await FirebaseFirestore.instance.collection('users').where('collectionId', isEqualTo: user.uid).get();
       username.docs.forEach((document) {
@@ -280,7 +281,7 @@ Confirm changing your password?
       });
 
       updatePassword(_rePasswordTextController.text);
-
+      print("I AM HERE3");
       FirebaseFirestore.instance.collection('usertrail').doc(user.uid).set({
         // 'collectionid2': collectionid2,
         'lastactivity_datetime': Timestamp.now(),
@@ -1105,7 +1106,11 @@ Confirm changing your password?
 
     final PhoneVerificationFailed verfifailed = (FirebaseAuthException exception) {
       print("${exception.message}");
-
+      _showErrorAlert(
+          title: "Verification failed.",
+          content: '${exception.message}', //show error firebase
+          onPressed: _changeBlackVisible,
+          context: context);
       print("falied");
     };
 
